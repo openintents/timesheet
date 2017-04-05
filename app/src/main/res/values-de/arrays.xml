@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entries_date_format">
+        <item>Voreinstellung</item>
+        <item>MM/TT/JJJJ</item>
+        <item>TT/MM/JJJJ</item>
+        <item>TT.MM.JJJJ</item>
+        <item>JJJJ/MM/DD</item>
+    </string-array>
+    <string-array name="entries_date_format_values">
+        <item></item>
+        <item>MM/dd/yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>dd.MM.yyyy</item>
+        <item>yyyy/MM/dd</item>
+    </string-array>
+    <string-array name="entries_time_format">
+        <item>Voreinstellung</item>
+        <item>12-Stunden-Anzeige</item>
+        <item>24-Stunden-Anzeige</item>
+    </string-array>
+    <string-array name="entries_time_format_values">
+        <item></item>
+        <item>hh:mm a</item>
+        <item>HH:mm</item>
+    </string-array>
+    <string-array name="entries_billing_unit">
+        <item>ohne Runden</item>
+        <item>1 Minute</item>
+        <item>5 Minuten</item>
+        <item>10 Minuten</item>
+        <item>15 Minuten</item>
+    </string-array>
+    <string-array name="entries_billing_unit_values">
+        <item>0</item>
+        <item>60000</item>
+        <item>300000</item>
+        <item>600000</item>
+        <item>900000</item>
+    </string-array>
+    <string-array name="entries_reminder">
+        <item>keine Erinnerung</item>
+        <item>5 Minuten</item>
+        <item>10 Minuten</item>
+        <item>15 Minuten</item>
+        <item>20 Minuten</item>
+        <item>25 Minuten</item>
+        <item>30 Minuten</item>
+        <item>45 Minuten</item>
+        <item>1 Stunde</item>
+        <item>2 Stunden</item>
+        <item>3 Stunden</item>
+        <item>12 Stunden</item>
+        <item>24 Stunden</item>
+        <item>2 Tage</item>
+        <item>1 Woche</item>
+    </string-array>
+    <string-array name="entries_reminder_values">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>720</item>
+        <item>1200</item>
+        <item>2400</item>
+        <item>7200</item>
+    </string-array>
+    <string-array name="invoice_types">
+        <item>Allgemein</item>
+        <item>Kilometer</item>
+    </string-array>
+    <string-array name="job_types">
+        <item>Job</item>
+        <item>Kilometer</item>
+        <item>Kosten</item>
+    </string-array>
+    <string-array name="about_authors">
+        <item>Friedger</item>
+        <item>Peli</item>
+    </string-array>
+    <array name="about_documenters" />
+    <string-array name="about_translators">
+        <item>Friedger</item>
+    </string-array>
+    <string-array name="about_artists">
+        <item>Peli</item>
+    </string-array>
+</resources>

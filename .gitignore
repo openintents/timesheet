@@ -1,0 +1,16 @@
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/*
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+keystore.properties
+milestone.keystore
+nightly.keystore
+last_build.properties
+Localizable.*strings
+projectFilesBackup

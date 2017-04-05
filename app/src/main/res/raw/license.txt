@@ -1,0 +1,48 @@
+Copyright (C) 2008-2009 OpenIntents.org
+
+EULA - End User Software License Agreement for TIMESHEET Android application. 
+
+
+PLEASE CAREFULLY READ THE FOLLOWING LEGAL AGREEMENT ("AGREEMENT") FOR THE LICENSE OF TIMESHEET ANDROID APPLICATION ("SOFTWARE") BY THE VENDOR OPENINTENTS HEREIN CALLED ("OPENINTENTS"). BY USING THE SOFTWARE, YOU (EITHER AN INDIVIDUAL OR A SINGLE ENTITY) CONSENT TO BE BOUND BY AND BECOME A PARTY TO THIS AGREEMENT. IF YOU DO NOT AGREE TO ALL OF THE TERMS OF THIS AGREEMENT, YOU MUST NOT USE THE SOFTWARE.
+
+
+1. License Grant.
+OPENINTENTS grants to you a non-exclusive, non-transferable License to use the Software for testing purposes (personal or business) provided you do not remove any of the original proprietary, trademark or copyright markings or notices placed upon or contained with the Software. OPENINTENTS warrants that it owns all intellectual property rights related to the Software and will defend and keep you harmless if any third party intellectual property claims arise.
+
+2. Term.
+This Agreement is effective for an unlimited duration. This Agreement will terminate automatically if you fail to comply with any of the limitations or other requirements described herein. Upon any termination or expiration of this Agreement, you must destroy all copies of the Software.
+
+3. Ownership Rights.
+The Software is protected by European copyright laws and international treaty provisions. All intellectual property rights related to the Software are the property of OPENINTENTS. Your possession, installation, or use of the Software does not transfer to you any title to the intellectual property in the Software.
+
+4. Restrictions.
+You may not rent, lease, loan, sublicense, resell or otherwise transfer rights to the Software. You may not remove any proprietary notices or labels on the Software. All rights not expressly set forth hereunder are reserved by OPENINTENTS.
+
+5. Fees.
+There is no License fee for the Software whilst being used for evaluation purposes on a non-profit basis by individuals, non-profit organizations or businesses. License fees will be applicable on final release when the product is being used in a commercial application, web site, personal use or an intranet. A License key can be obtained from the developer.
+
+6. OPENINTENTS Services.
+Use of the Services requires Internet access and use of certain Services requires you to accept additional terms of service which will be presented to you before you can use such Services. By using this software in connection with a OPENINTENTS account, you agree to the latest OPENINTENTS Terms of Service, which you may access and review from OPENINTENTS web site.
+You understand that by using any of the Services, you may encounter content that may be deemed offensive, indecent, or objectionable, which content may or may not be identified as having explicit language. Nevertheless, you agree to use the Services at your sole risk and that OPENINTENTS shall have no liability to you for content that may be found to be offensive, indecent, or objectionable. 
+Content types (including genres, sub-genres, sub-categories and the like) and descriptions are provided for convenience, and you acknowledge and agree that OPENINTENTS does not guarantee their accuracy. Certain Services may include materials from third parties or links to certain third party web sites. 
+
+You acknowledge and agree that OPENINTENTS is not responsible for examining or evaluating the content or accuracy of any such third-party material or web sites. OPENINTENTS does not warrant or endorse and does not assume and will not have any liability or responsibility for any third-party materials or web sites, or for any other materials, products, or services of third parties. 
+Links to other web sites are provided solely as a convenience to you. You agree that you will not use any third-party materials in a manner that would infringe or violate the rights of any other party, and that OPENINTENTS is not in any way responsible for any such use by you. 
+You agree that the Services, including but not limited to graphics, audio clips, and editorial content, contain proprietary information and material that is owned by OPENINTENTS and/or its licensors, and is protected by applicable intellectual property and other laws, including but not limited to copyright, and that you will not use such proprietary information or materials in any way whatsoever except for permitted use of the Services. 
+
+No portion of the Services may be reproduced in any form or by any means. You agree not to modify, rent, lease, loan, sell, distribute, or create derivative works based on the Services, in any manner, and you shall not exploit the Services in any unauthorized way whatsoever, including but not limited to, by trespass or burdening network capacity. OPENINTENTS and its licensors reserve the right to change, suspend, remove, or disable access to any Services at any time without notice. 
+In no event will OPENINTENTS be liable for the removal of or disabling of access to any such Services. OPENINTENTS may also impose limits on the use of or access to certain Services, in any case and without notice or liability. 
+
+7. Warranty Disclaimer.
+THE SOFTWARE IS PROVIDED ON AN "AS IS" BASIS. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, OPENINTENTS DISCLAIMS ALL WARRANTIES, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NONINFRINGEMENT. YOU ASSUME RESPONSIBILITY FOR SELECTING THE SOFTWARE TO ACHIEVE YOUR INTENDED RESULTS, AND FOR THE USE OF, AND RESULTS OBTAINED FROM THE SOFTWARE. OPENINTENTS MAKES NO WARRANTY THAT THE SOFTWARE WILL BE FREE FROM DEFECTS OR THAT THE SOFTWARE WILL MEET YOUR REQUIREMENTS. SOME JURISDICTIONS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES, SO THE ABOVE LIMITATION MAY NOT APPLY TO YOU.
+
+8. Limitation of Liability.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER IN TORT, CONTRACT, OR OTHERWISE, SHALL OPENINTENTS OR ITS SUPPLIERS OR RESELLERS BE LIABLE TO YOU OR TO ANY OTHER PERSON FOR ANY INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER ARISING OUT OF THE USE OF OR INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, COMPUTER FAILURE OR MALFUNCTION, WORK STOPPAGE OR FOR ANY AND ALL OTHER DAMAGES OR LOSSES. IN NO EVENT WILL OPENINTENTS BE LIABLE FOR ANY DAMAGES IN EXCESS OF THE LIST PRICE OPENINTENTS CHARGES FOR A LICENSE TO THE SOFTWARE, EVEN IF OPENINTENTS SHALL HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS LIMITATION AND EXCLUSION MAY NOT APPLY TO YOU.
+
+9. Further Limitation of Liability.
+THE SOFTWARE IS NOT DESIGNED FOR USE IN HAZARDOUS ENVIRONMENTS REQUIRING FAIL-SAFE PERFORMANCE. OPENINTENTS EXPRESSLY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR HIGH-RISK ACTIVITIES. YOU AGREE THAT OPENINTENTS WILL NOT BE LIABLE FOR ANY CLAIMS OR DAMAGES ARISING FROM THE USE OF THE SOFTWARE IN SUCH APPLICATIONS.
+
+10. Miscellaneous.
+This Agreement is governed by the law of Germany and the parties agree that the sole location and venue for any litigation which may arise hereunder shall be Germany. This Agreement sets forth all rights for the user of the Software and is the entire agreement between the parties. This Agreement may not be modified except by a written addendum issued by a duly authorized representative of OPENINTENTS. No provision hereof shall be deemed waived unless such waiver shall be in writing and signed by OPENINTENTS or a duly authorized representative of OPENINTENTS. If any provision of this Agreement is held illegal or unenforceable by a court having jurisdiction, such provision shall be modified to the extent necessary to render it enforceable without losing its intent, or severed from this Agreement if no such modification is possible, and the remainder of this Agreement shall continue in full force and effect. The parties confirm that it is their wish that this Agreement has been written in the English language only.
+
+
