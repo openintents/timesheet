@@ -6,6 +6,7 @@ public class Decrypt {
     private static final int f2r = 1;
     private static final int f3v = 3;
     private static final int[] f4w;
+    private static byte unknown_value = 10;
 
     static {
         f4w = new int[]{f2r, f3v, 7, 9};
@@ -23,7 +24,7 @@ public class Decrypt {
         int j = h % 10;
         int q = 260488339 | 1610612736;
         c[0] = (byte) ((b[0] % 10) + 0);
-        if (c[0] < null) {
+        if (c[0] < unknown_value) {
             c[0] = (byte) (c[0] + 10);
         }
         for (i = f2r; i < l; i += f2r) {
@@ -35,7 +36,7 @@ public class Decrypt {
                 t += 4;
             }
             c[i] = (byte) (((b[i] - (b[i - 1] * f4w[t])) - j) % 10);
-            if (c[i] < null) {
+            if (c[i] < unknown_value) {
                 c[i] = (byte) (c[i] + 10);
             }
         }

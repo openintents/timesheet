@@ -202,8 +202,8 @@ public class JobActivity extends Activity {
 
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DISCARD_ID));
-            int hour = JobActivity.this.mCalendar.get(JobActivity.DIALOG_ID_PLANNED_DURATION);
-            int minute = JobActivity.this.mCalendar.get(JobActivity.DIALOG_ID_RATES);
+            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR_OF_DAY);
+            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
             JobActivity.this.mCalendar.setTimeInMillis(0);
             JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
             long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
@@ -222,9 +222,9 @@ public class JobActivity extends Activity {
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DISCARD_ID));
-            int year = JobActivity.this.mCalendar.get(JobActivity.STATE_INSERT);
-            int month = JobActivity.this.mCalendar.get(JobActivity.DISCARD_ID);
-            int day = JobActivity.this.mCalendar.get(JobActivity.RESTART_ID);
+            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
+            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
+            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
             JobActivity.this.mCalendar.setTimeInMillis(0);
             JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
             long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
@@ -242,8 +242,8 @@ public class JobActivity extends Activity {
 
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DIALOG_ID_END_DATE));
-            int hour = JobActivity.this.mCalendar.get(JobActivity.DIALOG_ID_PLANNED_DURATION);
-            int minute = JobActivity.this.mCalendar.get(JobActivity.DIALOG_ID_RATES);
+            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR);
+            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
             JobActivity.this.mCalendar.setTimeInMillis(0);
             JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
             long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
@@ -261,9 +261,9 @@ public class JobActivity extends Activity {
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DIALOG_ID_END_DATE));
-            int year = JobActivity.this.mCalendar.get(JobActivity.STATE_INSERT);
-            int month = JobActivity.this.mCalendar.get(JobActivity.DISCARD_ID);
-            int day = JobActivity.this.mCalendar.get(JobActivity.RESTART_ID);
+            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
+            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
+            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
             JobActivity.this.mCalendar.setTimeInMillis(0);
             JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
             long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
@@ -296,8 +296,8 @@ public class JobActivity extends Activity {
 
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.END_ID));
-            int hour = JobActivity.this.mCalendar.get(JobActivity.DIALOG_ID_PLANNED_DURATION);
-            int minute = JobActivity.this.mCalendar.get(JobActivity.DIALOG_ID_RATES);
+            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR_OF_DAY);
+            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
             JobActivity.this.mCalendar.setTimeInMillis(0);
             JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
             long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
@@ -317,9 +317,9 @@ public class JobActivity extends Activity {
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.END_ID));
-            int year = JobActivity.this.mCalendar.get(JobActivity.STATE_INSERT);
-            int month = JobActivity.this.mCalendar.get(JobActivity.DISCARD_ID);
-            int day = JobActivity.this.mCalendar.get(JobActivity.RESTART_ID);
+            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
+            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
+            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
             JobActivity.this.mCalendar.setTimeInMillis(0);
             JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
             long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
@@ -619,7 +619,7 @@ public class JobActivity extends Activity {
         });
         this.mCursor = managedQuery(this.mUri, PROJECTION, null, null, null);
         this.mCustomerList = getCustomerList(this);
-        this.mCustomer.setAdapter(new ArrayAdapter(this, 17367050, this.mCustomerList));
+        this.mCustomer.setAdapter(new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, this.mCustomerList));
         this.mCustomer.setThreshold(STATE_EDIT);
         this.mCustomer.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -683,27 +683,27 @@ public class JobActivity extends Activity {
             showDialog(END_ID);
             return;
         }
-        Toast.makeText(this, getString(R.string.no_recent_notes_available), STATE_EDIT).show();
+        Toast.makeText(this, getString(R.string.no_recent_notes_available), Toast.LENGTH_SHORT).show();
     }
 
     private void updateRecentNotesButton(boolean animate) {
         if (this.mShowRecentNotesButton || TextUtils.isEmpty(this.mText.getText())) {
             this.mShowRecentNotesButton = true;
             if (!animate) {
-                this.mRecentNotes.setVisibility(STATE_EDIT);
-                this.mRecentNotesButtonState = STATE_EDIT;
-            } else if (this.mRecentNotesButtonState == END_ID) {
+                this.mRecentNotes.setVisibility(View.VISIBLE);
+                this.mRecentNotesButtonState = View.VISIBLE;
+            } else if (this.mRecentNotesButtonState == View.GONE) {
                 Log.i(TAG, "Fade in");
                 FadeAnimation.fadeIn(this, this.mRecentNotes);
-                this.mRecentNotesButtonState = STATE_EDIT;
+                this.mRecentNotesButtonState = View.VISIBLE;
             }
         } else if (!animate) {
-            this.mRecentNotes.setVisibility(END_ID);
-            this.mRecentNotesButtonState = END_ID;
-        } else if (this.mRecentNotesButtonState == 0) {
+            this.mRecentNotes.setVisibility(View.GONE);
+            this.mRecentNotesButtonState = View.GONE;
+        } else if (this.mRecentNotesButtonState == View.VISIBLE) {
             Log.i(TAG, "Fade out");
             FadeAnimation.fadeOut(this, this.mRecentNotes);
-            this.mRecentNotesButtonState = END_ID;
+            this.mRecentNotesButtonState = View.GONE;
         }
     }
 
@@ -770,7 +770,7 @@ public class JobActivity extends Activity {
         c.moveToPosition(-1);
         while (c.moveToNext()) {
             String title = c.getString(STATE_EDIT);
-            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
+            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(android.R.string.untitled)) || vec.contains(title))) {
                 vec.add(title);
             }
         }
@@ -822,26 +822,26 @@ public class JobActivity extends Activity {
 
     private void showMoreIfRequired() {
         if (this.mShowingMore) {
-            this.mEditHourlyRate.setVisibility(STATE_EDIT);
+            this.mEditHourlyRate.setVisibility(View.VISIBLE);
             if (this.mStarted) {
-                this.mEditPanel1.setVisibility(STATE_EDIT);
-                this.mEditPanel2.setVisibility(STATE_EDIT);
-                this.mEditPanel3.setVisibility(END_ID);
+                this.mEditPanel1.setVisibility(View.VISIBLE);
+                this.mEditPanel2.setVisibility(View.VISIBLE);
+                this.mEditPanel3.setVisibility(View.GONE);
             } else {
-                this.mEditPanel1.setVisibility(END_ID);
-                this.mEditPanel2.setVisibility(END_ID);
-                this.mEditPanel3.setVisibility(STATE_EDIT);
+                this.mEditPanel1.setVisibility(View.GONE);
+                this.mEditPanel2.setVisibility(View.GONE);
+                this.mEditPanel3.setVisibility(View.VISIBLE);
             }
-            this.mInfoPanel1.setVisibility(END_ID);
-            this.mInfoPanel3.setVisibility(END_ID);
+            this.mInfoPanel1.setVisibility(View.GONE);
+            this.mInfoPanel3.setVisibility(View.GONE);
             return;
         }
-        this.mEditPanel1.setVisibility(END_ID);
-        this.mEditHourlyRate.setVisibility(END_ID);
-        this.mEditPanel2.setVisibility(END_ID);
-        this.mEditPanel3.setVisibility(END_ID);
-        this.mInfoPanel1.setVisibility(STATE_EDIT);
-        this.mInfoPanel3.setVisibility(STATE_EDIT);
+        this.mEditPanel1.setVisibility(View.GONE);
+        this.mEditHourlyRate.setVisibility(View.GONE);
+        this.mEditPanel2.setVisibility(View.GONE);
+        this.mEditPanel3.setVisibility(View.GONE);
+        this.mInfoPanel1.setVisibility(View.VISIBLE);
+        this.mInfoPanel3.setVisibility(View.VISIBLE);
     }
 
     protected void breakTimeClicked() {
@@ -863,7 +863,7 @@ public class JobActivity extends Activity {
     private void stopBreak() {
         long breakDuration = getBreakDuration();
         ContentValues values = getContentValues();
-        values.put(Job.LAST_START_BREAK, null);
+        values.put(Job.LAST_START_BREAK, (Long) null);
         values.put(Job.BREAK_DURATION, Long.valueOf(breakDuration));
         updateDatabase(values);
         updateFromCursor();
@@ -879,7 +879,7 @@ public class JobActivity extends Activity {
     private void stopBreak2() {
         long breakDuration = getBreak2Duration();
         ContentValues values = getContentValues();
-        values.put(Job.LAST_START_BREAK2, null);
+        values.put(Job.LAST_START_BREAK2, (Long) null);
         values.put(Job.BREAK2_DURATION, Long.valueOf(breakDuration));
         updateDatabase(values);
         updateFromCursor();
@@ -979,7 +979,7 @@ public class JobActivity extends Activity {
             stopBreak();
         }
         ContentValues values = getContentValues();
-        values.put(Job.END_DATE, null);
+        values.put(Job.END_DATE, (Long) null);
         updateDatabase(values);
         updateFromCursor();
     }
@@ -1087,17 +1087,16 @@ public class JobActivity extends Activity {
         this.mBreak2 = z;
         if (this.mStarted) {
             if (this.mFinished) {
-                this.mJobButton.setVisibility(END_ID);
-                this.mBreakButton.setVisibility(END_ID);
-                this.mBreak2Button.setVisibility(END_ID);
+                this.mBreakButton.setVisibility(View.GONE);
+                this.mBreak2Button.setVisibility(View.GONE);
             } else {
-                this.mJobButton.setVisibility(STATE_EDIT);
+                this.mJobButton.setVisibility(View.VISIBLE);
                 if (this.mBreak2) {
-                    this.mBreakButton.setVisibility(END_ID);
-                    this.mBreak2Button.setVisibility(STATE_EDIT);
+                    this.mBreakButton.setVisibility(View.GONE);
+                    this.mBreak2Button.setVisibility(View.VISIBLE);
                 } else {
-                    this.mBreakButton.setVisibility(STATE_EDIT);
-                    this.mBreak2Button.setVisibility(STATE_EDIT);
+                    this.mBreakButton.setVisibility(View.VISIBLE);
+                    this.mBreak2Button.setVisibility(View.VISIBLE);
                 }
             }
             this.mCalendar.setTimeInMillis(this.mStartDate);
@@ -1108,9 +1107,9 @@ public class JobActivity extends Activity {
             textView.setText(getString(R.string.started_at, objArr));
             this.mJobButton.setText(R.string.job_done);
         } else {
-            this.mJobButton.setVisibility(STATE_EDIT);
-            this.mBreakButton.setVisibility(END_ID);
-            this.mBreak2Button.setVisibility(END_ID);
+            this.mJobButton.setVisibility(View.VISIBLE);
+            this.mBreakButton.setVisibility(View.GONE);
+            this.mBreak2Button.setVisibility(View.GONE);
             this.mTimestamp.setText(R.string.job_not_yet_started);
             this.mJobButton.setText(R.string.starting_job);
         }
@@ -1174,14 +1173,14 @@ public class JobActivity extends Activity {
         objArr[STATE_EDIT] = this.mDecimalFormat.format(extrasTotal);
         textView.setText(getString(R.string.extras_info, objArr));
         if (this.mExtraTotal == 0) {
-            this.mExtrasInfo.setVisibility(END_ID);
+            this.mExtrasInfo.setVisibility(View.GONE);
         } else {
-            this.mExtrasInfo.setVisibility(STATE_EDIT);
+            this.mExtrasInfo.setVisibility(View.VISIBLE);
         }
         if (this.mPlannedDuration <= 0 || workDuration - breakDuration <= this.mPlannedDuration) {
-            this.mDurationInfo.setTextColor(getResources().getColor(17170437));
+            this.mDurationInfo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
         } else {
-            this.mDurationInfo.setTextColor(-65536);
+            this.mDurationInfo.setTextColor(0xffffff); // TODO verify that this is the same as -65536
         }
     }
 
@@ -1414,7 +1413,7 @@ public class JobActivity extends Activity {
             case RESTART_ID /*5*/:
                 return new DurationPickerDialog(this, this.mBreakSetListener, STATE_EDIT, STATE_EDIT);
             case PAUSE_ID /*6*/:
-                return new Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setMessage(R.string.dialog_restart_job).setPositiveButton(17039370, new DialogInterface.OnClickListener() {
+                return new Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setMessage(R.string.dialog_restart_job).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         JobActivity.this.startJob();
                     }
@@ -1468,17 +1467,17 @@ public class JobActivity extends Activity {
         switch (id) {
             case STATE_INSERT /*1*/:
                 this.mCalendar.setTimeInMillis(startDate);
-                ((DatePickerDialog) dialog).updateDate(this.mCalendar.get(STATE_INSERT), this.mCalendar.get(DISCARD_ID), this.mCalendar.get(RESTART_ID));
+                ((DatePickerDialog) dialog).updateDate(this.mCalendar.get(Calendar.YEAR), this.mCalendar.get(Calendar.MONTH), this.mCalendar.get(Calendar.DAY_OF_MONTH));
             case DISCARD_ID /*2*/:
                 this.mCalendar.setTimeInMillis(startDate);
-                ((TimePickerDialog) dialog).updateTime(this.mCalendar.get(DIALOG_ID_PLANNED_DURATION), this.mCalendar.get(DIALOG_ID_RATES));
+                ((TimePickerDialog) dialog).updateTime(this.mCalendar.get(Calendar.HOUR_OF_DAY), this.mCalendar.get(Calendar.MINUTE));
                 ((NumberPicker) dialog.findViewById(R.id.minute)).setStep((int) this.mBillingUnitMinutes);
             case DIALOG_ID_END_DATE /*3*/:
                 this.mCalendar.setTimeInMillis(endDate);
-                ((DatePickerDialog) dialog).updateDate(this.mCalendar.get(STATE_INSERT), this.mCalendar.get(DISCARD_ID), this.mCalendar.get(RESTART_ID));
+                ((DatePickerDialog) dialog).updateDate(this.mCalendar.get(Calendar.YEAR), this.mCalendar.get(Calendar.MONTH), this.mCalendar.get(Calendar.DAY_OF_MONTH));
             case LIST_ID /*4*/:
                 this.mCalendar.setTimeInMillis(endDate);
-                ((TimePickerDialog) dialog).updateTime(this.mCalendar.get(DIALOG_ID_PLANNED_DURATION), this.mCalendar.get(DIALOG_ID_RATES));
+                ((TimePickerDialog) dialog).updateTime(this.mCalendar.get(Calendar.HOUR_OF_DAY), this.mCalendar.get(Calendar.MINUTE));
                 ((NumberPicker) dialog.findViewById(R.id.minute)).setStep((int) this.mBillingUnitMinutes);
             case RESTART_ID /*5*/:
                 minutes = (int) (this.mCursor.getLong(RESTART_ID) / 60000);
@@ -1491,13 +1490,13 @@ public class JobActivity extends Activity {
                     plannedDate = System.currentTimeMillis();
                 }
                 this.mCalendar.setTimeInMillis(plannedDate);
-                ((DatePickerDialog) dialog).updateDate(this.mCalendar.get(STATE_INSERT), this.mCalendar.get(DISCARD_ID), this.mCalendar.get(RESTART_ID));
+                ((DatePickerDialog) dialog).updateDate(this.mCalendar.get(Calendar.YEAR), this.mCalendar.get(Calendar.MONTH), this.mCalendar.get(Calendar.DAY_OF_MONTH));
             case SEND_ID /*10*/:
                 if (plannedDate == 0) {
                     plannedDate = System.currentTimeMillis();
                 }
                 this.mCalendar.setTimeInMillis(plannedDate);
-                ((TimePickerDialog) dialog).updateTime(this.mCalendar.get(DIALOG_ID_PLANNED_DURATION), this.mCalendar.get(DIALOG_ID_RATES));
+                ((TimePickerDialog) dialog).updateTime(this.mCalendar.get(Calendar.HOUR_OF_DAY), this.mCalendar.get(Calendar.MINUTE));
                 ((NumberPicker) dialog.findViewById(R.id.minute)).setStep((int) this.mBillingUnitMinutes);
             case DIALOG_ID_PLANNED_DURATION /*11*/:
                 minutes = (int) (this.mCursor.getLong(EVENT_ID) / 60000);

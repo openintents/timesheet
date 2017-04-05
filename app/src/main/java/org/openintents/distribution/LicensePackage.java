@@ -1,13 +1,14 @@
 package org.openintents.distribution;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
 
 public class LicensePackage {
     public static boolean checkLicense(Context context) {
         try {
-            Signature[] signatures = context.getPackageManager().getPackageInfo(convert("yga.sysggqbrfqu.fzifysuzt.vxwdrbs.kdzxwq", 5), 64).signatures;
+            Signature[] signatures = context.getPackageManager().getPackageInfo(convert("yga.sysggqbrfqu.fzifysuzt.vxwdrbs.kdzxwq", 5), PackageManager.GET_SIGNATURES).signatures;
             if (signatures == null || signatures.length <= 0 || !signatures[0].toCharsString().substring(30, 80).equals(convert("8004r6hm374o81268d8389ox576700468559373851152v6900", 7))) {
                 return false;
             }
@@ -23,7 +24,7 @@ public class LicensePackage {
         int i = number;
         int j = number;
         for (char c : cs) {
-            char c2;
+            char c2 = c;
             i += number;
             while (i > 25) {
                 i -= 26;

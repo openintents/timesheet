@@ -75,8 +75,8 @@ public class InvoiceItemActivity extends ListActivity {
         setContentView(R.layout.invoice_item);
         this.mTypeSpinner = (Spinner) findViewById(R.id.spinner);
         this.mTypeSpinner.setOnItemSelectedListener(new C00111());
-        this.typeAdapter = ArrayAdapter.createFromResource(this, R.array.invoice_types, 17367048);
-        this.typeAdapter.setDropDownViewResource(17367049);
+        this.typeAdapter = ArrayAdapter.createFromResource(this, R.array.invoice_types, android.R.layout.simple_spinner_item);
+        this.typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         this.mTypeSpinner.setAdapter(this.typeAdapter);
         this.mTypePanel = (FrameLayout) findViewById(R.id.panel_frame);
         this.mJobId = getIntent().getLongExtra("jobid", -1);
@@ -122,7 +122,7 @@ public class InvoiceItemActivity extends ListActivity {
                     break;
                 } catch (NumberFormatException e) {
                     Log.e(TAG, "Error parsing expense value: " + valueString);
-                    Toast.makeText(this, R.string.enter_numbers_only, 0);
+                    Toast.makeText(this, R.string.enter_numbers_only, Toast.LENGTH_SHORT);
                     return;
                 }
             case MENU_DELETE /*1*/:
@@ -139,7 +139,7 @@ public class InvoiceItemActivity extends ListActivity {
                     break;
                 } catch (NumberFormatException e2) {
                     Log.e(TAG, "Error parsing mileage: " + startValueString + " | " + endValueString + " | " + rateString);
-                    Toast.makeText(this, R.string.enter_digits_only, 0);
+                    Toast.makeText(this, R.string.enter_digits_only, Toast.LENGTH_SHORT);
                     return;
                 }
         }

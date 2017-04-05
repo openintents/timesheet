@@ -12,39 +12,38 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.openintents.timesheet.R;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.openintents.timesheet.R;
 
 public class EulaActivity extends Activity {
+    static final String PREFERENCES_EULA_ACCEPTED = "eula_accepted";
     private static final String EXTRA_LAUNCH_ACTIVITY_CLASS = "org.openintents.extra.launch_activity_class";
     private static final String EXTRA_LAUNCH_ACTIVITY_PACKAGE = "org.openintents.extra.launch_activity_package";
-    static final String PREFERENCES_EULA_ACCEPTED = "eula_accepted";
     private static final String TAG = "EulaActivity";
     private Button mAgree;
     private Button mDisagree;
     private String mLaunchClass;
     private String mLaunchPackage;
 
-    /* renamed from: org.openintents.distribution.EulaActivity.1 */
-    class C00001 implements OnClickListener {
-        C00001() {
+    public static boolean checkEula(Activity activity) {
+        if (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(PREFERENCES_EULA_ACCEPTED, false)) {
+            Log.i(TAG, "Eula has been accepted.");
+            return true;
         }
-
-        public void onClick(View view) {
-            EulaActivity.this.acceptEula();
-        }
-    }
-
-    /* renamed from: org.openintents.distribution.EulaActivity.2 */
-    class C00012 implements OnClickListener {
-        C00012() {
-        }
-
-        public void onClick(View view) {
-            EulaActivity.this.refuseEula();
-        }
+        Log.i(TAG, "Eula has not been accepted yet.");
+        Intent i = new Intent(activity, EulaActivity.class);
+        ComponentName ci = activity.getComponentName();
+        Log.d(TAG, "Local package name: " + ci.getPackageName());
+        Log.d(TAG, "Local class name: " + ci.getClassName());
+        i.putExtra(EXTRA_LAUNCH_ACTIVITY_PACKAGE, ci.getPackageName());
+        i.putExtra(EXTRA_LAUNCH_ACTIVITY_CLASS, ci.getClassName());
+        activity.startActivity(i);
+        activity.finish();
+        return false;
     }
 
     public void onCreate(Bundle icicle) {
@@ -77,43 +76,46 @@ public class EulaActivity extends Activity {
         finish();
     }
 
-    public static boolean checkEula(Activity activity) {
-        if (PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(PREFERENCES_EULA_ACCEPTED, false)) {
-            Log.i(TAG, "Eula has been accepted.");
-            return true;
-        }
-        Log.i(TAG, "Eula has not been accepted yet.");
-        Intent i = new Intent(activity, EulaActivity.class);
-        ComponentName ci = activity.getComponentName();
-        Log.d(TAG, "Local package name: " + ci.getPackageName());
-        Log.d(TAG, "Local class name: " + ci.getClassName());
-        i.putExtra(EXTRA_LAUNCH_ACTIVITY_PACKAGE, ci.getPackageName());
-        i.putExtra(EXTRA_LAUNCH_ACTIVITY_CLASS, ci.getClassName());
-        activity.startActivity(i);
-        activity.finish();
-        return false;
-    }
-
     private String readLicenseFromRawResource(int resourceid) {
         String license = "";
         BufferedReader in = new BufferedReader(new InputStreamReader(getResources().openRawResource(resourceid)));
         StringBuilder sb = new StringBuilder();
-        while (true) {
-            String line = in.readLine();
-            if (line == null) {
-                return sb.toString();
-            }
-            if (TextUtils.isEmpty(line)) {
-                sb.append("\n\n");
-            } else {
-                try {
+        try {
+            while (true) {
+                String line = in.readLine();
+                if (line == null) {
+                    return sb.toString();
+                }
+                if (TextUtils.isEmpty(line)) {
+                    sb.append("\n\n");
+                } else {
                     sb.append(line);
                     sb.append(" ");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return license;
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return license;
+        }
+    }
+
+    /* renamed from: org.openintents.distribution.EulaActivity.1 */
+    class C00001 implements OnClickListener {
+        C00001() {
+        }
+
+        public void onClick(View view) {
+            EulaActivity.this.acceptEula();
+        }
+    }
+
+    /* renamed from: org.openintents.distribution.EulaActivity.2 */
+    class C00012 implements OnClickListener {
+        C00012() {
+        }
+
+        public void onClick(View view) {
+            EulaActivity.this.refuseEula();
         }
     }
 }
