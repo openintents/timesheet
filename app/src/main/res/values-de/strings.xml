@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stundenzettel</string>
-    <string name="trial_suffix">" (Testversion)"</string>
     <string name="app_descr">Arbeitszeiten notieren</string>
     <string name="title_create">Job anlegen</string>
     <string name="title_edit">Job ändern</string>

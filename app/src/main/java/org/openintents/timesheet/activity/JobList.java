@@ -1,3 +1,26 @@
+/*
+ * Copyright (C) 2008-2017 OpenIntents.org
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Original copyright:
+ * Based on the Android SDK sample application NotePad.
+ * Copyright (C) 2007 Google Inc.
+ * Licensed under the Apache License, Version 2.0.
+ */
+
 package org.openintents.timesheet.activity;
 
 import android.app.AlertDialog;
@@ -36,9 +59,7 @@ import android.widget.TextView;
 import org.openintents.distribution.AboutActivity;
 import org.openintents.distribution.EulaActivity;
 import org.openintents.distribution.LicenseActivity;
-import org.openintents.distribution.LicenseUtils;
 import org.openintents.distribution.UpdateMenu;
-import org.openintents.timesheet.Application;
 import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet;
@@ -55,43 +76,52 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class JobList extends ListActivity {
-    static final int COLUMN_INDEX_BREAK2_DURATION = 13;
+    static final int DIALOG_ID_DELETE_ALL = 1;
+    //static final int DIALOG_ID_TRIAL_LICENSE = 2;
+    static final int DIALOG_ID_DELETE_LAST = 3;
+    static final int DIALOG_ID_CHOOSE_JOB_TYPE = 4;
+    /**
+     * The index of the columns
+     */
+    static final int COLUMN_INDEX_TITLE = 1;
+    static final int COLUMN_INDEX_START = 2;
+    static final int COLUMN_INDEX_END = 3;
+    static final int COLUMN_INDEX_LAST_START_BREAK = 4;
     static final int COLUMN_INDEX_BREAK_DURATION = 5;
     static final int COLUMN_INDEX_CUSTOMER = 6;
-    static final int COLUMN_INDEX_CUSTOMER_REF = 16;
-    static final int COLUMN_INDEX_END = 3;
-    static final int COLUMN_INDEX_EXTERNAL_REF = 14;
-    static final int COLUMN_INDEX_EXTRAS_TOTAL = 8;
     static final int COLUMN_INDEX_HOURLY_RATE = 7;
-    static final int COLUMN_INDEX_LAST_START_BREAK = 4;
-    static final int COLUMN_INDEX_LAST_START_BREAK2 = 12;
-    static final int COLUMN_INDEX_START = 2;
-    static final int COLUMN_INDEX_STATUS = 15;
-    static final int COLUMN_INDEX_TITLE = 1;
+    static final int COLUMN_INDEX_EXTRAS_TOTAL = 8;
     static final int COLUMN_INDEX_TYPE = 9;
-    static final int DIALOG_ID_CHOOSE_JOB_TYPE = 4;
-    static final int DIALOG_ID_DELETE_ALL = 1;
-    static final int DIALOG_ID_DELETE_LAST = 3;
-    static final int DIALOG_ID_TRIAL_LICENSE = 2;
+    static final int COLUMN_INDEX_LAST_START_BREAK2 = 12;
+    static final int COLUMN_INDEX_BREAK2_DURATION = 13;
+    static final int COLUMN_INDEX_EXTERNAL_REF = 14;
+    static final int COLUMN_INDEX_STATUS = 15;
+    static final int COLUMN_INDEX_CUSTOMER_REF = 16;
     static final String PREFERENCES = "preferences";
     static final String PREFERENCE_SPINNER = "spinner";
-    private static final int MENU_ABOUT = 6;
-    private static final int MENU_DELETE_ALL = 5;
-    private static final int MENU_EXPORT = 4;
-    private static final int MENU_ITEM_DELETE = 1;
-    private static final int MENU_ITEM_INSERT = 2;
-    private static final int MENU_SETTINGS = 8;
-    private static final int MENU_TIMEXCHANGE = 9;
-    private static final int MENU_UPDATE = 7;
-    private static final String[] PROJECTION;
+    // Menu item ids
+    private static final int MENU_ITEM_DELETE = Menu.FIRST;
+    private static final int MENU_ITEM_INSERT = Menu.FIRST + 1;
+    // private static final int MENU_ITEM_SEND_BY_EMAIL = Menu.FIRST + 2;
+    private static final int MENU_EXPORT = Menu.FIRST + 3;
+    private static final int MENU_DELETE_ALL = Menu.FIRST + 4;
+    private static final int MENU_ABOUT = Menu.FIRST + 5;
+    private static final int MENU_UPDATE = Menu.FIRST + 6;
+    private static final int MENU_SETTINGS = Menu.FIRST + 7;
+    private static final int MENU_TIMEXCHANGE = Menu.FIRST + 8;
+    private static final int MENU_PRIVACY = Menu.FIRST + 9;
+
     private static final int RESULT_CODE_NEW_JOB = 1;
     private static final int RESULT_CODE_SETTINGS = 2;
     private static final String TAG = "JobList";
-
-    static {
-        PROJECTION = new String[]{Reminders._ID, Job.TITLE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, TimesheetIntent.EXTRA_CUSTOMER, Job.HOURLY_RATE, TimesheetProvider.QUERY_EXTRAS_TOTAL, Job.TYPE, Job.TOTAL_LONG, Job.RATE_LONG, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.EXTERNAL_REF, Job.STATUS, Job.CUSTOMER_REF};
-    }
-
+    private static final String[] PROJECTION = new String[]{
+            Job._ID, // 0
+            Job.TITLE, // 1
+            Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK,
+            Job.BREAK_DURATION, Job.CUSTOMER, Job.HOURLY_RATE,
+            Job.EXTRAS_TOTAL, Job.TYPE, Job.TOTAL_LONG, Job.RATE_LONG,
+            Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.EXTERNAL_REF,
+            Job.STATUS, Job.CUSTOMER_REF};
     protected Class mJobActivityClass;
     NumberFormat mDecimalFormat;
     private TextView mBreakInfo;
@@ -117,8 +147,10 @@ public class JobList extends ListActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (EulaActivity.checkEula(this)) {
-            LicenseUtils.modifyTitle(this);
+        if (!EulaActivity.checkEula(this)) {
+            return;
+        }
+
             setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
             Intent intent = getIntent();
             if (intent.getData() == null) {
@@ -135,7 +167,6 @@ public class JobList extends ListActivity {
             this.mBreakInfo = (TextView) findViewById(R.id.break_info);
             this.mJobCountInfo = (TextView) findViewById(R.id.job_count_info);
             refreshList();
-        }
     }
 
     protected void onResume() {
@@ -146,7 +177,10 @@ public class JobList extends ListActivity {
         if (TextUtils.isEmpty(customer)) {
             updateChoice(0);
         } else {
-            this.mSpinner.setSelection(findChoice(customer));
+            // Set specific customer.
+            int choice = findChoice(customer);
+            // updateChoice(choice);
+            mSpinner.setSelection(choice);
         }
         this.mContinueUpdate = true;
         updateDisplay(100);
@@ -162,7 +196,7 @@ public class JobList extends ListActivity {
         }
         Editor editor = prefs.edit();
         editor.putString(PREFERENCE_SPINNER, currentSelection);
-        editor.commit();
+        editor.apply();
     }
 
     private void refreshSpinner() {
@@ -195,20 +229,20 @@ public class JobList extends ListActivity {
         int count = 0;
         while (true) {
             if (this.mCursor.moveToNext()) {
-                long start = this.mCursor.getLong(RESULT_CODE_SETTINGS);
-                long stop = this.mCursor.getLong(DIALOG_ID_DELETE_LAST);
-                long breakstart = this.mCursor.getLong(MENU_EXPORT);
-                long breakDuration = this.mCursor.getLong(MENU_DELETE_ALL);
+                long start = this.mCursor.getLong(COLUMN_INDEX_START);
+                long stop = this.mCursor.getLong(COLUMN_INDEX_END);
+                long breakstart = this.mCursor.getLong(COLUMN_INDEX_LAST_START_BREAK);
+                long breakDuration = this.mCursor.getLong(COLUMN_INDEX_BREAK_DURATION);
                 long break2start = this.mCursor.getLong(COLUMN_INDEX_LAST_START_BREAK2);
                 long break2Duration = this.mCursor.getLong(COLUMN_INDEX_BREAK2_DURATION);
-                long hourlyRate = this.mCursor.getLong(MENU_UPDATE);
-                long extrasTotal = this.mCursor.getLong(MENU_SETTINGS);
+                long hourlyRate = this.mCursor.getLong(COLUMN_INDEX_HOURLY_RATE);
+                long extrasTotal = this.mCursor.getLong(COLUMN_INDEX_EXTRAS_TOTAL);
                 if (start > 0 && stop == 0 && break2start == 0) {
-                    worktype = RESULT_CODE_NEW_JOB;
+                    worktype = DurationFormater.TYPE_FORMAT_SECONDS;
                     this.mContinueUpdate = true;
                 }
                 if (start > 0 && breakstart > 0) {
-                    breaktype = RESULT_CODE_NEW_JOB;
+                    breaktype = DurationFormater.TYPE_FORMAT_SECONDS;
                     this.mContinueUpdate = true;
                 }
                 if (breakstart > 0) {
@@ -232,30 +266,18 @@ public class JobList extends ListActivity {
                     count += RESULT_CODE_NEW_JOB;
                 }
             } else {
-                TextView textView = this.mDurationInfo;
-                String[] strArr = new String[RESULT_CODE_NEW_JOB];
-                strArr[0] = DurationFormater.formatDuration(this, sumWorkDuration, worktype);
-                textView.setText(getString(R.string.duration_info, strArr));
-                textView = this.mTotalInfo;
-                strArr = new String[RESULT_CODE_NEW_JOB];
-                strArr[0] = this.mDecimalFormat.format(sumTotal);
-                textView.setText(getString(R.string.total_info, strArr));
+                mDurationInfo.setText(getString(R.string.duration_info, DurationFormater.formatDuration(this, sumWorkDuration, worktype)));
+                mTotalInfo.setText(getString(R.string.total_info, this.mDecimalFormat.format(sumTotal)));
                 String breakString = DurationFormater.formatDuration(this, sumBreakDuration, breaktype);
-                textView = this.mBreakInfo;
-                strArr = new String[RESULT_CODE_NEW_JOB];
-                strArr[0] = breakString;
-                textView.setText(getString(R.string.break_info, strArr));
-                textView = this.mJobCountInfo;
-                Integer[] numArr = new Integer[RESULT_CODE_NEW_JOB];
-                numArr[0] = Integer.valueOf(count);
-                textView.setText(getString(R.string.number_of_jobs_info, numArr));
+                mBreakInfo.setText(getString(R.string.break_info, breakString));
+                mJobCountInfo.setText(getString(R.string.number_of_jobs_info, String.valueOf(count)));
                 return;
             }
         }
     }
 
     private int findChoice(String customer) {
-        for (int i = RESULT_CODE_NEW_JOB; i < this.mCustomerList.length; i += RESULT_CODE_NEW_JOB) {
+        for (int i = 1; i < this.mCustomerList.length; i++) {
             Log.i(TAG, "Compare " + this.mCustomerList[i] + " : " + customer);
             if (this.mCustomerList[i].equals(customer)) {
                 return i;
@@ -275,49 +297,55 @@ public class JobList extends ListActivity {
         this.mWhereClause = "";
         this.mWhereArguments = new String[0];
         if (!TextUtils.isEmpty(selectCustomer)) {
-            this.mWhereClause = "customer = ?";
-            String[] strArr = new String[RESULT_CODE_NEW_JOB];
-            strArr[0] = selectCustomer;
-            this.mWhereArguments = strArr;
+            mWhereClause = Job.CUSTOMER + " = ?";
+            mWhereArguments = new String[]{selectCustomer};
         }
         Log.i(TAG, "Select: " + this.mWhereClause + ", " + selectCustomer);
     }
 
+    /**
+     *
+     */
     private String[] getCustomerListAndAll() {
+        // Retrieve a list of unique customers:
         String[] customerList = JobActivity.getCustomerList(this);
-        String[] tmp = new String[(customerList.length + RESULT_CODE_NEW_JOB)];
+
+        // prepend All customers:
+        String[] tmp = new String[customerList.length + 1];
         tmp[0] = getString(R.string.all_customers);
-        for (int i = 0; i < customerList.length; i += RESULT_CODE_NEW_JOB) {
-            tmp[i + RESULT_CODE_NEW_JOB] = customerList[i];
+        for (int i = 0; i < customerList.length; i++) {
+            tmp[i + 1] = customerList[i];
         }
-        return tmp;
+        customerList = tmp;
+        return customerList;
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(0, RESULT_CODE_SETTINGS, 0, R.string.menu_insert).setShortcut('1', 'i').setIcon(android.R.drawable.ic_menu_add);
+        menu.add(0, MENU_ITEM_INSERT, 0, R.string.menu_insert).setShortcut('1', 'i').setIcon(android.R.drawable.ic_menu_add);
         menu.add(0, MENU_EXPORT, 0, R.string.menu_export).setShortcut('2', 'e').setIcon(android.R.drawable.ic_menu_save);
         menu.add(0, MENU_SETTINGS, 0, R.string.menu_preferences).setShortcut('4', 's').setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(0, MENU_DELETE_ALL, 0, R.string.menu_delete_all).setShortcut('3', 'd').setIcon(android.R.drawable.ic_menu_delete);
-        UpdateMenu.addUpdateMenu(this, menu, 0, MENU_UPDATE, 0, R.string.update);
         menu.add(0, MENU_ABOUT, 0, R.string.about).setIcon(android.R.drawable.ic_menu_info_details).setShortcut('0', 'a');
+        menu.add(0, MENU_PRIVACY, 0, R.string.privacy).setIcon(android.R.drawable.ic_menu_info_details);
         return true;
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         Intent i = new Intent(null, Job.CONTENT_URI);
-        i.addCategory("android.intent.category.ALTERNATIVE");
+        i.addCategory(Intent.CATEGORY_ALTERNATIVE);
         MenuIntentOptionsWithIcons menu2 = new MenuIntentOptionsWithIcons(this, menu);
-        menu2.addIntentOptions(262144, 0, 0, new ComponentName(this, JobList.class), null, i, 0, null);
+        menu2.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, new ComponentName(this, JobList.class), null, i, 0, null);
         if (getListAdapter().getCount() > 0) {
             Uri uri = ContentUris.withAppendedId(getIntent().getData(), getSelectedItemId());
-            Intent[] specifics = new Intent[RESULT_CODE_NEW_JOB];
-            specifics[0] = new Intent("android.intent.action.EDIT", uri);
-            MenuItem[] items = new MenuItem[RESULT_CODE_NEW_JOB];
+            Intent[] specifics = new Intent[1];
+            specifics[0] = new Intent(Intent.ACTION_EDIT, uri);
+            MenuItem[] items = new MenuItem[1];
             Intent intent = new Intent(null, uri);
-            intent.addCategory("android.intent.category.ALTERNATIVE");
-            menu2.addIntentOptions(262144, 0, 0, null, specifics, intent, RESULT_CODE_NEW_JOB, items);
+            intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            menu2.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, null, specifics, intent, Menu.FLAG_APPEND_TO_GROUP, items);
             if (items[0] != null) {
                 items[0].setShortcut('1', 'e');
             }
@@ -327,7 +355,7 @@ public class JobList extends ListActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case RESULT_CODE_SETTINGS /*2*/:
+            case MENU_ITEM_INSERT /*2*/:
                 insertNewJob();
                 return true;
             case MENU_EXPORT /*4*/:
@@ -339,32 +367,18 @@ public class JobList extends ListActivity {
             case MENU_ABOUT /*6*/:
                 showAboutBox();
                 return true;
-            case MENU_UPDATE /*7*/:
-                UpdateMenu.showUpdateBox(this);
-                return true;
             case MENU_SETTINGS /*8*/:
                 startActivityForResult(new Intent(this, PreferenceActivity.class), RESULT_CODE_SETTINGS);
                 return true;
-            case MENU_TIMEXCHANGE /*9*/:
-                startTimeXchange();
-                return true;
+            case MENU_PRIVACY:
+                return false;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     private void insertNewJob() {
-        boolean insertAllowed = false;
-        if (((Application) getApplication()).isLicenseValid()) {
-            insertAllowed = true;
-        } else {
-            Cursor c = getContentResolver().query(Job.CONTENT_URI, new String[0], null, null, null);
-            int count = c.getCount();
-            c.close();
-            if (count < 11) {
-                insertAllowed = true;
-            }
-        }
+        boolean insertAllowed = true;
         if (insertAllowed) {
             insertNewJobInternal(JobActivity.class);
         } else {

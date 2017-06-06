@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="5dp">
 
@@ -20,8 +20,8 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:orientation="vertical">
 
@@ -34,7 +34,6 @@
                     android:id="@id/customer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
                     android:capitalize="words"
                     android:hint="@string/customer_hint"
                     android:singleLine="true"

@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import org.openintents.convertcsv.opencsv.CSVReader;
 import org.openintents.convertcsv.opencsv.CSVWriter;
-import org.openintents.distribution.LicenseUtils;
 import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.InvoiceItem;
@@ -68,7 +67,6 @@ public class ConvertCsvActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.convertcsv);
-        LicenseUtils.modifyTitle(this);
         this.mCustomer = getIntent().getStringExtra(TimesheetIntent.EXTRA_CUSTOMER);
         if (TextUtils.isEmpty(this.mCustomer)) {
             this.mCustomer = getString(R.string.all_customers);

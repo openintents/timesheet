@@ -10,11 +10,11 @@ import android.widget.TextView;
 import org.openintents.timesheet.R;
 
 public class JobListItemView extends LinearLayout {
-    public static final int STATUS_BREAK = 4;
-    public static final int STATUS_BREAK2 = 5;
-    public static final int STATUS_FINISHED = 3;
     public static final int STATUS_NEW = 1;
     public static final int STATUS_STARTED = 2;
+    public static final int STATUS_FINISHED = 3;
+    public static final int STATUS_BREAK = 4;
+    public static final int STATUS_BREAK2 = 5;
     private static final String TAG = "UpdateListListItemView";
     Context mContext;
     private boolean isSyncItem;
@@ -24,64 +24,82 @@ public class JobListItemView extends LinearLayout {
 
     public JobListItemView(Context context) {
         super(context);
-        this.isSyncItem = false;
-        this.mContext = context;
-        ((LayoutInflater) this.mContext.getSystemService("layout_inflater")).inflate(R.layout.jobslist_item, this, true);
-        this.mTitle = (TextView) findViewById(R.id.title);
-        this.mInfo = (TextView) findViewById(R.id.info);
-        this.mStatus = (ImageView) findViewById(R.id.status);
+        mContext = context;
+
+        // inflate rating
+        LayoutInflater inflater = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        inflater.inflate(
+                R.layout.jobslist_item, this, true);
+
+        mTitle = (TextView) findViewById(R.id.title);
+        mInfo = (TextView) findViewById(R.id.info);
+        mStatus = (ImageView) findViewById(R.id.status);
     }
 
+    /**
+     * Convenience method to set the title of a NewsView
+     */
     public void setTitle(String title) {
-        this.mTitle.setText(title);
+        mTitle.setText(title);
     }
 
     public void setInfo(String info) {
-        this.mInfo.setText(info);
+        mInfo.setText(info);
     }
 
     public void setIsSyncItem(boolean b) {
-        this.isSyncItem = b;
+        isSyncItem = b;
     }
 
     public void setStatus(int status) {
-        if (this.isSyncItem) {
+        if (isSyncItem) {
             switch (status) {
-                case STATUS_NEW /*1*/:
-                    this.mStatus.setImageResource(R.drawable.ic_status_new_sync);
-                    return;
-                case STATUS_STARTED /*2*/:
-                    this.mStatus.setImageResource(R.drawable.ic_status_work_sync);
-                    return;
-                case STATUS_FINISHED /*3*/:
-                    this.mStatus.setImageResource(R.drawable.ic_status_ok_sync);
-                    return;
-                case STATUS_BREAK /*4*/:
-                    this.mStatus.setImageResource(R.drawable.ic_status_sleep_sync);
-                    return;
-                case STATUS_BREAK2 /*5*/:
-                    this.mStatus.setImageResource(R.drawable.ic_status_bed_sync);
-                    return;
+                case STATUS_NEW:
+                    mStatus.setImageResource(R.drawable.ic_status_new_sync);
+                    break;
+                case STATUS_STARTED:
+                    mStatus.setImageResource(R.drawable.ic_status_work_sync);
+                    break;
+                case STATUS_FINISHED:
+                    mStatus.setImageResource(R.drawable.ic_status_ok_sync);
+                    break;
+                case STATUS_BREAK:
+                    mStatus.setImageResource(R.drawable.ic_status_sleep_sync);
+                    break;
+                case STATUS_BREAK2:
+                    mStatus.setImageResource(R.drawable.ic_status_bed_sync);
+                    break;
                 default:
                     Log.e(TAG, "Unknown status " + status);
-                    this.mStatus.setImageDrawable(null);
-                    return;
+                    mStatus.setImageDrawable(null);
+            }
+
+
+        } else {
+
+            switch (status) {
+                case STATUS_NEW:
+                    mStatus.setImageResource(R.drawable.ic_new_item);
+                    break;
+                case STATUS_STARTED:
+                    mStatus.setImageResource(R.drawable.ic_status_work);
+                    break;
+                case STATUS_FINISHED:
+                    mStatus.setImageResource(R.drawable.ic_ok);
+                    break;
+                case STATUS_BREAK:
+                    mStatus.setImageResource(R.drawable.ic_status_sleep);
+                    break;
+                case STATUS_BREAK2:
+                    mStatus.setImageResource(R.drawable.ic_status_bed);
+                    break;
+                default:
+                    Log.e(TAG, "Unknown status " + status);
+                    mStatus.setImageDrawable(null);
             }
         }
-        switch (status) {
-            case STATUS_NEW /*1*/:
-                this.mStatus.setImageResource(R.drawable.ic_new_item);
-            case STATUS_STARTED /*2*/:
-                this.mStatus.setImageResource(R.drawable.ic_status_work);
-            case STATUS_FINISHED /*3*/:
-                this.mStatus.setImageResource(R.drawable.ic_ok);
-            case STATUS_BREAK /*4*/:
-                this.mStatus.setImageResource(R.drawable.ic_status_sleep);
-            case STATUS_BREAK2 /*5*/:
-                this.mStatus.setImageResource(R.drawable.ic_status_bed);
-            default:
-                Log.e(TAG, "Unknown status " + status);
-                this.mStatus.setImageDrawable(null);
-        }
+
     }
 }

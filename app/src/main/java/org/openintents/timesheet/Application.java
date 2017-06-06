@@ -45,17 +45,10 @@ public class Application extends android.app.Application implements LicensedAppl
     }
 
     public boolean isLicenseValid() {
-        if (LicensePackage.checkLicense(getApplicationContext())) {
-            return true;
-        }
-        if (!this.mChecked) {
-            this.mValid = LicenseChecker.checkLicense(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(PreferenceActivity.PREFS_LICENSE_DEVELOPER, null));
-            this.mChecked = true;
-        }
-        return this.mValid;
+        return true;
     }
 
     public void newLicense() {
-        this.mChecked = false;
+        this.mChecked = true;
     }
 }

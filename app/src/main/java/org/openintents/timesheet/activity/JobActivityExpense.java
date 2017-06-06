@@ -30,7 +30,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.openintents.distribution.LicenseUtils;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.Job;
 import org.openintents.timesheet.Timesheet.Reminders;
@@ -298,7 +297,6 @@ public class JobActivityExpense extends Activity {
         } else if (this.mState == STATE_INSERT) {
             setTitle(getText(R.string.title_create));
         }
-        LicenseUtils.modifyTitle(this);
         String note = this.mCursor.getString(STATE_INSERT);
         this.mText.setTextKeepState(note);
         if (this.mOriginalContent == null) {

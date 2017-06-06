@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2008-2017 OpenIntents.org
+ *
+ -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -22,8 +26,8 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:orientation="vertical">
 
@@ -36,7 +40,6 @@
                         android:id="@id/customer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.0"
                         android:capitalize="words"
                         android:hint="@string/customer_hint"
                         android:singleLine="true"

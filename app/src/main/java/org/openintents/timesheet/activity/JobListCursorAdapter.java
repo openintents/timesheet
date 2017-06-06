@@ -14,95 +14,89 @@ import java.util.Calendar;
 
 public class JobListCursorAdapter extends CursorAdapter {
     private static final String TAG = "JobListCursorAdapter";
+
     Context mContext;
     StringBuilder mInfo;
-    private Calendar mCalendar;
+    /*
+	 * private DateFormat mDateFormater = DateFormat.getDateTimeInstance(
+	 * DateFormat.SHORT, DateFormat.SHORT);
+	 */
+    private Calendar mCalendar = Calendar.getInstance();
     private boolean mShowCustomer;
 
     public JobListCursorAdapter(Context context, Cursor c, boolean showCustomer) {
         super(context, c);
-        this.mCalendar = Calendar.getInstance();
-        this.mContext = context;
-        this.mInfo = new StringBuilder();
-        this.mShowCustomer = showCustomer;
+        mContext = context;
+        mInfo = new StringBuilder();
+        mShowCustomer = showCustomer;
+
+        // don't check preferences, we rely on calling activity.
+        // getPreferences(context);
     }
 
+    @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        boolean z;
         JobListItemView cliv = (JobListItemView) view;
-        String title = cursor.getString(1);
-        String customer = cursor.getString(6);
-        long startDate = cursor.getLong(2);
-        long endDate = cursor.getLong(3);
-        long lastStartBreak = cursor.getLong(4);
-        long breakDuration = cursor.getLong(5);
-        long lastStartBreak2 = cursor.getLong(12);
-        String externalRef = cursor.getString(14);
-        if (externalRef != null) {
-            if (!externalRef.equals("")) {
-                z = true;
-                cliv.setIsSyncItem(z);
-                cliv.setTitle(title);
-                this.mInfo.delete(0, this.mInfo.length());
-                if (startDate > 0) {
-                    this.mCalendar.setTimeInMillis(startDate);
-                    this.mInfo.append(DateTimeFormater.mDateFormater.format(this.mCalendar.getTime()));
-                    this.mInfo.append(" ");
-                    this.mInfo.append(DateTimeFormater.mTimeFormater.format(this.mCalendar.getTime()));
-                    if (this.mShowCustomer && !TextUtils.isEmpty(customer)) {
-                        this.mInfo.append(", ");
-                        this.mInfo.append(customer);
-                    }
-                    if (endDate > 0) {
-                        this.mInfo.append(", ");
-                        this.mInfo.append(DurationFormater.formatDuration(context, (endDate - startDate) - breakDuration, 2));
-                    }
-                } else if (this.mShowCustomer) {
-                    this.mInfo.append(customer);
-                }
-                cliv.setInfo(this.mInfo.toString());
-                if (startDate > 0) {
-                    cliv.setStatus(1);
-                } else if (endDate > 0) {
-                    cliv.setStatus(3);
-                } else if (lastStartBreak > 0) {
-                    cliv.setStatus(4);
-                } else if (lastStartBreak2 <= 0) {
-                    cliv.setStatus(5);
-                } else {
-                    cliv.setStatus(2);
-                }
-            }
-        }
-        z = false;
-        cliv.setIsSyncItem(z);
+
+        String title = cursor.getString(JobList.COLUMN_INDEX_TITLE);
+        String customer = cursor.getString(JobList.COLUMN_INDEX_CUSTOMER);
+        long startDate = cursor.getLong(JobList.COLUMN_INDEX_START);
+        long endDate = cursor.getLong(JobList.COLUMN_INDEX_END);
+        long lastStartBreak = cursor
+                .getLong(JobList.COLUMN_INDEX_LAST_START_BREAK);
+        long breakDuration = cursor
+                .getLong(JobList.COLUMN_INDEX_BREAK_DURATION);
+        long lastStartBreak2 = cursor
+                .getLong(JobList.COLUMN_INDEX_LAST_START_BREAK2);
+        String externalRef = cursor
+                .getString(JobList.COLUMN_INDEX_EXTERNAL_REF);
+        cliv.setIsSyncItem(externalRef != null && !externalRef.equals(""));
+
         cliv.setTitle(title);
-        this.mInfo.delete(0, this.mInfo.length());
+
+        mInfo.delete(0, mInfo.length());
         if (startDate > 0) {
-            this.mCalendar.setTimeInMillis(startDate);
-            this.mInfo.append(DateTimeFormater.mDateFormater.format(this.mCalendar.getTime()));
-            this.mInfo.append(" ");
-            this.mInfo.append(DateTimeFormater.mTimeFormater.format(this.mCalendar.getTime()));
-            this.mInfo.append(", ");
-            this.mInfo.append(customer);
-            if (endDate > 0) {
-                this.mInfo.append(", ");
-                this.mInfo.append(DurationFormater.formatDuration(context, (endDate - startDate) - breakDuration, 2));
+            mCalendar.setTimeInMillis(startDate);
+            mInfo.append(DateTimeFormater.mDateFormater.format(mCalendar
+                    .getTime()));
+            mInfo.append(" ");
+            mInfo.append(DateTimeFormater.mTimeFormater.format(mCalendar
+                    .getTime()));
+            if (mShowCustomer) {
+                if (!TextUtils.isEmpty(customer)) {
+                    mInfo.append(", ");
+                    mInfo.append(customer);
+                }
             }
-        } else if (this.mShowCustomer) {
-            this.mInfo.append(customer);
-        }
-        cliv.setInfo(this.mInfo.toString());
-        if (startDate > 0) {
-            cliv.setStatus(1);
-        } else if (endDate > 0) {
-            cliv.setStatus(3);
-        } else if (lastStartBreak > 0) {
-            cliv.setStatus(4);
-        } else if (lastStartBreak2 <= 0) {
-            cliv.setStatus(2);
+            if (endDate > 0) {
+                mInfo.append(", ");
+                mInfo.append(DurationFormater.formatDuration(context, endDate
+                                - startDate - breakDuration,
+                        DurationFormater.TYPE_FORMAT_NICE));
+            }
+
         } else {
-            cliv.setStatus(5);
+            if (mShowCustomer) {
+                mInfo.append(customer);
+            }
+        }
+
+        cliv.setInfo(mInfo.toString());
+
+        if (startDate > 0) {
+            if (endDate > 0) {
+                cliv.setStatus(JobListItemView.STATUS_FINISHED);
+            } else {
+                if (lastStartBreak > 0) {
+                    cliv.setStatus(JobListItemView.STATUS_BREAK);
+                } else if (lastStartBreak2 > 0) {
+                    cliv.setStatus(JobListItemView.STATUS_BREAK2);
+                } else {
+                    cliv.setStatus(JobListItemView.STATUS_STARTED);
+                }
+            }
+        } else {
+            cliv.setStatus(JobListItemView.STATUS_NEW);
         }
     }
 

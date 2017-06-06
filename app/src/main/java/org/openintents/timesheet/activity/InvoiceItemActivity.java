@@ -3,6 +3,7 @@ package org.openintents.timesheet.activity;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,7 +19,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,56 +28,68 @@ import android.widget.Toast;
 import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.InvoiceItem;
-import org.openintents.timesheet.Timesheet.Job;
-import org.openintents.timesheet.Timesheet.Reminders;
 
 public class InvoiceItemActivity extends ListActivity {
-    public static final int COLUMN_INDEX_DESCRIPTION = 2;
-    public static final int COLUMN_INDEX_EXTRAS = 4;
     public static final int COLUMN_INDEX_TYPE = 1;
+    public static final int COLUMN_INDEX_DESCRIPTION = 2;
     public static final int COLUMN_INDEX_VALUE = 3;
-    private static final int MENU_DELETE = 1;
+    public static final int COLUMN_INDEX_EXTRAS = 4;
+    private static final int MENU_DELETE = Menu.FIRST;
     private static final String TAG = "InvoiceItemActivity";
-    private long mJobId;
-    private String[] mProjection;
-    private FrameLayout mTypePanel;
-    private Spinner mTypeSpinner;
+    private static final int[] type_panels = new int[]{R.layout.type_panel_general,
+            R.layout.type_panel_mileage};
+    private static final String[] mProjection = new String[]{InvoiceItem._ID,
+            InvoiceItem.TYPE, // 1
+            InvoiceItem.DESCRIPTION, // 2
+            InvoiceItem.VALUE, // 3
+            InvoiceItem.EXTRAS // 4
+    };
     private ArrayAdapter<CharSequence> typeAdapter;
-    private int[] type_panels;
+    private Spinner mTypeSpinner;
+    private FrameLayout mTypePanel;
+    private long mJobId;
 
-    public InvoiceItemActivity() {
-        this.type_panels = new int[]{R.layout.type_panel_general, R.layout.type_panel_mileage};
-        this.mProjection = new String[]{Reminders._ID, Job.TYPE, InvoiceItem.DESCRIPTION, InvoiceItem.VALUE, InvoiceItem.EXTRAS};
-    }
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.invoice_item);
-        this.mTypeSpinner = (Spinner) findViewById(R.id.spinner);
-        this.mTypeSpinner.setOnItemSelectedListener(new C00111());
-        this.typeAdapter = ArrayAdapter.createFromResource(this, R.array.invoice_types, android.R.layout.simple_spinner_item);
-        this.typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        this.mTypeSpinner.setAdapter(this.typeAdapter);
-        this.mTypePanel = (FrameLayout) findViewById(R.id.panel_frame);
-        this.mJobId = getIntent().getLongExtra("jobid", -1);
+        mTypeSpinner = (Spinner) findViewById(R.id.spinner);
+        mTypeSpinner.setOnItemSelectedListener(new C00111());
+
+        typeAdapter = ArrayAdapter.createFromResource(this, R.array.invoice_types, android.R.layout.simple_spinner_item);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mTypeSpinner.setAdapter(typeAdapter);
+
+        mTypePanel = (FrameLayout) findViewById(R.id.panel_frame);
+        mJobId = getIntent().getLongExtra("jobid", -1L);
         setType(0);
-        this.mTypeSpinner.setVisibility(8);
-        ((Button) findViewById(R.id.add_button)).setOnClickListener(new C00122());
+        mTypeSpinner.setVisibility(View.GONE);
+        findViewById(R.id.add_button).setOnClickListener(new C00122());
         getListView().setEmptyView(findViewById(R.id.empty));
+
         updateListAdapter();
+
         registerForContextMenu(getListView());
+
     }
 
     private void updateListAdapter() {
-        String[] strArr = new String[MENU_DELETE];
-        strArr[0] = String.valueOf(this.mJobId);
-        setListAdapter(new InvoiceItemCursorAdapter(this, getContentResolver().query(InvoiceItem.CONTENT_URI, this.mProjection, "job_id = ?", strArr, null)));
+        Cursor c = getContentResolver().query(InvoiceItem.CONTENT_URI,
+                mProjection, InvoiceItem.JOB_ID + " = ?",
+                new String[]{String.valueOf(mJobId)}, null);
+        CursorAdapter adapter = new InvoiceItemCursorAdapter(this, c);
+        setListAdapter(adapter);
+
     }
 
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenuInfo menuInfo) {
         menu.add(0, MENU_DELETE, 0, R.string.delete);
     }
 
+    @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo menu = (AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
@@ -87,23 +101,23 @@ public class InvoiceItemActivity extends ListActivity {
     }
 
     protected void addInvoiceItem() {
-        int type = this.mTypeSpinner.getSelectedItemPosition();
+        int type = mTypeSpinner.getSelectedItemPosition();
         ContentValues values = new ContentValues();
-        values.put(Job.TYPE, Integer.valueOf(type));
-        values.put(InvoiceItem.JOB_ID, Long.valueOf(this.mJobId));
+        values.put(InvoiceItem.TYPE, type);
+        values.put(InvoiceItem.JOB_ID, mJobId);
         switch (type) {
-            case Reminders.METHOD_DEFAULT /*0*/:
+            case 0:
                 values.put(InvoiceItem.DESCRIPTION, ((TextView) findViewById(R.id.description)).getText().toString());
                 String valueString = ((TextView) findViewById(R.id.value)).getText().toString();
                 try {
-                    values.put(InvoiceItem.VALUE, Long.valueOf((long) (100.0f * Float.parseFloat(valueString))));
+                    values.put(InvoiceItem.VALUE, (long) (100.0f * Float.parseFloat(valueString)));
                     break;
                 } catch (NumberFormatException e) {
                     Log.e(TAG, "Error parsing expense value: " + valueString);
                     Toast.makeText(this, R.string.enter_numbers_only, Toast.LENGTH_SHORT);
                     return;
                 }
-            case MENU_DELETE /*1*/:
+            case 1:
                 String description = PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceActivity.PREFS_MILAGE_DESCRIPTION, getString(R.string.mileage));
                 values.put(InvoiceItem.DESCRIPTION, description);
                 String startValueString = ((TextView) findViewById(R.id.start_value)).getText().toString();
@@ -112,7 +126,7 @@ public class InvoiceItemActivity extends ListActivity {
                 try {
                     int startValue = Integer.parseInt(startValueString);
                     int endValue = Integer.parseInt(endValueString);
-                    values.put(InvoiceItem.VALUE, Integer.valueOf((endValue - startValue) * Integer.parseInt(rateString)));
+                    values.put(InvoiceItem.VALUE, (endValue - startValue) * Integer.parseInt(rateString));
                     values.put(InvoiceItem.EXTRAS, new StringBuilder(String.valueOf(startValue)).append("|").append(endValue).append("|").append("10").toString());
                     break;
                 } catch (NumberFormatException e2) {
@@ -125,9 +139,9 @@ public class InvoiceItemActivity extends ListActivity {
     }
 
     protected void setType(int type) {
-        this.mTypePanel.removeAllViews();
-        View typePanel = LayoutInflater.from(this).inflate(this.type_panels[type], this.mTypePanel);
-        if (type == MENU_DELETE) {
+        mTypePanel.removeAllViews();
+        View typePanel = LayoutInflater.from(this).inflate(type_panels[type], mTypePanel);
+        if (type == 1) {
             TextView setRate = (TextView) typePanel.findViewById(R.id.rate);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             int defaultRate = -1;
@@ -139,9 +153,9 @@ public class InvoiceItemActivity extends ListActivity {
                 setRate.setText(String.valueOf(defaultRate));
             }
             if (defaultRate <= 0 || prefs.getBoolean(PreferenceActivity.PREFS_SHOW_MILEAGE_RATE, true)) {
-                setRate.setVisibility(0);
+                setRate.setVisibility(View.VISIBLE);
             } else {
-                setRate.setVisibility(8);
+                setRate.setVisibility(View.GONE);
             }
         }
     }

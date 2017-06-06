@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Timesheet</string>
-    <string name="trial_suffix">" (Trial version)"</string>
     <string name="app_descr">Protocol your working time</string>
     <string name="title_create">Create job</string>
     <string name="title_edit">Edit job</string>
@@ -250,4 +249,6 @@ No compatible extension available to display full info (contact, credits, licens
     <string name="permission_read_descr">Allows an application to read all timesheet information.</string>
     <string name="permission_write">Write timesheets</string>
     <string name="permission_write_descr">Allows an application to create new entries or modifiy existing ones.</string>
+    <string name="privacy">Privacy</string>
+    <string name="support">Support</string>
 </resources>
