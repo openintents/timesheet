@@ -1,5 +1,39 @@
 package org.openintents.convertcsv.opencsv;
 
+/**
+ * Copyright 2005 Bytecode Pty Ltd.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * <p>
+ * The project is available at http://sourceforge.net/projects/opencsv/
+ * <p>
+ * Modifications:
+ * - Peli: Dec 2, 2008: Add possibility to write mixed output through new functions
+ * write() and writeNewline().
+ * - Peli: Dec 3, 2008: Add writeValue() function.
+ */
+
+/**
+ * The project is available at http://sourceforge.net/projects/opencsv/
+ */
+
+/**
+ * Modifications:
+ *   - Peli: Dec 2, 2008: Add possibility to write mixed output through new functions
+ *     write() and writeNewline().
+ *   - Peli: Dec 3, 2008: Add writeValue() function.
+ */
+
 import org.openintents.timesheet.activity.JobListItemView;
 import org.openintents.util.DurationFormater;
 
@@ -19,28 +53,29 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CSVWriter<T> {
-    private static final SimpleDateFormat DATE_FORMATTER;
     public static final char DEFAULT_ESCAPE_CHARACTER = '\"';
     public static final String DEFAULT_LINE_END = "\n";
     public static final char DEFAULT_QUOTE_CHARACTER = '\"';
     public static final char DEFAULT_SEPARATOR = ',';
     public static final char NO_ESCAPE_CHARACTER = '\u0000';
     public static final char NO_QUOTE_CHARACTER = '\u0000';
+    private static final SimpleDateFormat DATE_FORMATTER;
     private static final SimpleDateFormat TIMESTAMP_FORMATTER;
+
+    static {
+        TIMESTAMP_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+        DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy");
+    }
+
+    public T extras;
     private int currentColumn;
     private char escapechar;
-    public T extras;
     private String lineEnd;
     private PrintWriter pw;
     private char quotechar;
     private Writer rawWriter;
     private char separator;
     private StringBuffer stringBuffer;
-
-    static {
-        TIMESTAMP_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
-        DATE_FORMATTER = new SimpleDateFormat("dd-MMM-yyyy");
-    }
 
     public CSVWriter(Writer writer) {
         this(writer, DEFAULT_SEPARATOR);
@@ -71,36 +106,6 @@ public class CSVWriter<T> {
         this.lineEnd = lineEnd;
         this.currentColumn = 0;
         this.stringBuffer = new StringBuffer();
-    }
-
-    public void writeAll(List<String[]> allLines) {
-        for (String[] nextLine : allLines) {
-            writeNext(nextLine);
-        }
-    }
-
-    protected void writeColumnNames(ResultSetMetaData metadata) throws SQLException {
-        int columnCount = metadata.getColumnCount();
-        String[] nextLine = new String[columnCount];
-        for (int i = 0; i < columnCount; i++) {
-            nextLine[i] = metadata.getColumnName(i + 1);
-        }
-        writeNext(nextLine);
-    }
-
-    public void writeAll(ResultSet rs, boolean includeColumnNames) throws SQLException, IOException {
-        ResultSetMetaData metadata = rs.getMetaData();
-        if (includeColumnNames) {
-            writeColumnNames(metadata);
-        }
-        int columnCount = metadata.getColumnCount();
-        while (rs.next()) {
-            String[] nextLine = new String[columnCount];
-            for (int i = 0; i < columnCount; i++) {
-                nextLine[i] = getColumnValue(rs, metadata.getColumnType(i + 1), i + 1);
-            }
-            writeNext(nextLine);
-        }
     }
 
     private static String getColumnValue(ResultSet rs, int colType, int colIndex) throws SQLException, IOException {
@@ -206,6 +211,36 @@ public class CSVWriter<T> {
         }
     }
 
+    public void writeAll(List<String[]> allLines) {
+        for (String[] nextLine : allLines) {
+            writeNext(nextLine);
+        }
+    }
+
+    protected void writeColumnNames(ResultSetMetaData metadata) throws SQLException {
+        int columnCount = metadata.getColumnCount();
+        String[] nextLine = new String[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            nextLine[i] = metadata.getColumnName(i + 1);
+        }
+        writeNext(nextLine);
+    }
+
+    public void writeAll(ResultSet rs, boolean includeColumnNames) throws SQLException, IOException {
+        ResultSetMetaData metadata = rs.getMetaData();
+        if (includeColumnNames) {
+            writeColumnNames(metadata);
+        }
+        int columnCount = metadata.getColumnCount();
+        while (rs.next()) {
+            String[] nextLine = new String[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                nextLine[i] = getColumnValue(rs, metadata.getColumnType(i + 1), i + 1);
+            }
+            writeNext(nextLine);
+        }
+    }
+
     public void writeNext(String[] nextLine) {
         if (nextLine != null) {
             StringBuffer sb = new StringBuffer();
@@ -246,7 +281,7 @@ public class CSVWriter<T> {
         if (string != null) {
             boolean usingQuotes = useQuotes;
             if ((this.quotechar != '\u0000' && string.indexOf(this.quotechar) >= 0)
-                    || string.indexOf(this.separator)>= 0
+                    || string.indexOf(this.separator) >= 0
                     || ((this.escapechar != '\u0000' && string.indexOf(this.escapechar) >= 0)
                     || string.contains(this.lineEnd))) {
                 usingQuotes = true;
@@ -270,26 +305,50 @@ public class CSVWriter<T> {
         }
     }
 
+    /**
+     * Write a string. Quote chars are used.
+     *
+     * @param string
+     */
     public void write(String string) {
         write(string, true);
     }
 
+    /**
+     * Write a value. Quote chars are only used if necessary.
+     *
+     * @param string
+     */
     public void writeValue(String string) {
         write(string, false);
     }
 
+    /**
+     * Write an integer value. Quote chars are only used if necessary.
+     *
+     * @param i
+     */
     public void write(int i) {
         write(String.valueOf(i), false);
     }
 
+    /**
+     * Write a long value. Quote chars are only used if necessary.
+     *
+     * @param i
+     */
     public void write(long i) {
         write(String.valueOf(i), false);
     }
+
 
     public void writePlain(String s) {
         this.stringBuffer.append(s);
     }
 
+    /**
+     * End a line of items that have been added through write().
+     */
     public void writeNewline() {
         this.stringBuffer.append(this.lineEnd);
         this.pw.write(this.stringBuffer.toString());
@@ -297,10 +356,23 @@ public class CSVWriter<T> {
         this.currentColumn = 0;
     }
 
+    /**
+     * Flush underlying stream to writer.
+     *
+     * @throws IOException
+     *             if bad things happen
+     */
     public void flush() throws IOException {
         this.pw.flush();
     }
 
+    /**
+     * Close the underlying stream writer flushing any buffered content.
+     *
+     * @throws IOException
+     *             if bad things happen
+     *
+     */
     public void close() throws IOException {
         this.pw.flush();
         this.pw.close();

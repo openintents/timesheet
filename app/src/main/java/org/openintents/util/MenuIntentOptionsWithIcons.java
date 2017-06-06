@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import java.util.List;
 
 public class MenuIntentOptionsWithIcons {

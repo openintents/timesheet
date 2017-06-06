@@ -18,6 +18,19 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import org.openintents.convertcsv.opencsv.CSVReader;
+import org.openintents.convertcsv.opencsv.CSVWriter;
+import org.openintents.distribution.LicenseUtils;
+import org.openintents.timesheet.PreferenceActivity;
+import org.openintents.timesheet.R;
+import org.openintents.timesheet.Timesheet.InvoiceItem;
+import org.openintents.timesheet.Timesheet.Job;
+import org.openintents.timesheet.Timesheet.Reminders;
+import org.openintents.timesheet.TimesheetIntent;
+import org.openintents.timesheet.activity.JobActivity;
+import org.openintents.util.DateTimeFormater;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -28,17 +41,6 @@ import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import org.openintents.convertcsv.opencsv.CSVReader;
-import org.openintents.convertcsv.opencsv.CSVWriter;
-import org.openintents.distribution.LicenseUtils;
-import org.openintents.timesheet.R;
-import org.openintents.timesheet.PreferenceActivity;
-import org.openintents.timesheet.Timesheet.InvoiceItem;
-import org.openintents.timesheet.Timesheet.Job;
-import org.openintents.timesheet.Timesheet.Reminders;
-import org.openintents.timesheet.TimesheetIntent;
-import org.openintents.timesheet.activity.JobActivity;
-import org.openintents.util.DateTimeFormater;
 
 public class ConvertCsvActivity extends Activity {
     private static final int COLUMN_INDEX_ID = 0;
@@ -50,149 +52,18 @@ public class ConvertCsvActivity extends Activity {
     private static final String[] PROJECTION;
     private static final double RATE_FACTOR = 0.01d;
     private static final String TAG = "ConvertCsvActivity";
-    private TextView mCalendar;
-    String mCustomer;
-    EditText mEditText;
-    TextView mExportFor;
-    private TextView mFilePathLabel;
-    private TextView mInfo;
-
-    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.1 */
-    class C00431 implements OnClickListener {
-        C00431() {
-        }
-
-        public void onClick(View arg0) {
-            ConvertCsvActivity.this.startExportAndFinish();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.2 */
-    class C00442 implements OnClickListener {
-        C00442() {
-        }
-
-        public void onClick(View arg0) {
-            ConvertCsvActivity.this.startImportAndFinish();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.3 */
-    class C00453 implements DialogInterface.OnClickListener {
-        private final /* synthetic */ int val$calendarAuthority;
-        private final /* synthetic */ CheckBox val$cb;
-        private final /* synthetic */ NumberFormat val$decimalFormat;
-        private final /* synthetic */ Editor val$editor;
-        private final /* synthetic */ boolean val$exportCompletedOnly;
-        private final /* synthetic */ ExportContext val$exportContext;
-        private final /* synthetic */ boolean val$exportReplaceBr;
-        private final /* synthetic */ boolean val$exportTotals;
-        private final /* synthetic */ File val$file;
-        private final /* synthetic */ boolean val$omitTemplates;
-        private final /* synthetic */ boolean val$updateCalendar;
-
-        C00453(Editor editor, CheckBox checkBox, boolean z, boolean z2, boolean z3, boolean z4, NumberFormat numberFormat, boolean z5, File file, ExportContext exportContext, int i) {
-            this.val$editor = editor;
-            this.val$cb = checkBox;
-            this.val$exportReplaceBr = z;
-            this.val$exportCompletedOnly = z2;
-            this.val$omitTemplates = z3;
-            this.val$updateCalendar = z4;
-            this.val$decimalFormat = numberFormat;
-            this.val$exportTotals = z5;
-            this.val$file = file;
-            this.val$exportContext = exportContext;
-            this.val$calendarAuthority = i;
-        }
-
-        public void onClick(DialogInterface dialog, int which) {
-            this.val$editor.putBoolean(PreferenceActivity.PREFS_ASK_IF_FILE_EXISTS, !this.val$cb.isChecked());
-            this.val$editor.commit();
-            ConvertCsvActivity.this.doExport(this.val$exportReplaceBr, this.val$exportCompletedOnly, this.val$omitTemplates, this.val$updateCalendar, this.val$decimalFormat, this.val$exportTotals, this.val$file, this.val$exportContext, this.val$calendarAuthority);
-            ConvertCsvActivity.this.finish();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.4 */
-    class C00464 implements DialogInterface.OnClickListener {
-        C00464() {
-        }
-
-        public void onClick(DialogInterface dialog, int which) {
-        }
-    }
-
-    class ExportContext {
-        HashMap<String, CSVWriter<Totals>> mCSVWriter;
-        File mFile;
-        boolean mSingleFile;
-        HashMap<String, Writer> mWriter;
-
-        ExportContext(File file, boolean singleFile) {
-            this.mSingleFile = true;
-            this.mWriter = new HashMap();
-            this.mCSVWriter = new HashMap();
-            this.mFile = file;
-            this.mSingleFile = singleFile;
-        }
-
-        private void closeCsvWriter(String customer) throws IOException {
-            if (this.mSingleFile) {
-                customer = "";
-            }
-            ((Writer) this.mWriter.get(customer)).close();
-        }
-
-        private CSVWriter<Totals> getCsvWriter(String customer) throws IOException {
-            if (this.mSingleFile) {
-                customer = "";
-            }
-            if (this.mWriter.containsKey(customer)) {
-                return (CSVWriter) this.mCSVWriter.get(customer);
-            }
-            File file;
-            if (this.mSingleFile) {
-                file = this.mFile;
-            } else {
-                file = new File(this.mFile + "/" + customer + ".csv");
-            }
-            FileWriter writer = new FileWriter(file);
-            CSVWriter<Totals> csvwriter = new CSVWriter(writer);
-            csvwriter.extras = new Totals();
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_date), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_time_started), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_total), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_work), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_break_time), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_earnings), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_rate), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_description), false);
-            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_customer), false);
-            csvwriter.writeNewline();
-            this.mWriter.put(customer, writer);
-            this.mCSVWriter.put(customer, csvwriter);
-            return csvwriter;
-        }
-    }
-
-    static class Totals {
-        long sumBreakhours;
-        double sumEarning;
-        long sumTotalhours;
-        long sumWorkhours;
-
-        Totals() {
-            this.sumTotalhours = 0;
-            this.sumBreakhours = 0;
-            this.sumWorkhours = 0;
-            this.sumEarning = 0.0d;
-        }
-    }
 
     static {
         PROJECTION = new String[]{Reminders._ID, Job.TITLE, TimesheetIntent.EXTRA_NOTE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, TimesheetIntent.EXTRA_CUSTOMER, Job.HOURLY_RATE, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.CALENDAR_REF};
         INVOICE_ITEMS_PROJECTION = new String[]{Reminders._ID, InvoiceItem.VALUE, InvoiceItem.DESCRIPTION};
     }
+
+    String mCustomer;
+    EditText mEditText;
+    TextView mExportFor;
+    private TextView mCalendar;
+    private TextView mFilePathLabel;
+    private TextView mInfo;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -901,6 +772,138 @@ public class ConvertCsvActivity extends Activity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    static class Totals {
+        long sumBreakhours;
+        double sumEarning;
+        long sumTotalhours;
+        long sumWorkhours;
+
+        Totals() {
+            this.sumTotalhours = 0;
+            this.sumBreakhours = 0;
+            this.sumWorkhours = 0;
+            this.sumEarning = 0.0d;
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.1 */
+    class C00431 implements OnClickListener {
+        C00431() {
+        }
+
+        public void onClick(View arg0) {
+            ConvertCsvActivity.this.startExportAndFinish();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.2 */
+    class C00442 implements OnClickListener {
+        C00442() {
+        }
+
+        public void onClick(View arg0) {
+            ConvertCsvActivity.this.startImportAndFinish();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.3 */
+    class C00453 implements DialogInterface.OnClickListener {
+        private final /* synthetic */ int val$calendarAuthority;
+        private final /* synthetic */ CheckBox val$cb;
+        private final /* synthetic */ NumberFormat val$decimalFormat;
+        private final /* synthetic */ Editor val$editor;
+        private final /* synthetic */ boolean val$exportCompletedOnly;
+        private final /* synthetic */ ExportContext val$exportContext;
+        private final /* synthetic */ boolean val$exportReplaceBr;
+        private final /* synthetic */ boolean val$exportTotals;
+        private final /* synthetic */ File val$file;
+        private final /* synthetic */ boolean val$omitTemplates;
+        private final /* synthetic */ boolean val$updateCalendar;
+
+        C00453(Editor editor, CheckBox checkBox, boolean z, boolean z2, boolean z3, boolean z4, NumberFormat numberFormat, boolean z5, File file, ExportContext exportContext, int i) {
+            this.val$editor = editor;
+            this.val$cb = checkBox;
+            this.val$exportReplaceBr = z;
+            this.val$exportCompletedOnly = z2;
+            this.val$omitTemplates = z3;
+            this.val$updateCalendar = z4;
+            this.val$decimalFormat = numberFormat;
+            this.val$exportTotals = z5;
+            this.val$file = file;
+            this.val$exportContext = exportContext;
+            this.val$calendarAuthority = i;
+        }
+
+        public void onClick(DialogInterface dialog, int which) {
+            this.val$editor.putBoolean(PreferenceActivity.PREFS_ASK_IF_FILE_EXISTS, !this.val$cb.isChecked());
+            this.val$editor.commit();
+            ConvertCsvActivity.this.doExport(this.val$exportReplaceBr, this.val$exportCompletedOnly, this.val$omitTemplates, this.val$updateCalendar, this.val$decimalFormat, this.val$exportTotals, this.val$file, this.val$exportContext, this.val$calendarAuthority);
+            ConvertCsvActivity.this.finish();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.convert.ConvertCsvActivity.4 */
+    class C00464 implements DialogInterface.OnClickListener {
+        C00464() {
+        }
+
+        public void onClick(DialogInterface dialog, int which) {
+        }
+    }
+
+    class ExportContext {
+        HashMap<String, CSVWriter<Totals>> mCSVWriter;
+        File mFile;
+        boolean mSingleFile;
+        HashMap<String, Writer> mWriter;
+
+        ExportContext(File file, boolean singleFile) {
+            this.mSingleFile = true;
+            this.mWriter = new HashMap();
+            this.mCSVWriter = new HashMap();
+            this.mFile = file;
+            this.mSingleFile = singleFile;
+        }
+
+        private void closeCsvWriter(String customer) throws IOException {
+            if (this.mSingleFile) {
+                customer = "";
+            }
+            ((Writer) this.mWriter.get(customer)).close();
+        }
+
+        private CSVWriter<Totals> getCsvWriter(String customer) throws IOException {
+            if (this.mSingleFile) {
+                customer = "";
+            }
+            if (this.mWriter.containsKey(customer)) {
+                return (CSVWriter) this.mCSVWriter.get(customer);
+            }
+            File file;
+            if (this.mSingleFile) {
+                file = this.mFile;
+            } else {
+                file = new File(this.mFile + "/" + customer + ".csv");
+            }
+            FileWriter writer = new FileWriter(file);
+            CSVWriter<Totals> csvwriter = new CSVWriter(writer);
+            csvwriter.extras = new Totals();
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_date), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_time_started), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_total), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_work), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_break_time), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_earnings), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_rate), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_description), false);
+            csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_customer), false);
+            csvwriter.writeNewline();
+            this.mWriter.put(customer, writer);
+            this.mCSVWriter.put(customer, csvwriter);
+            return csvwriter;
         }
     }
 }

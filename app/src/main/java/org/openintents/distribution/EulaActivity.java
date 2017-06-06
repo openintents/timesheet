@@ -1,5 +1,6 @@
 package org.openintents.distribution;
 
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -19,7 +20,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * Displays the Eula for the first time, reading it from a raw resource.
+ *
+ * @author Peli
+ * @version 2009-01-17
+ */
 public class EulaActivity extends Activity {
+
     static final String PREFERENCES_EULA_ACCEPTED = "eula_accepted";
     private static final String EXTRA_LAUNCH_ACTIVITY_CLASS = "org.openintents.extra.launch_activity_class";
     private static final String EXTRA_LAUNCH_ACTIVITY_PACKAGE = "org.openintents.extra.launch_activity_package";
@@ -76,6 +84,12 @@ public class EulaActivity extends Activity {
         finish();
     }
 
+    /**
+     * Read license from raw resource.
+     *
+     * @param resourceid ID of the raw resource.
+     * @return
+     */
     private String readLicenseFromRawResource(int resourceid) {
         String license = "";
         BufferedReader in = new BufferedReader(new InputStreamReader(getResources().openRawResource(resourceid)));

@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
 import org.openintents.timesheet.R;
 
 public class RateListAdapter extends BaseAdapter {
     static final long[][] rates;
-    private Context mContext;
-    private LayoutInflater mInflater;
 
     static {
         long[][] r0 = new long[2][];
@@ -22,6 +21,9 @@ public class RateListAdapter extends BaseAdapter {
         r0[1] = jArr;
         rates = r0;
     }
+
+    private Context mContext;
+    private LayoutInflater mInflater;
 
     public RateListAdapter(Context context) {
         this.mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

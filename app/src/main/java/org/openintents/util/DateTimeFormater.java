@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.Settings.System;
 import android.text.TextUtils;
+
+import org.openintents.timesheet.PreferenceActivity;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import org.openintents.timesheet.PreferenceActivity;
 
 public class DateTimeFormater {
     public static DateFormat mDateFormater;

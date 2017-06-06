@@ -1,6 +1,7 @@
 package org.openintents.util;
 
 import android.content.Context;
+
 import org.openintents.timesheet.R;
 
 public class DurationFormater {

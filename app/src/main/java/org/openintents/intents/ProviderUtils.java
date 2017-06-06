@@ -3,6 +3,7 @@ package org.openintents.intents;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+
 import org.openintents.timesheet.Timesheet.Reminders;
 
 public class ProviderUtils {

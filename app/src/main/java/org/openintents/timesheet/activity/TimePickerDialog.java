@@ -24,14 +24,10 @@ public class TimePickerDialog extends AlertDialog implements OnClickListener, On
     private final Calendar mCalendar;
     private final OnTimeSetListener mCallback;
     private final DateFormat mDateFormat;
+    private final TimePicker mTimePicker;
     int mInitialHourOfDay;
     int mInitialMinute;
     boolean mIs24HourView;
-    private final TimePicker mTimePicker;
-
-    public interface OnTimeSetListener {
-        void onTimeSet(TimePicker timePicker, int i, int i2);
-    }
 
     public TimePickerDialog(Context context, OnTimeSetListener callBack, int hourOfDay, int minute, boolean is24HourView) {
         this(context, R.style.MyThemeDialogAlert, callBack, hourOfDay, minute, is24HourView);
@@ -103,5 +99,9 @@ public class TimePickerDialog extends AlertDialog implements OnClickListener, On
         this.mTimePicker.setIs24HourView(Boolean.valueOf(savedInstanceState.getBoolean(IS_24_HOUR)));
         this.mTimePicker.setOnTimeChangedListener(this);
         updateTitle(hour, minute);
+    }
+
+    public interface OnTimeSetListener {
+        void onTimeSet(TimePicker timePicker, int i, int i2);
     }
 }

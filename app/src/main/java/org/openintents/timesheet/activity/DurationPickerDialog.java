@@ -1,8 +1,8 @@
 package org.openintents.timesheet.activity;
 
 import android.content.Context;
+
 import org.openintents.timesheet.R;
-import org.openintents.timesheet.activity.TimePickerDialog.OnTimeSetListener;
 
 public class DurationPickerDialog extends TimePickerDialog {
     public DurationPickerDialog(Context context, OnTimeSetListener callBack, int hourOfDay, int minute) {

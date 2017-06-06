@@ -6,6 +6,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceScreen;
+
 import org.openintents.distribution.LicensedApplication;
 import org.openintents.util.IntentUtils;
 
@@ -24,7 +25,6 @@ public class PreferenceActivity extends android.preference.PreferenceActivity im
     public static final String PREFS_EXPORT_TIME_FORMAT = "export_time_format";
     public static final String PREFS_EXPORT_TOTALS = "export_totals";
     public static final String PREFS_EXTENSIONS_MARKET = "preference_extensions_market";
-    private static final String PREFS_LICENSE_CATEGORY = "preference_screen_license";
     public static final String PREFS_LICENSE_DEVELOPER = "org.openintents.lickey";
     public static final String PREFS_LICENSE_MARKET = "preference_license_market";
     public static final String PREFS_LICENSE_PDASSI = "preference_license_pdassi";
@@ -35,6 +35,7 @@ public class PreferenceActivity extends android.preference.PreferenceActivity im
     public static final String PREFS_SHOW_MILEAGE_RATE = "show_mileage_rate";
     public static final String PREFS_SHOW_NOTIFICATION = "show_notification";
     public static final String PREFS_START_JOBS_IMMEDIATELY = "start_jobs_immediately";
+    private static final String PREFS_LICENSE_CATEGORY = "preference_screen_license";
 
     protected void onCreate(Bundle savedInstanceState) {
         boolean z = true;

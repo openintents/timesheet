@@ -1,6 +1,7 @@
 package org.openintents.distribution;
 
 import android.app.Activity;
+
 import org.openintents.timesheet.Application;
 import org.openintents.timesheet.R;
 

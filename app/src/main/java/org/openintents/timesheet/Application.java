@@ -2,6 +2,7 @@ package org.openintents.timesheet;
 
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
+
 import org.openintents.distribution.LicenseChecker;
 import org.openintents.distribution.LicensePackage;
 import org.openintents.distribution.LicensedApplication;
@@ -12,6 +13,12 @@ public class Application extends android.app.Application implements LicensedAppl
     public static final int APPLICATION_VARIANT_PDASSI = 2;
     public static int mApplicationVariant;
     public static String mApplicationVariantVersionSuffix;
+
+    static {
+        mApplicationVariant = APPLICATION_VARIANT_DEFAULT;
+        mApplicationVariantVersionSuffix = "";
+    }
+
     private boolean mChecked;
     private boolean mValid;
 
@@ -20,9 +27,8 @@ public class Application extends android.app.Application implements LicensedAppl
         this.mValid = false;
     }
 
-    static {
-        mApplicationVariant = APPLICATION_VARIANT_DEFAULT;
-        mApplicationVariantVersionSuffix = "";
+    public static String getVersionSuffix() {
+        return mApplicationVariantVersionSuffix;
     }
 
     public void onCreate() {
@@ -36,10 +42,6 @@ public class Application extends android.app.Application implements LicensedAppl
         if (id != 0) {
             mApplicationVariantVersionSuffix = res.getString(id);
         }
-    }
-
-    public static String getVersionSuffix() {
-        return mApplicationVariantVersionSuffix;
     }
 
     public boolean isLicenseValid() {

@@ -29,11 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+
 import org.openintents.distribution.LicenseUtils;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.Job;
@@ -43,14 +39,21 @@ import org.openintents.timesheet.animation.FadeAnimation;
 import org.openintents.util.DateTimeFormater;
 import org.openintents.util.MenuIntentOptionsWithIcons;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
+
 public class JobActivityExpense extends Activity {
+    static final int DIALOG_ID_RECENT_NOTES = 1;
+    static final String TAG = "JobActivityExpense";
     private static final int ADD_EXTRA_ITEM_ID = 11;
     private static final int COLUMN_INDEX_CUSTOMER = 4;
     private static final int COLUMN_INDEX_HOURLY_RATE = 3;
     private static final int COLUMN_INDEX_NOTE = 1;
     private static final int COLUMN_INDEX_START = 2;
     private static final int DELETE_ID = 3;
-    static final int DIALOG_ID_RECENT_NOTES = 1;
     private static final int DISCARD_ID = 2;
     private static final int LIST_ID = 4;
     private static final String ORIGINAL_CONTENT = "origNote";
@@ -60,15 +63,19 @@ public class JobActivityExpense extends Activity {
     private static final String SHOW_RECENT_NOTES_BUTTON = "show_recent_notes";
     private static final int STATE_EDIT = 0;
     private static final int STATE_INSERT = 1;
-    static final String TAG = "JobActivityExpense";
+
+    static {
+        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_DATE, Job.HOURLY_RATE, TimesheetIntent.EXTRA_CUSTOMER};
+    }
+
+    NumberFormat mDecimalFormat;
+    String[] mRecentNoteList;
     private Cursor mCursor;
     private AutoCompleteTextView mCustomer;
     private String[] mCustomerList;
-    NumberFormat mDecimalFormat;
     private long mHourlyRate;
     private String mOriginalContent;
     private String mPreselectedCustomer;
-    String[] mRecentNoteList;
     private Button mRecentNotes;
     private int mRecentNotesButtonState;
     private EditText mSetValue;
@@ -77,74 +84,83 @@ public class JobActivityExpense extends Activity {
     private EditText mText;
     private Uri mUri;
 
-    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.1 */
-    class C00221 implements TextWatcher {
-        C00221() {
-        }
-
-        public void afterTextChanged(Editable s) {
-            JobActivityExpense.this.mShowRecentNotesButton = false;
-            JobActivityExpense.this.updateRecentNotesButton(true);
-        }
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.2 */
-    class C00232 implements OnClickListener {
-        C00232() {
-        }
-
-        public void onClick(View v) {
-            JobActivityExpense.this.showRecentNotesDialog();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.3 */
-    class C00243 implements OnClickListener {
-        C00243() {
-        }
-
-        public void onClick(View v) {
-            if (JobActivityExpense.this.mCustomer.isPopupShowing()) {
-                JobActivityExpense.this.mCustomer.dismissDropDown();
-            } else {
-                JobActivityExpense.this.mCustomer.showDropDown();
-            }
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.4 */
-    class C00254 implements OnItemClickListener {
-        C00254() {
-        }
-
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.5 */
-    class C00265 implements DialogInterface.OnClickListener {
-        C00265() {
-        }
-
-        public void onClick(DialogInterface dialog, int which) {
-            JobActivityExpense.this.mText.setText(JobActivityExpense.getNote(JobActivityExpense.this, JobActivityExpense.this.mRecentNoteList[which]));
-        }
-    }
-
     public JobActivityExpense() {
         this.mDecimalFormat = new DecimalFormat("0.00");
         this.mShowRecentNotesButton = false;
         this.mRecentNoteList = null;
     }
 
-    static {
-        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_DATE, Job.HOURLY_RATE, TimesheetIntent.EXTRA_CUSTOMER};
+    public static String[] getCustomerList(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        Set<String> set = new TreeSet();
+        c.moveToPosition(-1);
+        while (c.moveToNext()) {
+            String customer = c.getString(STATE_EDIT);
+            if (!TextUtils.isEmpty(customer)) {
+                set.add(customer);
+            }
+        }
+        c.close();
+        return (String[]) set.toArray(new String[STATE_EDIT]);
+    }
+
+    public static String[] getTitlesList(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Job.TITLE;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        Vector<String> vec = new Vector();
+        c.moveToPosition(-1);
+        while (c.moveToNext()) {
+            String title = c.getString(STATE_EDIT);
+            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
+                vec.add(title);
+            }
+        }
+        c.close();
+        return (String[]) vec.toArray(new String[STATE_EDIT]);
+    }
+
+    public static String getNote(Context context, String title) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Job.TITLE;
+        String[] strArr2 = new String[STATE_INSERT];
+        strArr2[STATE_EDIT] = title;
+        Cursor c = contentResolver.query(uri, strArr, "title = ?", strArr2, "modified DESC");
+        if (c != null && c.moveToFirst()) {
+            return c.getString(STATE_EDIT);
+        }
+        if (c != null) {
+            c.close();
+        }
+        return null;
+    }
+
+    public static String getLastCustomer(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        String customer = "";
+        while (c != null && c.moveToNext()) {
+            customer = c.getString(STATE_EDIT);
+            if (!TextUtils.isEmpty(customer)) {
+                break;
+            }
+        }
+        Log.i(TAG, "LastCustomer:" + customer);
+        if (c != null) {
+            c.close();
+        }
+        return customer;
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -255,79 +271,6 @@ public class JobActivityExpense extends Activity {
             FadeAnimation.fadeOut(this, this.mRecentNotes);
             this.mRecentNotesButtonState = 8;
         }
-    }
-
-    public static String[] getCustomerList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Set<String> set = new TreeSet();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            String customer = c.getString(STATE_EDIT);
-            if (!TextUtils.isEmpty(customer)) {
-                set.add(customer);
-            }
-        }
-        c.close();
-        return (String[]) set.toArray(new String[STATE_EDIT]);
-    }
-
-    public static String[] getTitlesList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Vector<String> vec = new Vector();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            String title = c.getString(STATE_EDIT);
-            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
-                vec.add(title);
-            }
-        }
-        c.close();
-        return (String[]) vec.toArray(new String[STATE_EDIT]);
-    }
-
-    public static String getNote(Context context, String title) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        String[] strArr2 = new String[STATE_INSERT];
-        strArr2[STATE_EDIT] = title;
-        Cursor c = contentResolver.query(uri, strArr, "title = ?", strArr2, "modified DESC");
-        if (c != null && c.moveToFirst()) {
-            return c.getString(STATE_EDIT);
-        }
-        if (c != null) {
-            c.close();
-        }
-        return null;
-    }
-
-    public static String getLastCustomer(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        String customer = "";
-        while (c != null && c.moveToNext()) {
-            customer = c.getString(STATE_EDIT);
-            if (!TextUtils.isEmpty(customer)) {
-                break;
-            }
-        }
-        Log.i(TAG, "LastCustomer:" + customer);
-        if (c != null) {
-            c.close();
-        }
-        return customer;
     }
 
     protected void onResume() {
@@ -493,6 +436,66 @@ public class JobActivityExpense extends Activity {
             this.mCursor = null;
             getContentResolver().delete(this.mUri, null, null);
             this.mText.setText("");
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.1 */
+    class C00221 implements TextWatcher {
+        C00221() {
+        }
+
+        public void afterTextChanged(Editable s) {
+            JobActivityExpense.this.mShowRecentNotesButton = false;
+            JobActivityExpense.this.updateRecentNotesButton(true);
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.2 */
+    class C00232 implements OnClickListener {
+        C00232() {
+        }
+
+        public void onClick(View v) {
+            JobActivityExpense.this.showRecentNotesDialog();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.3 */
+    class C00243 implements OnClickListener {
+        C00243() {
+        }
+
+        public void onClick(View v) {
+            if (JobActivityExpense.this.mCustomer.isPopupShowing()) {
+                JobActivityExpense.this.mCustomer.dismissDropDown();
+            } else {
+                JobActivityExpense.this.mCustomer.showDropDown();
+            }
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.4 */
+    class C00254 implements OnItemClickListener {
+        C00254() {
+        }
+
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityExpense.5 */
+    class C00265 implements DialogInterface.OnClickListener {
+        C00265() {
+        }
+
+        public void onClick(DialogInterface dialog, int which) {
+            JobActivityExpense.this.mText.setText(JobActivityExpense.getNote(JobActivityExpense.this, JobActivityExpense.this.mRecentNoteList[which]));
         }
     }
 }

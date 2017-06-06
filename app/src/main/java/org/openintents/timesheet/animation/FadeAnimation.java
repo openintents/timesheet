@@ -5,9 +5,23 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+
 import org.openintents.timesheet.R;
 
 public class FadeAnimation {
+
+    public static void fadeIn(Context context, View view) {
+        Animation anim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        anim.setAnimationListener(new C00411());
+        view.setVisibility(View.VISIBLE);
+        view.startAnimation(anim);
+    }
+
+    public static void fadeOut(Context context, View view) {
+        Animation anim = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+        anim.setAnimationListener(new C00422(view));
+        view.startAnimation(anim);
+    }
 
     /* renamed from: org.openintents.timesheet.animation.FadeAnimation.1 */
     static class C00411 implements AnimationListener {
@@ -41,18 +55,5 @@ public class FadeAnimation {
 
         public void onAnimationStart(Animation animation) {
         }
-    }
-
-    public static void fadeIn(Context context, View view) {
-        Animation anim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
-        anim.setAnimationListener(new C00411());
-        view.setVisibility(View.VISIBLE);
-        view.startAnimation(anim);
-    }
-
-    public static void fadeOut(Context context, View view) {
-        Animation anim = AnimationUtils.loadAnimation(context, R.anim.fade_out);
-        anim.setAnimationListener(new C00422(view));
-        view.startAnimation(anim);
     }
 }

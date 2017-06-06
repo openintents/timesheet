@@ -69,6 +69,19 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 public class JobActivity extends Activity {
+    static final int DIALOG_ID_BREAK = 5;
+    static final int DIALOG_ID_END_DATE = 3;
+    static final int DIALOG_ID_END_TIME = 4;
+    static final int DIALOG_ID_PLANNED_DATE = 9;
+    static final int DIALOG_ID_PLANNED_DURATION = 11;
+    static final int DIALOG_ID_PLANNED_TIME = 10;
+    static final int DIALOG_ID_RATES = 12;
+    static final int DIALOG_ID_RECENT_NOTES = 8;
+    static final int DIALOG_ID_RESTART_JOB = 6;
+    static final int DIALOG_ID_START_DATE = 1;
+    static final int DIALOG_ID_START_TIME = 2;
+    static final int DIALOG_ID_STOP_JOB = 7;
+    static final String TAG = "JobActivity";
     private static final int ADD_EXTRA_ITEM_ID = 11;
     private static final int COLUMN_INDEX_BREAK2_COUNT = 14;
     private static final int COLUMN_INDEX_BREAK2_DURATION = 13;
@@ -91,18 +104,6 @@ public class JobActivity extends Activity {
     private static final int COLUMN_INDEX_START = 2;
     private static final int CONTINUE_ID = 7;
     private static final int DELETE_ID = 3;
-    static final int DIALOG_ID_BREAK = 5;
-    static final int DIALOG_ID_END_DATE = 3;
-    static final int DIALOG_ID_END_TIME = 4;
-    static final int DIALOG_ID_PLANNED_DATE = 9;
-    static final int DIALOG_ID_PLANNED_DURATION = 11;
-    static final int DIALOG_ID_PLANNED_TIME = 10;
-    static final int DIALOG_ID_RATES = 12;
-    static final int DIALOG_ID_RECENT_NOTES = 8;
-    static final int DIALOG_ID_RESTART_JOB = 6;
-    static final int DIALOG_ID_START_DATE = 1;
-    static final int DIALOG_ID_START_TIME = 2;
-    static final int DIALOG_ID_STOP_JOB = 7;
     private static final int DISCARD_ID = 2;
     private static final int END_ID = 8;
     private static final int EVENT_ID = 9;
@@ -120,7 +121,13 @@ public class JobActivity extends Activity {
     private static final String SHOW_RECENT_NOTES_BUTTON = "show_recent_notes";
     private static final int STATE_EDIT = 0;
     private static final int STATE_INSERT = 1;
-    static final String TAG = "JobActivity";
+
+    static {
+        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, Job.HOURLY_RATE, TimesheetIntent.EXTRA_CUSTOMER, Job.PLANNED_DATE, Job.PLANNED_DURATION, Job.CALENDAR_REF, TimesheetProvider.QUERY_EXTRAS_TOTAL, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.BREAK2_COUNT, Job.HOURLY_RATE2, Job.HOURLY_RATE2_START, Job.HOURLY_RATE3, Job.HOURLY_RATE3_START, Job.CUSTOMER_REF};
+    }
+
+    NumberFormat mDecimalFormat;
+    String[] mRecentNoteList;
     private long mBillingUnit;
     private long mBillingUnitHalf;
     private long mBillingUnitMinutes;
@@ -139,7 +146,6 @@ public class JobActivity extends Activity {
     private AutoCompleteTextView mCustomer;
     private String[] mCustomerList;
     private String mCustomerRef;
-    NumberFormat mDecimalFormat;
     private Runnable mDisplayUpdater;
     private TextView mDurationInfo;
     private LinearLayout mEditHourlyRate;
@@ -169,7 +175,6 @@ public class JobActivity extends Activity {
     private String mPreselectedCustomer;
     private RateListAdapter mRateAdatper;
     private ImageButton mRateButton;
-    String[] mRecentNoteList;
     private Button mRecentNotes;
     private int mRecentNotesButtonState;
     private Button mSetBreak;
@@ -195,191 +200,6 @@ public class JobActivity extends Activity {
     private boolean mUpdateCalendarEvent;
     private Uri mUri;
 
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.1 */
-    class C00131 implements OnDateSetListener {
-        C00131() {
-        }
-
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DISCARD_ID));
-            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR_OF_DAY);
-            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
-            JobActivity.this.mCalendar.setTimeInMillis(0);
-            JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
-            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
-            JobActivity.this.updateDatabase();
-            ContentValues values = new ContentValues();
-            values.put(Job.START_DATE, Long.valueOf(millis));
-            JobActivity.this.getContentResolver().update(JobActivity.this.mUri, values, null, null);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.2 */
-    class C00142 implements OnTimeSetListener {
-        C00142() {
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DISCARD_ID));
-            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
-            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
-            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
-            JobActivity.this.mCalendar.setTimeInMillis(0);
-            JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
-            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.START_DATE, Long.valueOf(millis));
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.3 */
-    class C00153 implements OnDateSetListener {
-        C00153() {
-        }
-
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DIALOG_ID_END_DATE));
-            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR);
-            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
-            JobActivity.this.mCalendar.setTimeInMillis(0);
-            JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
-            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.END_DATE, Long.valueOf(millis));
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.4 */
-    class C00164 implements OnTimeSetListener {
-        C00164() {
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DIALOG_ID_END_DATE));
-            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
-            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
-            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
-            JobActivity.this.mCalendar.setTimeInMillis(0);
-            JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
-            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.END_DATE, Long.valueOf(millis));
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.5 */
-    class C00175 implements OnTimeSetListener {
-        C00175() {
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            long millis = JobActivity.this.round((long) (((hourOfDay * 60) + minute) * 60000));
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.LAST_START_BREAK, (String) null);
-            values.put(Job.BREAK_DURATION, Long.valueOf(millis));
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.6 */
-    class C00186 implements OnDateSetListener {
-        C00186() {
-        }
-
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.END_ID));
-            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR_OF_DAY);
-            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
-            JobActivity.this.mCalendar.setTimeInMillis(0);
-            JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
-            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
-            String calendarRef = JobActivity.this.setOrUpdateCalendarEvent(JobActivity.this.mCursor.getString(JobActivity.SEND_ID), millis, Long.valueOf(JobActivity.this.mCursor.getLong(JobActivity.EVENT_ID)).longValue(), JobActivity.this.mCalendarAuthority);
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.PLANNED_DATE, Long.valueOf(millis));
-            values.put(Job.CALENDAR_REF, calendarRef);
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.7 */
-    class C00197 implements OnTimeSetListener {
-        C00197() {
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.END_ID));
-            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
-            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
-            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
-            JobActivity.this.mCalendar.setTimeInMillis(0);
-            JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
-            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
-            String calendarRef = JobActivity.this.setOrUpdateCalendarEvent(JobActivity.this.mCursor.getString(JobActivity.SEND_ID), millis, Long.valueOf(JobActivity.this.mCursor.getLong(JobActivity.EVENT_ID)).longValue(), JobActivity.this.mCalendarAuthority);
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.PLANNED_DATE, Long.valueOf(millis));
-            values.put(Job.CALENDAR_REF, calendarRef);
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.8 */
-    class C00208 implements OnTimeSetListener {
-        C00208() {
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            long millis = JobActivity.this.round((long) (((hourOfDay * 60) + minute) * 60000));
-            String calendarRef = JobActivity.this.setOrUpdateCalendarEvent(JobActivity.this.mCursor.getString(JobActivity.SEND_ID), Long.valueOf(JobActivity.this.mCursor.getLong(JobActivity.END_ID)).longValue(), millis, JobActivity.this.mCalendarAuthority);
-            ContentValues values = JobActivity.this.getContentValues();
-            values.put(Job.PLANNED_DURATION, Long.valueOf(millis));
-            values.put(Job.CALENDAR_REF, calendarRef);
-            JobActivity.this.updateDatabase(values);
-            JobActivity.this.updateFromCursor();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivity.9 */
-    class C00219 implements TextWatcher {
-        C00219() {
-        }
-
-        public void afterTextChanged(Editable s) {
-            JobActivity.this.mShowRecentNotesButton = false;
-            JobActivity.this.updateRecentNotesButton(true);
-            JobActivity.this.mUpdateCalendarEvent = true;
-        }
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-    }
-
-    public class DisplayUpdater implements Runnable {
-        public void run() {
-            updateEndTime();
-            JobActivity.this.updateDisplay(1000);
-        }
-
-        private void updateEndTime() {
-            JobActivity.this.mCalendar.setTimeInMillis(System.currentTimeMillis());
-            JobActivity.this.mSetEndTime.setText(DateTimeFormater.mTimeWithSecondsFormater.format(JobActivity.this.mCalendar.getTime()));
-            JobActivity.this.mSetEndDate.setText(DateTimeFormater.mDateFormater.format(JobActivity.this.mCalendar.getTime()));
-            JobActivity.this.updateInfo(JobActivity.STATE_INSERT);
-        }
-    }
-
     public JobActivity() {
         this.mStartBillingImmediately = false;
         this.mHandler = new Handler();
@@ -400,8 +220,94 @@ public class JobActivity extends Activity {
         this.mPlannedMinutesSetListener = new C00208();
     }
 
-    static {
-        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, Job.HOURLY_RATE, TimesheetIntent.EXTRA_CUSTOMER, Job.PLANNED_DATE, Job.PLANNED_DURATION, Job.CALENDAR_REF, TimesheetProvider.QUERY_EXTRAS_TOTAL, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.BREAK2_COUNT, Job.HOURLY_RATE2, Job.HOURLY_RATE2_START, Job.HOURLY_RATE3, Job.HOURLY_RATE3_START, Job.CUSTOMER_REF};
+    public static int getCalendarAuthority(Context ctx) {
+        ContentResolver contentResolver = ctx.getContentResolver();
+        Uri uri = Calendars.CONTENT_URI_1;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Reminders._ID;
+        Cursor result = contentResolver.query(uri, strArr, null, null, null);
+        if (result != null && result.getCount() > 0) {
+            return STATE_INSERT;
+        }
+        contentResolver = ctx.getContentResolver();
+        uri = Calendars.CONTENT_URI_2;
+        strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Reminders._ID;
+        result = contentResolver.query(uri, strArr, null, null, null);
+        return (result == null || result.getCount() <= 0) ? STATE_EDIT : DISCARD_ID;
+    }
+
+    public static String[] getCustomerList(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        Set<String> set = new TreeSet();
+        c.moveToPosition(-1);
+        while (c.moveToNext()) {
+            String customer = c.getString(STATE_EDIT);
+            if (!TextUtils.isEmpty(customer)) {
+                set.add(customer);
+            }
+        }
+        c.close();
+        return (String[]) set.toArray(new String[STATE_EDIT]);
+    }
+
+    public static String[] getTitlesList(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Job.TITLE;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        Vector<String> vec = new Vector();
+        c.moveToPosition(-1);
+        while (c.moveToNext()) {
+            String title = c.getString(STATE_EDIT);
+            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(android.R.string.untitled)) || vec.contains(title))) {
+                vec.add(title);
+            }
+        }
+        c.close();
+        return (String[]) vec.toArray(new String[STATE_EDIT]);
+    }
+
+    public static String getNote(Context context, String title) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Job.TITLE;
+        String[] strArr2 = new String[STATE_INSERT];
+        strArr2[STATE_EDIT] = title;
+        Cursor c = contentResolver.query(uri, strArr, "title = ?", strArr2, "modified DESC");
+        if (c != null && c.moveToFirst()) {
+            return c.getString(STATE_EDIT);
+        }
+        if (c != null) {
+            c.close();
+        }
+        return null;
+    }
+
+    public static String getLastCustomer(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        String customer = "";
+        while (c != null && c.moveToNext()) {
+            customer = c.getString(STATE_EDIT);
+            if (!TextUtils.isEmpty(customer)) {
+                break;
+            }
+        }
+        Log.i(TAG, "LastCustomer:" + customer);
+        if (c != null) {
+            c.close();
+        }
+        return customer;
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -655,23 +561,6 @@ public class JobActivity extends Activity {
         }
     }
 
-    public static int getCalendarAuthority(Context ctx) {
-        ContentResolver contentResolver = ctx.getContentResolver();
-        Uri uri = Calendars.CONTENT_URI_1;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Reminders._ID;
-        Cursor result = contentResolver.query(uri, strArr, null, null, null);
-        if (result != null && result.getCount() > 0) {
-            return STATE_INSERT;
-        }
-        contentResolver = ctx.getContentResolver();
-        uri = Calendars.CONTENT_URI_2;
-        strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Reminders._ID;
-        result = contentResolver.query(uri, strArr, null, null, null);
-        return (result == null || result.getCount() <= 0) ? STATE_EDIT : DISCARD_ID;
-    }
-
     private void showRecentNotesDialog() {
         Log.d(TAG, "showRecentNOtes");
         if (this.mRecentNoteList == null) {
@@ -740,79 +629,6 @@ public class JobActivity extends Activity {
         Object[] objArr = new Object[STATE_INSERT];
         objArr[STATE_EDIT] = rateString;
         textView.setText(getString(R.string.hourly_rate_info, objArr));
-    }
-
-    public static String[] getCustomerList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Set<String> set = new TreeSet();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            String customer = c.getString(STATE_EDIT);
-            if (!TextUtils.isEmpty(customer)) {
-                set.add(customer);
-            }
-        }
-        c.close();
-        return (String[]) set.toArray(new String[STATE_EDIT]);
-    }
-
-    public static String[] getTitlesList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Vector<String> vec = new Vector();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            String title = c.getString(STATE_EDIT);
-            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(android.R.string.untitled)) || vec.contains(title))) {
-                vec.add(title);
-            }
-        }
-        c.close();
-        return (String[]) vec.toArray(new String[STATE_EDIT]);
-    }
-
-    public static String getNote(Context context, String title) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        String[] strArr2 = new String[STATE_INSERT];
-        strArr2[STATE_EDIT] = title;
-        Cursor c = contentResolver.query(uri, strArr, "title = ?", strArr2, "modified DESC");
-        if (c != null && c.moveToFirst()) {
-            return c.getString(STATE_EDIT);
-        }
-        if (c != null) {
-            c.close();
-        }
-        return null;
-    }
-
-    public static String getLastCustomer(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        String customer = "";
-        while (c != null && c.moveToNext()) {
-            customer = c.getString(STATE_EDIT);
-            if (!TextUtils.isEmpty(customer)) {
-                break;
-            }
-        }
-        Log.i(TAG, "LastCustomer:" + customer);
-        if (c != null) {
-            c.close();
-        }
-        return customer;
     }
 
     private void rateButtonClicked() {
@@ -1584,6 +1400,191 @@ public class JobActivity extends Activity {
             this.mCursor = null;
             getContentResolver().delete(this.mUri, null, null);
             this.mText.setText("");
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.1 */
+    class C00131 implements OnDateSetListener {
+        C00131() {
+        }
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DISCARD_ID));
+            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR_OF_DAY);
+            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
+            JobActivity.this.mCalendar.setTimeInMillis(0);
+            JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
+            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
+            JobActivity.this.updateDatabase();
+            ContentValues values = new ContentValues();
+            values.put(Job.START_DATE, Long.valueOf(millis));
+            JobActivity.this.getContentResolver().update(JobActivity.this.mUri, values, null, null);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.2 */
+    class C00142 implements OnTimeSetListener {
+        C00142() {
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DISCARD_ID));
+            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
+            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
+            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
+            JobActivity.this.mCalendar.setTimeInMillis(0);
+            JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
+            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.START_DATE, Long.valueOf(millis));
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.3 */
+    class C00153 implements OnDateSetListener {
+        C00153() {
+        }
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DIALOG_ID_END_DATE));
+            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR);
+            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
+            JobActivity.this.mCalendar.setTimeInMillis(0);
+            JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
+            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.END_DATE, Long.valueOf(millis));
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.4 */
+    class C00164 implements OnTimeSetListener {
+        C00164() {
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.DIALOG_ID_END_DATE));
+            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
+            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
+            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
+            JobActivity.this.mCalendar.setTimeInMillis(0);
+            JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
+            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.END_DATE, Long.valueOf(millis));
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.5 */
+    class C00175 implements OnTimeSetListener {
+        C00175() {
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            long millis = JobActivity.this.round((long) (((hourOfDay * 60) + minute) * 60000));
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.LAST_START_BREAK, (String) null);
+            values.put(Job.BREAK_DURATION, Long.valueOf(millis));
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.6 */
+    class C00186 implements OnDateSetListener {
+        C00186() {
+        }
+
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.END_ID));
+            int hour = JobActivity.this.mCalendar.get(Calendar.HOUR_OF_DAY);
+            int minute = JobActivity.this.mCalendar.get(Calendar.MINUTE);
+            JobActivity.this.mCalendar.setTimeInMillis(0);
+            JobActivity.this.mCalendar.set(year, monthOfYear, dayOfMonth, hour, minute);
+            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
+            String calendarRef = JobActivity.this.setOrUpdateCalendarEvent(JobActivity.this.mCursor.getString(JobActivity.SEND_ID), millis, Long.valueOf(JobActivity.this.mCursor.getLong(JobActivity.EVENT_ID)).longValue(), JobActivity.this.mCalendarAuthority);
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.PLANNED_DATE, Long.valueOf(millis));
+            values.put(Job.CALENDAR_REF, calendarRef);
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.7 */
+    class C00197 implements OnTimeSetListener {
+        C00197() {
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            JobActivity.this.mCalendar.setTimeInMillis(JobActivity.this.mCursor.getLong(JobActivity.END_ID));
+            int year = JobActivity.this.mCalendar.get(Calendar.YEAR);
+            int month = JobActivity.this.mCalendar.get(Calendar.MONTH);
+            int day = JobActivity.this.mCalendar.get(Calendar.DAY_OF_MONTH);
+            JobActivity.this.mCalendar.setTimeInMillis(0);
+            JobActivity.this.mCalendar.set(year, month, day, hourOfDay, minute);
+            long millis = JobActivity.this.round(JobActivity.this.mCalendar.getTimeInMillis());
+            String calendarRef = JobActivity.this.setOrUpdateCalendarEvent(JobActivity.this.mCursor.getString(JobActivity.SEND_ID), millis, Long.valueOf(JobActivity.this.mCursor.getLong(JobActivity.EVENT_ID)).longValue(), JobActivity.this.mCalendarAuthority);
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.PLANNED_DATE, Long.valueOf(millis));
+            values.put(Job.CALENDAR_REF, calendarRef);
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.8 */
+    class C00208 implements OnTimeSetListener {
+        C00208() {
+        }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            long millis = JobActivity.this.round((long) (((hourOfDay * 60) + minute) * 60000));
+            String calendarRef = JobActivity.this.setOrUpdateCalendarEvent(JobActivity.this.mCursor.getString(JobActivity.SEND_ID), Long.valueOf(JobActivity.this.mCursor.getLong(JobActivity.END_ID)).longValue(), millis, JobActivity.this.mCalendarAuthority);
+            ContentValues values = JobActivity.this.getContentValues();
+            values.put(Job.PLANNED_DURATION, Long.valueOf(millis));
+            values.put(Job.CALENDAR_REF, calendarRef);
+            JobActivity.this.updateDatabase(values);
+            JobActivity.this.updateFromCursor();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivity.9 */
+    class C00219 implements TextWatcher {
+        C00219() {
+        }
+
+        public void afterTextChanged(Editable s) {
+            JobActivity.this.mShowRecentNotesButton = false;
+            JobActivity.this.updateRecentNotesButton(true);
+            JobActivity.this.mUpdateCalendarEvent = true;
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
+
+    public class DisplayUpdater implements Runnable {
+        public void run() {
+            updateEndTime();
+            JobActivity.this.updateDisplay(1000);
+        }
+
+        private void updateEndTime() {
+            JobActivity.this.mCalendar.setTimeInMillis(System.currentTimeMillis());
+            JobActivity.this.mSetEndTime.setText(DateTimeFormater.mTimeWithSecondsFormater.format(JobActivity.this.mCalendar.getTime()));
+            JobActivity.this.mSetEndDate.setText(DateTimeFormater.mDateFormater.format(JobActivity.this.mCalendar.getTime()));
+            JobActivity.this.updateInfo(JobActivity.STATE_INSERT);
         }
     }
 }

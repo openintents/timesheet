@@ -6,15 +6,17 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import java.util.Calendar;
+
 import org.openintents.util.DateTimeFormater;
 import org.openintents.util.DurationFormater;
 
+import java.util.Calendar;
+
 public class JobListCursorAdapter extends CursorAdapter {
     private static final String TAG = "JobListCursorAdapter";
-    private Calendar mCalendar;
     Context mContext;
     StringBuilder mInfo;
+    private Calendar mCalendar;
     private boolean mShowCustomer;
 
     public JobListCursorAdapter(Context context, Cursor c, boolean showCustomer) {

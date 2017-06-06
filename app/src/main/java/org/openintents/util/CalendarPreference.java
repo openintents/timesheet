@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 import android.widget.Toast;
+
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.Calendars;
 import org.openintents.timesheet.activity.JobActivity;

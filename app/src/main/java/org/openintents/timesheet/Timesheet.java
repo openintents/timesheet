@@ -32,6 +32,57 @@ public class Timesheet {
     public static final double RATE_FACTOR = 0.01d;
     public static final String _TAG = "Timesheet";
 
+    public static void updateNotification(Context context, boolean force) {
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceActivity.PREFS_SHOW_NOTIFICATION, false)) {
+            Cursor cursor = context.getContentResolver().query(Job.CONTENT_URI, new String[]{Reminders._ID}, "start_date is not null and end_date is null and last_start_break2 is null", null, null);
+            int jobsInProgress = cursor.getCount();
+            cursor.close();
+            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (jobsInProgress > 0) {
+                String text;
+                if (jobsInProgress == 1) {
+                    text = context.getString(R.string.job_in_progress);
+                } else {
+                    text = context.getString(R.string.jobs_in_progress, new Object[]{String.valueOf(jobsInProgress)});
+                }
+
+
+                Intent intent = new Intent(context, JobList.class);
+                intent.addCategory("android.intent.category.LAUNCHER");
+                intent.setAction("android.intent.action.MAIN");
+                PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                        context);
+                Notification notification = builder.setContentIntent(pi)
+                        .setSmallIcon(R.drawable.icon_timesheet)
+                        .setTicker(null)
+                        .setWhen(time)
+                        .setAutoCancel(true)
+                        .setContentTitle(context.getString(R.string.app_name))
+                        .setContentText(text).build();
+                notification.flags = 2;
+                nm.notify(R.string.jobs_in_progress, notification);
+                return;
+            }
+            nm.cancel(R.string.jobs_in_progress);
+        } else if (force) {
+            ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(R.string.jobs_in_progress);
+        }
+    }
+
+    public interface InvoiceItem extends BaseColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://org.openintents.timesheet/invoiceitems");
+        public static final String CREATED_DATE = "created";
+        public static final String DEFAULT_SORT_ORDER = "description";
+        public static final String DESCRIPTION = "description";
+        public static final String EXTRAS = "extras";
+        public static final String JOB_ID = "job_id";
+        public static final String MODIFIED_DATE = "modified";
+        public static final String TYPE = "type";
+        public static final String VALUE = "value";
+    }
+
     public static final class CalendarApp {
         public static final String EVENT_BEGIN_TIME = "beginTime";
         public static final String EVENT_END_TIME = "endTime";
@@ -173,7 +224,8 @@ public class Timesheet {
     public static class Events {
         public static final String ALL_DAY = "allDay";
         public static final String CALENDAR_ID = "calendar_id";
-        public static final Uri CONTENT_URI_1 = Uri.parse("content://calendar/events");;
+        public static final Uri CONTENT_URI_1 = Uri.parse("content://calendar/events");
+        ;
         public static final Uri CONTENT_URI_2 = Uri.parse("content://com.android.calendar/events");
         public static final String DESCRIPTION = "description";
         public static final String DTEND = "dtend";
@@ -188,18 +240,6 @@ public class Timesheet {
         public static final String VISIBILITY = "visibility";
         public static final String _ID = "_id";
         public static String _SYNC_ID;
-    }
-
-    public interface InvoiceItem extends BaseColumns {
-        public static final Uri CONTENT_URI = Uri.parse("content://org.openintents.timesheet/invoiceitems");
-        public static final String CREATED_DATE = "created";
-        public static final String DEFAULT_SORT_ORDER = "description";
-        public static final String DESCRIPTION = "description";
-        public static final String EXTRAS = "extras";
-        public static final String JOB_ID = "job_id";
-        public static final String MODIFIED_DATE = "modified";
-        public static final String TYPE = "type";
-        public static final String VALUE = "value";
     }
 
     public static class Job implements BaseColumns {
@@ -262,45 +302,6 @@ public class Timesheet {
         static {
             CONTENT_URI_1 = Uri.parse("content://calendar/reminders");
             CONTENT_URI_2 = Uri.parse("content://calendar/reminders");
-        }
-    }
-
-    public static void updateNotification(Context context, boolean force) {
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceActivity.PREFS_SHOW_NOTIFICATION, false)) {
-            Cursor cursor = context.getContentResolver().query(Job.CONTENT_URI, new String[]{Reminders._ID}, "start_date is not null and end_date is null and last_start_break2 is null", null, null);
-            int jobsInProgress = cursor.getCount();
-            cursor.close();
-            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            if (jobsInProgress > 0) {
-                String text;
-                if (jobsInProgress == 1) {
-                    text = context.getString(R.string.job_in_progress);
-                } else {
-                    text = context.getString(R.string.jobs_in_progress, new Object[]{String.valueOf(jobsInProgress)});
-                }
-
-
-                Intent intent = new Intent(context, JobList.class);
-                intent.addCategory("android.intent.category.LAUNCHER");
-                intent.setAction("android.intent.action.MAIN");
-                PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                        context);
-                Notification notification = builder.setContentIntent(pi)
-                        .setSmallIcon(R.drawable.icon_timesheet)
-                        .setTicker(null)
-                        .setWhen(time)
-                        .setAutoCancel(true)
-                        .setContentTitle(context.getString(R.string.app_name))
-                        .setContentText(text).build();
-                notification.flags = 2;
-                nm.notify(R.string.jobs_in_progress, notification);
-                return;
-            }
-            nm.cancel(R.string.jobs_in_progress);
-        } else if (force) {
-            ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(R.string.jobs_in_progress);
         }
     }
 }

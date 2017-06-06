@@ -1,395 +1,395 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <public type="drawable" name="ic_dialog_time" id="0x7f020000" />
-    <public type="drawable" name="ic_menu_continue" id="0x7f020001" />
-    <public type="drawable" name="ic_menu_edit" id="0x7f020002" />
-    <public type="drawable" name="ic_menu_pause" id="0x7f020003" />
-    <public type="drawable" name="ic_menu_play" id="0x7f020004" />
-    <public type="drawable" name="ic_menu_stop" id="0x7f020005" />
-    <public type="drawable" name="ic_new_item" id="0x7f020006" />
-    <public type="drawable" name="ic_ok" id="0x7f020007" />
-    <public type="drawable" name="ic_status_attention" id="0x7f020008" />
-    <public type="drawable" name="ic_status_bed" id="0x7f020009" />
-    <public type="drawable" name="ic_status_bed_sync" id="0x7f02000a" />
-    <public type="drawable" name="ic_status_new_sync" id="0x7f02000b" />
-    <public type="drawable" name="ic_status_ok_sync" id="0x7f02000c" />
-    <public type="drawable" name="ic_status_sleep" id="0x7f02000d" />
-    <public type="drawable" name="ic_status_sleep_sync" id="0x7f02000e" />
-    <public type="drawable" name="ic_status_work" id="0x7f02000f" />
-    <public type="drawable" name="ic_status_work_sync" id="0x7f020010" />
-    <public type="drawable" name="icon_timesheet" id="0x7f020011" />
-    <public type="drawable" name="timepicker_down_btn" id="0x7f020012" />
-    <public type="drawable" name="timepicker_down_disabled" id="0x7f020013" />
-    <public type="drawable" name="timepicker_down_disabled_focused" id="0x7f020014" />
-    <public type="drawable" name="timepicker_down_normal" id="0x7f020015" />
-    <public type="drawable" name="timepicker_down_pressed" id="0x7f020016" />
-    <public type="drawable" name="timepicker_down_selected" id="0x7f020017" />
-    <public type="drawable" name="timepicker_input" id="0x7f020018" />
-    <public type="drawable" name="timepicker_input_disabled" id="0x7f020019" />
-    <public type="drawable" name="timepicker_input_normal" id="0x7f02001a" />
-    <public type="drawable" name="timepicker_input_pressed" id="0x7f02001b" />
-    <public type="drawable" name="timepicker_input_selected" id="0x7f02001c" />
-    <public type="drawable" name="timepicker_up_btn" id="0x7f02001d" />
-    <public type="drawable" name="timepicker_up_disabled" id="0x7f02001e" />
-    <public type="drawable" name="timepicker_up_disabled_focused" id="0x7f02001f" />
-    <public type="drawable" name="timepicker_up_normal" id="0x7f020020" />
-    <public type="drawable" name="timepicker_up_pressed" id="0x7f020021" />
-    <public type="drawable" name="timepicker_up_selected" id="0x7f020022" />
-    <public type="layout" name="about" id="0x7f030000" />
-    <public type="layout" name="convertcsv" id="0x7f030001" />
-    <public type="layout" name="eula" id="0x7f030002" />
-    <public type="layout" name="file_exists" id="0x7f030003" />
-    <public type="layout" name="insert_job" id="0x7f030004" />
-    <public type="layout" name="invoice_item" id="0x7f030005" />
-    <public type="layout" name="job" id="0x7f030006" />
-    <public type="layout" name="job_expense" id="0x7f030007" />
-    <public type="layout" name="job_mileage" id="0x7f030008" />
-    <public type="layout" name="jobslist" id="0x7f030009" />
-    <public type="layout" name="jobslist_item" id="0x7f03000a" />
-    <public type="layout" name="license" id="0x7f03000b" />
-    <public type="layout" name="number_picker" id="0x7f03000c" />
-    <public type="layout" name="time_picker" id="0x7f03000d" />
-    <public type="layout" name="time_picker_dialog" id="0x7f03000e" />
-    <public type="layout" name="type_panel_general" id="0x7f03000f" />
-    <public type="layout" name="type_panel_mileage" id="0x7f030010" />
-    <public type="anim" name="fade_in" id="0x7f040000" />
-    <public type="anim" name="fade_out" id="0x7f040001" />
-    <public type="xml" name="preferences" id="0x7f050000" />
-    <public type="raw" name="license" id="0x7f060000" />
-    <public type="array" name="entries_date_format" id="0x7f070000" />
-    <public type="array" name="entries_date_format_values" id="0x7f070001" />
-    <public type="array" name="entries_time_format" id="0x7f070002" />
-    <public type="array" name="entries_time_format_values" id="0x7f070003" />
-    <public type="array" name="entries_billing_unit" id="0x7f070004" />
-    <public type="array" name="entries_billing_unit_values" id="0x7f070005" />
-    <public type="array" name="entries_reminder" id="0x7f070006" />
-    <public type="array" name="entries_reminder_values" id="0x7f070007" />
-    <public type="array" name="invoice_types" id="0x7f070008" />
-    <public type="array" name="job_types" id="0x7f070009" />
-    <public type="array" name="about_authors" id="0x7f07000a" />
-    <public type="array" name="about_documenters" id="0x7f07000b" />
-    <public type="array" name="about_translators" id="0x7f07000c" />
-    <public type="array" name="about_artists" id="0x7f07000d" />
-    <public type="string" name="app_name" id="0x7f080000" />
-    <public type="string" name="trial_suffix" id="0x7f080001" />
-    <public type="string" name="app_descr" id="0x7f080002" />
-    <public type="string" name="title_create" id="0x7f080003" />
-    <public type="string" name="title_edit" id="0x7f080004" />
-    <public type="string" name="customer" id="0x7f080005" />
-    <public type="string" name="job_done" id="0x7f080006" />
-    <public type="string" name="break_info" id="0x7f080007" />
-    <public type="string" name="duration_info" id="0x7f080008" />
-    <public type="string" name="total_info" id="0x7f080009" />
-    <public type="string" name="extras_info" id="0x7f08000a" />
-    <public type="string" name="hourly_rate_info" id="0x7f08000b" />
-    <public type="string" name="having_a_break" id="0x7f08000c" />
-    <public type="string" name="end_of_break" id="0x7f08000d" />
-    <public type="string" name="started_at" id="0x7f08000e" />
-    <public type="string" name="finshed" id="0x7f08000f" />
-    <public type="string" name="job_not_yet_started" id="0x7f080010" />
-    <public type="string" name="starting_job" id="0x7f080011" />
-    <public type="string" name="hourly_rate" id="0x7f080012" />
-    <public type="string" name="start_time" id="0x7f080013" />
-    <public type="string" name="end_time" id="0x7f080014" />
-    <public type="string" name="break_in_minutes" id="0x7f080015" />
-    <public type="string" name="unknown" id="0x7f080016" />
-    <public type="string" name="customer_hint" id="0x7f080017" />
-    <public type="string" name="customer_hint_first_time" id="0x7f080018" />
-    <public type="string" name="break_duration" id="0x7f080019" />
-    <public type="string" name="planned_time" id="0x7f08001a" />
-    <public type="string" name="planned_duration" id="0x7f08001b" />
-    <public type="string" name="continue_now" id="0x7f08001c" />
-    <public type="string" name="continue_tomorrow" id="0x7f08001d" />
-    <public type="string" name="note" id="0x7f08001e" />
-    <public type="string" name="hour_short" id="0x7f08001f" />
-    <public type="string" name="minute_short" id="0x7f080020" />
-    <public type="string" name="recent_notes" id="0x7f080021" />
-    <public type="string" name="no_recent_notes_available" id="0x7f080022" />
-    <public type="string" name="pick_contact" id="0x7f080023" />
-    <public type="string" name="call_contact" id="0x7f080024" />
-    <public type="string" name="simple_rate" id="0x7f080025" />
-    <public type="string" name="two_rates" id="0x7f080026" />
-    <public type="string" name="thre_rates" id="0x7f080027" />
-    <public type="string" name="dialog_restart_job" id="0x7f080028" />
-    <public type="string" name="dialog_stop_job" id="0x7f080029" />
-    <public type="string" name="end_now" id="0x7f08002a" />
-    <public type="string" name="continue_button" id="0x7f08002b" />
-    <public type="string" name="calendar_missing" id="0x7f08002c" />
-    <public type="string" name="recent_descriptions" id="0x7f08002d" />
-    <public type="string" name="total" id="0x7f08002e" />
-    <public type="string" name="job_denied" id="0x7f08002f" />
-    <public type="string" name="insert_job_full" id="0x7f080030" />
-    <public type="string" name="insert_job_no_duration" id="0x7f080031" />
-    <public type="string" name="insert_job_no_date" id="0x7f080032" />
-    <public type="string" name="insert_job" id="0x7f080033" />
-    <public type="string" name="job_in_progress" id="0x7f080034" />
-    <public type="string" name="jobs_in_progress" id="0x7f080035" />
-    <public type="string" name="trial_version_description" id="0x7f080036" />
-    <public type="string" name="enter_license_code" id="0x7f080037" />
-    <public type="string" name="ok" id="0x7f080038" />
-    <public type="string" name="alert" id="0x7f080039" />
-    <public type="string" name="no_jobs" id="0x7f08003a" />
-    <public type="string" name="spinner_prompt" id="0x7f08003b" />
-    <public type="string" name="all_customers" id="0x7f08003c" />
-    <public type="string" name="number_of_jobs_info" id="0x7f08003d" />
-    <public type="string" name="invoice_item_type_spinner" id="0x7f08003e" />
-    <public type="string" name="description" id="0x7f08003f" />
-    <public type="string" name="value" id="0x7f080040" />
-    <public type="string" name="general_type" id="0x7f080041" />
-    <public type="string" name="start_value" id="0x7f080042" />
-    <public type="string" name="end_value" id="0x7f080043" />
-    <public type="string" name="add" id="0x7f080044" />
-    <public type="string" name="delete" id="0x7f080045" />
-    <public type="string" name="mileage" id="0x7f080046" />
-    <public type="string" name="enter_digits_only" id="0x7f080047" />
-    <public type="string" name="enter_numbers_only" id="0x7f080048" />
-    <public type="string" name="rate_per_mile" id="0x7f080049" />
-    <public type="string" name="no_extra_items" id="0x7f08004a" />
-    <public type="string" name="error_title" id="0x7f08004b" />
-    <public type="string" name="error_message" id="0x7f08004c" />
-    <public type="string" name="menu_delete" id="0x7f08004d" />
-    <public type="string" name="menu_insert" id="0x7f08004e" />
-    <public type="string" name="menu_revert" id="0x7f08004f" />
-    <public type="string" name="menu_discard" id="0x7f080050" />
-    <public type="string" name="menu_list" id="0x7f080051" />
-    <public type="string" name="menu_export" id="0x7f080052" />
-    <public type="string" name="menu_delete_all" id="0x7f080053" />
-    <public type="string" name="menu_start" id="0x7f080054" />
-    <public type="string" name="menu_restart" id="0x7f080055" />
-    <public type="string" name="menu_pause" id="0x7f080056" />
-    <public type="string" name="menu_continue" id="0x7f080057" />
-    <public type="string" name="menu_end" id="0x7f080058" />
-    <public type="string" name="menu_preferences" id="0x7f080059" />
-    <public type="string" name="menu_calendar" id="0x7f08005a" />
-    <public type="string" name="menu_send" id="0x7f08005b" />
-    <public type="string" name="menu_extra_items" id="0x7f08005c" />
-    <public type="string" name="menu_timexchange" id="0x7f08005d" />
-    <public type="string" name="dialog_delete_all" id="0x7f08005e" />
-    <public type="string" name="dialog_delete_last" id="0x7f08005f" />
-    <public type="string" name="delete_all" id="0x7f080060" />
-    <public type="string" name="leave_template" id="0x7f080061" />
-    <public type="string" name="received_job" id="0x7f080062" />
-    <public type="string" name="accept" id="0x7f080063" />
-    <public type="string" name="deny" id="0x7f080064" />
-    <public type="string" name="duration" id="0x7f080065" />
-    <public type="string" name="date_time_set" id="0x7f080066" />
-    <public type="string" name="convert_csv" id="0x7f080067" />
-    <public type="string" name="file_path" id="0x7f080068" />
-    <public type="string" name="dir_path" id="0x7f080069" />
-    <public type="string" name="file_import" id="0x7f08006a" />
-    <public type="string" name="file_export" id="0x7f08006b" />
-    <public type="string" name="error_writing_file" id="0x7f08006c" />
-    <public type="string" name="export_finished" id="0x7f08006d" />
-    <public type="string" name="export_for" id="0x7f08006e" />
-    <public type="string" name="export_to_single_file" id="0x7f08006f" />
-    <public type="string" name="export_to_directory" id="0x7f080070" />
-    <public type="string" name="default_path" id="0x7f080071" />
-    <public type="string" name="default_directory" id="0x7f080072" />
-    <public type="string" name="calendar_entries_added_or_updated" id="0x7f080073" />
-    <public type="string" name="file_exists" id="0x7f080074" />
-    <public type="string" name="dont_ask_again" id="0x7f080075" />
-    <public type="string" name="yes" id="0x7f080076" />
-    <public type="string" name="no" id="0x7f080077" />
-    <public type="string" name="convert_timexchange" id="0x7f080078" />
-    <public type="string" name="header_date" id="0x7f080079" />
-    <public type="string" name="header_time_started" id="0x7f08007a" />
-    <public type="string" name="header_total" id="0x7f08007b" />
-    <public type="string" name="header_work" id="0x7f08007c" />
-    <public type="string" name="header_break_time" id="0x7f08007d" />
-    <public type="string" name="header_earnings" id="0x7f08007e" />
-    <public type="string" name="header_description" id="0x7f08007f" />
-    <public type="string" name="header_rate" id="0x7f080080" />
-    <public type="string" name="header_customer" id="0x7f080081" />
-    <public type="string" name="export_total" id="0x7f080082" />
-    <public type="string" name="preference_general" id="0x7f080083" />
-    <public type="string" name="preference_general_summary" id="0x7f080084" />
-    <public type="string" name="preference_export_completed_only" id="0x7f080085" />
-    <public type="string" name="preference_export_completed_only_summary" id="0x7f080086" />
-    <public type="string" name="preference_export_filename" id="0x7f080087" />
-    <public type="string" name="preference_export_filename_summary" id="0x7f080088" />
-    <public type="string" name="preference_export_directory" id="0x7f080089" />
-    <public type="string" name="preference_export_directory_summary" id="0x7f08008a" />
-    <public type="string" name="preference_export_replace_br" id="0x7f08008b" />
-    <public type="string" name="preference_export_replace_br_summary" id="0x7f08008c" />
-    <public type="string" name="preference_export_totals" id="0x7f08008d" />
-    <public type="string" name="preference_export_totals_summary" id="0x7f08008e" />
-    <public type="string" name="preference_export_csv" id="0x7f08008f" />
-    <public type="string" name="preference_export_csv_summary" id="0x7f080090" />
-    <public type="string" name="preference_export_single_file" id="0x7f080091" />
-    <public type="string" name="preference_export_single_file_summary" id="0x7f080092" />
-    <public type="string" name="preference_export_calendar" id="0x7f080093" />
-    <public type="string" name="preference_export_calendar_summary" id="0x7f080094" />
-    <public type="string" name="preference_date_format" id="0x7f080095" />
-    <public type="string" name="preference_date_format_summary" id="0x7f080096" />
-    <public type="string" name="preference_date_format_dialog_title" id="0x7f080097" />
-    <public type="string" name="preference_time_format" id="0x7f080098" />
-    <public type="string" name="preference_time_format_summary" id="0x7f080099" />
-    <public type="string" name="preference_time_format_dialog_title" id="0x7f08009a" />
-    <public type="string" name="preference_application" id="0x7f08009b" />
-    <public type="string" name="preference_start_jobs_immediately" id="0x7f08009c" />
-    <public type="string" name="preference_start_jobs_immediately_summary" id="0x7f08009d" />
-    <public type="string" name="preference_ask_if_file_exists" id="0x7f08009e" />
-    <public type="string" name="preference_ask_if_file_exists_summary" id="0x7f08009f" />
-    <public type="string" name="preference_billing_unit" id="0x7f0800a0" />
-    <public type="string" name="preference_billing_unit_summary" id="0x7f0800a1" />
-    <public type="string" name="preference_billing_unit_dialog_title" id="0x7f0800a2" />
-    <public type="string" name="preference_omit_templates" id="0x7f0800a3" />
-    <public type="string" name="preference_omit_templates_summary" id="0x7f0800a4" />
-    <public type="string" name="preference_show_notification" id="0x7f0800a5" />
-    <public type="string" name="preference_show_notification_summary" id="0x7f0800a6" />
-    <public type="string" name="preference_scheduled_jobs" id="0x7f0800a7" />
-    <public type="string" name="preference_calendar" id="0x7f0800a8" />
-    <public type="string" name="preference_calendar_summary" id="0x7f0800a9" />
-    <public type="string" name="preference_calendar_dialog_title" id="0x7f0800aa" />
-    <public type="string" name="preference_reminder" id="0x7f0800ab" />
-    <public type="string" name="preference_reminder_summary" id="0x7f0800ac" />
-    <public type="string" name="preference_reminder_dialog_title" id="0x7f0800ad" />
-    <public type="string" name="preference_license" id="0x7f0800ae" />
-    <public type="string" name="preference_get_license" id="0x7f0800af" />
-    <public type="string" name="preference_get_license_summary" id="0x7f0800b0" />
-    <public type="string" name="preference_get_license_from" id="0x7f0800b1" />
-    <public type="string" name="preference_license_market" id="0x7f0800b2" />
-    <public type="string" name="preference_license_market_summary" id="0x7f0800b3" />
-    <public type="string" name="preference_license_developer" id="0x7f0800b4" />
-    <public type="string" name="preference_license_developer_summary" id="0x7f0800b5" />
-    <public type="string" name="preference_license_pdassi" id="0x7f0800b6" />
-    <public type="string" name="preference_license_pdassi_summary" id="0x7f0800b7" />
-    <public type="string" name="preference_extensions" id="0x7f0800b8" />
-    <public type="string" name="preference_get_extensions" id="0x7f0800b9" />
-    <public type="string" name="preference_get_extensions_summary" id="0x7f0800ba" />
-    <public type="string" name="preference_get_extensions_from" id="0x7f0800bb" />
-    <public type="string" name="preference_extensions_market" id="0x7f0800bc" />
-    <public type="string" name="preference_extensions_market_summary" id="0x7f0800bd" />
-    <public type="string" name="preference_extensions_developer" id="0x7f0800be" />
-    <public type="string" name="preference_extensions_developer_summary" id="0x7f0800bf" />
-    <public type="string" name="license_title" id="0x7f0800c0" />
-    <public type="string" name="license_only_title" id="0x7f0800c1" />
-    <public type="string" name="enter_license" id="0x7f0800c2" />
-    <public type="string" name="buy_license" id="0x7f0800c3" />
-    <public type="string" name="license_text" id="0x7f0800c4" />
-    <public type="string" name="license_text_market" id="0x7f0800c5" />
-    <public type="string" name="invalid_license" id="0x7f0800c6" />
-    <public type="string" name="license_from_clipboard" id="0x7f0800c7" />
-    <public type="string" name="license_valid" id="0x7f0800c8" />
-    <public type="string" name="dialog_market_warning" id="0x7f0800c9" />
-    <public type="string" name="about_comments" id="0x7f0800ca" />
-    <public type="string" name="about_copyright" id="0x7f0800cb" />
-    <public type="string" name="about_website_label" id="0x7f0800cc" />
-    <public type="string" name="about_website_url" id="0x7f0800cd" />
-    <public type="string" name="about_email" id="0x7f0800ce" />
-    <public type="string" name="eula_title" id="0x7f0800cf" />
-    <public type="string" name="eula_accept" id="0x7f0800d0" />
-    <public type="string" name="eula_refuse" id="0x7f0800d1" />
-    <public type="string" name="eula_description_open" id="0x7f0800d2" />
-    <public type="string" name="update_box_text" id="0x7f0800d3" />
-    <public type="string" name="update_check_now" id="0x7f0800d4" />
-    <public type="string" name="update_get_updater" id="0x7f0800d5" />
-    <public type="string" name="update_app_url" id="0x7f0800d6" />
-    <public type="string" name="update_checker_url" id="0x7f0800d7" />
-    <public type="string" name="update_app_developer_url" id="0x7f0800d8" />
-    <public type="string" name="update_checker_developer_url" id="0x7f0800d9" />
-    <public type="string" name="update_error" id="0x7f0800da" />
-    <public type="string" name="update" id="0x7f0800db" />
-    <public type="string" name="about" id="0x7f0800dc" />
-    <public type="string" name="aboutapp_not_available" id="0x7f0800dd" />
-    <public type="string" name="aboutapp_get" id="0x7f0800de" />
-    <public type="string" name="aboutapp_market_uri" id="0x7f0800df" />
-    <public type="string" name="aboutapp_developer_uri" id="0x7f0800e0" />
-    <public type="string" name="about_title" id="0x7f0800e1" />
-    <public type="string" name="about_text" id="0x7f0800e2" />
-    <public type="string" name="preference_extensions_market_link" id="0x7f0800e3" />
-    <public type="string" name="preference_extensions_developer_link" id="0x7f0800e4" />
-    <public type="string" name="preference_license_market_link" id="0x7f0800e5" />
-    <public type="string" name="preference_license_pdassi_link" id="0x7f0800e6" />
-    <public type="string" name="permission_read" id="0x7f0800e7" />
-    <public type="string" name="permission_read_descr" id="0x7f0800e8" />
-    <public type="string" name="permission_write" id="0x7f0800e9" />
-    <public type="string" name="permission_write_descr" id="0x7f0800ea" />
-    <public type="style" name="DialogWindowTitle" id="0x7f090000" />
-    <public type="style" name="TextAppearance" id="0x7f090001" />
-    <public type="style" name="TextAppearance.DialogWindowTitle" id="0x7f090002" />
-    <public type="style" name="MyThemeDialogAlert" id="0x7f090003" />
-    <public type="menu" name="context_menu_customer" id="0x7f0a0000" />
-    <public type="id" name="text" id="0x7f0b0000" />
-    <public type="id" name="file_path_label" id="0x7f0b0001" />
-    <public type="id" name="file_path" id="0x7f0b0002" />
-    <public type="id" name="export_for" id="0x7f0b0003" />
-    <public type="id" name="info" id="0x7f0b0004" />
-    <public type="id" name="calendar_info" id="0x7f0b0005" />
-    <public type="id" name="file_export" id="0x7f0b0006" />
-    <public type="id" name="file_import" id="0x7f0b0007" />
-    <public type="id" name="text1" id="0x7f0b0008" />
-    <public type="id" name="container2" id="0x7f0b0009" />
-    <public type="id" name="button1" id="0x7f0b000a" />
-    <public type="id" name="button2" id="0x7f0b000b" />
-    <public type="id" name="dont_ask_again" id="0x7f0b000c" />
-    <public type="id" name="customer" id="0x7f0b000d" />
-    <public type="id" name="hourly_rate" id="0x7f0b000e" />
-    <public type="id" name="accept" id="0x7f0b000f" />
-    <public type="id" name="deny" id="0x7f0b0010" />
-    <public type="id" name="spinner" id="0x7f0b0011" />
-    <public type="id" name="panel_frame" id="0x7f0b0012" />
-    <public type="id" name="add_button" id="0x7f0b0013" />
-    <public type="id" name="empty" id="0x7f0b0014" />
-    <public type="id" name="customer_box" id="0x7f0b0015" />
-    <public type="id" name="rate_button" id="0x7f0b0016" />
-    <public type="id" name="info_panel1" id="0x7f0b0017" />
-    <public type="id" name="timestamp" id="0x7f0b0018" />
-    <public type="id" name="info_panel2" id="0x7f0b0019" />
-    <public type="id" name="duration_info" id="0x7f0b001a" />
-    <public type="id" name="extras_info" id="0x7f0b001b" />
-    <public type="id" name="total_info" id="0x7f0b001c" />
-    <public type="id" name="info_panel3" id="0x7f0b001d" />
-    <public type="id" name="break_info" id="0x7f0b001e" />
-    <public type="id" name="hourly_rate_info" id="0x7f0b001f" />
-    <public type="id" name="edit_panel1" id="0x7f0b0020" />
-    <public type="id" name="edit_hourlyrate" id="0x7f0b0021" />
-    <public type="id" name="set_hourly_rate" id="0x7f0b0022" />
-    <public type="id" name="rate_edit_button" id="0x7f0b0023" />
-    <public type="id" name="edit_panel2" id="0x7f0b0024" />
-    <public type="id" name="set_start_date" id="0x7f0b0025" />
-    <public type="id" name="set_start_time" id="0x7f0b0026" />
-    <public type="id" name="set_end_date" id="0x7f0b0027" />
-    <public type="id" name="set_end_time" id="0x7f0b0028" />
-    <public type="id" name="set_break_minutes" id="0x7f0b0029" />
-    <public type="id" name="edit_panel3" id="0x7f0b002a" />
-    <public type="id" name="set_planned_date" id="0x7f0b002b" />
-    <public type="id" name="set_planned_time" id="0x7f0b002c" />
-    <public type="id" name="set_planned_minutes" id="0x7f0b002d" />
-    <public type="id" name="quick_panel" id="0x7f0b002e" />
-    <public type="id" name="break_start_end" id="0x7f0b002f" />
-    <public type="id" name="start_end" id="0x7f0b0030" />
-    <public type="id" name="break2_start_end" id="0x7f0b0031" />
-    <public type="id" name="note" id="0x7f0b0032" />
-    <public type="id" name="recent_notes" id="0x7f0b0033" />
-    <public type="id" name="set_mileage_start" id="0x7f0b0034" />
-    <public type="id" name="set_mileage_end" id="0x7f0b0035" />
-    <public type="id" name="set_mileage_total" id="0x7f0b0036" />
-    <public type="id" name="set_mileage_rate" id="0x7f0b0037" />
-    <public type="id" name="job_count_info" id="0x7f0b0038" />
-    <public type="id" name="title" id="0x7f0b0039" />
-    <public type="id" name="status" id="0x7f0b003a" />
-    <public type="id" name="container" id="0x7f0b003b" />
-    <public type="id" name="layout" id="0x7f0b003c" />
-    <public type="id" name="lic1" id="0x7f0b003d" />
-    <public type="id" name="lic2" id="0x7f0b003e" />
-    <public type="id" name="lic3" id="0x7f0b003f" />
-    <public type="id" name="lic4" id="0x7f0b0040" />
-    <public type="id" name="ok" id="0x7f0b0041" />
-    <public type="id" name="lic_text" id="0x7f0b0042" />
-    <public type="id" name="request" id="0x7f0b0043" />
-    <public type="id" name="increment" id="0x7f0b0044" />
-    <public type="id" name="timepicker_input" id="0x7f0b0045" />
-    <public type="id" name="decrement" id="0x7f0b0046" />
-    <public type="id" name="hour" id="0x7f0b0047" />
-    <public type="id" name="minute" id="0x7f0b0048" />
-    <public type="id" name="amPm" id="0x7f0b0049" />
-    <public type="id" name="timePicker" id="0x7f0b004a" />
-    <public type="id" name="description" id="0x7f0b004b" />
-    <public type="id" name="value" id="0x7f0b004c" />
-    <public type="id" name="start_value" id="0x7f0b004d" />
-    <public type="id" name="end_value" id="0x7f0b004e" />
-    <public type="id" name="rate" id="0x7f0b004f" />
-    <public type="id" name="pick_contact" id="0x7f0b0050" />
-    <public type="id" name="call_contact" id="0x7f0b0051" />
+    <public name="ic_dialog_time" id="0x7f020000" type="drawable"/>
+    <public name="ic_menu_continue" id="0x7f020001" type="drawable"/>
+    <public name="ic_menu_edit" id="0x7f020002" type="drawable"/>
+    <public name="ic_menu_pause" id="0x7f020003" type="drawable"/>
+    <public name="ic_menu_play" id="0x7f020004" type="drawable"/>
+    <public name="ic_menu_stop" id="0x7f020005" type="drawable"/>
+    <public name="ic_new_item" id="0x7f020006" type="drawable"/>
+    <public name="ic_ok" id="0x7f020007" type="drawable"/>
+    <public name="ic_status_attention" id="0x7f020008" type="drawable"/>
+    <public name="ic_status_bed" id="0x7f020009" type="drawable"/>
+    <public name="ic_status_bed_sync" id="0x7f02000a" type="drawable"/>
+    <public name="ic_status_new_sync" id="0x7f02000b" type="drawable"/>
+    <public name="ic_status_ok_sync" id="0x7f02000c" type="drawable"/>
+    <public name="ic_status_sleep" id="0x7f02000d" type="drawable"/>
+    <public name="ic_status_sleep_sync" id="0x7f02000e" type="drawable"/>
+    <public name="ic_status_work" id="0x7f02000f" type="drawable"/>
+    <public name="ic_status_work_sync" id="0x7f020010" type="drawable"/>
+    <public name="icon_timesheet" id="0x7f020011" type="drawable"/>
+    <public name="timepicker_down_btn" id="0x7f020012" type="drawable"/>
+    <public name="timepicker_down_disabled" id="0x7f020013" type="drawable"/>
+    <public name="timepicker_down_disabled_focused" id="0x7f020014" type="drawable"/>
+    <public name="timepicker_down_normal" id="0x7f020015" type="drawable"/>
+    <public name="timepicker_down_pressed" id="0x7f020016" type="drawable"/>
+    <public name="timepicker_down_selected" id="0x7f020017" type="drawable"/>
+    <public name="timepicker_input" id="0x7f020018" type="drawable"/>
+    <public name="timepicker_input_disabled" id="0x7f020019" type="drawable"/>
+    <public name="timepicker_input_normal" id="0x7f02001a" type="drawable"/>
+    <public name="timepicker_input_pressed" id="0x7f02001b" type="drawable"/>
+    <public name="timepicker_input_selected" id="0x7f02001c" type="drawable"/>
+    <public name="timepicker_up_btn" id="0x7f02001d" type="drawable"/>
+    <public name="timepicker_up_disabled" id="0x7f02001e" type="drawable"/>
+    <public name="timepicker_up_disabled_focused" id="0x7f02001f" type="drawable"/>
+    <public name="timepicker_up_normal" id="0x7f020020" type="drawable"/>
+    <public name="timepicker_up_pressed" id="0x7f020021" type="drawable"/>
+    <public name="timepicker_up_selected" id="0x7f020022" type="drawable"/>
+    <public name="about" id="0x7f030000" type="layout"/>
+    <public name="convertcsv" id="0x7f030001" type="layout"/>
+    <public name="eula" id="0x7f030002" type="layout"/>
+    <public name="file_exists" id="0x7f030003" type="layout"/>
+    <public name="insert_job" id="0x7f030004" type="layout"/>
+    <public name="invoice_item" id="0x7f030005" type="layout"/>
+    <public name="job" id="0x7f030006" type="layout"/>
+    <public name="job_expense" id="0x7f030007" type="layout"/>
+    <public name="job_mileage" id="0x7f030008" type="layout"/>
+    <public name="jobslist" id="0x7f030009" type="layout"/>
+    <public name="jobslist_item" id="0x7f03000a" type="layout"/>
+    <public name="license" id="0x7f03000b" type="layout"/>
+    <public name="number_picker" id="0x7f03000c" type="layout"/>
+    <public name="time_picker" id="0x7f03000d" type="layout"/>
+    <public name="time_picker_dialog" id="0x7f03000e" type="layout"/>
+    <public name="type_panel_general" id="0x7f03000f" type="layout"/>
+    <public name="type_panel_mileage" id="0x7f030010" type="layout"/>
+    <public name="fade_in" id="0x7f040000" type="anim"/>
+    <public name="fade_out" id="0x7f040001" type="anim"/>
+    <public name="preferences" id="0x7f050000" type="xml"/>
+    <public name="license" id="0x7f060000" type="raw"/>
+    <public name="entries_date_format" id="0x7f070000" type="array"/>
+    <public name="entries_date_format_values" id="0x7f070001" type="array"/>
+    <public name="entries_time_format" id="0x7f070002" type="array"/>
+    <public name="entries_time_format_values" id="0x7f070003" type="array"/>
+    <public name="entries_billing_unit" id="0x7f070004" type="array"/>
+    <public name="entries_billing_unit_values" id="0x7f070005" type="array"/>
+    <public name="entries_reminder" id="0x7f070006" type="array"/>
+    <public name="entries_reminder_values" id="0x7f070007" type="array"/>
+    <public name="invoice_types" id="0x7f070008" type="array"/>
+    <public name="job_types" id="0x7f070009" type="array"/>
+    <public name="about_authors" id="0x7f07000a" type="array"/>
+    <public name="about_documenters" id="0x7f07000b" type="array"/>
+    <public name="about_translators" id="0x7f07000c" type="array"/>
+    <public name="about_artists" id="0x7f07000d" type="array"/>
+    <public name="app_name" id="0x7f080000" type="string"/>
+    <public name="trial_suffix" id="0x7f080001" type="string"/>
+    <public name="app_descr" id="0x7f080002" type="string"/>
+    <public name="title_create" id="0x7f080003" type="string"/>
+    <public name="title_edit" id="0x7f080004" type="string"/>
+    <public name="customer" id="0x7f080005" type="string"/>
+    <public name="job_done" id="0x7f080006" type="string"/>
+    <public name="break_info" id="0x7f080007" type="string"/>
+    <public name="duration_info" id="0x7f080008" type="string"/>
+    <public name="total_info" id="0x7f080009" type="string"/>
+    <public name="extras_info" id="0x7f08000a" type="string"/>
+    <public name="hourly_rate_info" id="0x7f08000b" type="string"/>
+    <public name="having_a_break" id="0x7f08000c" type="string"/>
+    <public name="end_of_break" id="0x7f08000d" type="string"/>
+    <public name="started_at" id="0x7f08000e" type="string"/>
+    <public name="finshed" id="0x7f08000f" type="string"/>
+    <public name="job_not_yet_started" id="0x7f080010" type="string"/>
+    <public name="starting_job" id="0x7f080011" type="string"/>
+    <public name="hourly_rate" id="0x7f080012" type="string"/>
+    <public name="start_time" id="0x7f080013" type="string"/>
+    <public name="end_time" id="0x7f080014" type="string"/>
+    <public name="break_in_minutes" id="0x7f080015" type="string"/>
+    <public name="unknown" id="0x7f080016" type="string"/>
+    <public name="customer_hint" id="0x7f080017" type="string"/>
+    <public name="customer_hint_first_time" id="0x7f080018" type="string"/>
+    <public name="break_duration" id="0x7f080019" type="string"/>
+    <public name="planned_time" id="0x7f08001a" type="string"/>
+    <public name="planned_duration" id="0x7f08001b" type="string"/>
+    <public name="continue_now" id="0x7f08001c" type="string"/>
+    <public name="continue_tomorrow" id="0x7f08001d" type="string"/>
+    <public name="note" id="0x7f08001e" type="string"/>
+    <public name="hour_short" id="0x7f08001f" type="string"/>
+    <public name="minute_short" id="0x7f080020" type="string"/>
+    <public name="recent_notes" id="0x7f080021" type="string"/>
+    <public name="no_recent_notes_available" id="0x7f080022" type="string"/>
+    <public name="pick_contact" id="0x7f080023" type="string"/>
+    <public name="call_contact" id="0x7f080024" type="string"/>
+    <public name="simple_rate" id="0x7f080025" type="string"/>
+    <public name="two_rates" id="0x7f080026" type="string"/>
+    <public name="thre_rates" id="0x7f080027" type="string"/>
+    <public name="dialog_restart_job" id="0x7f080028" type="string"/>
+    <public name="dialog_stop_job" id="0x7f080029" type="string"/>
+    <public name="end_now" id="0x7f08002a" type="string"/>
+    <public name="continue_button" id="0x7f08002b" type="string"/>
+    <public name="calendar_missing" id="0x7f08002c" type="string"/>
+    <public name="recent_descriptions" id="0x7f08002d" type="string"/>
+    <public name="total" id="0x7f08002e" type="string"/>
+    <public name="job_denied" id="0x7f08002f" type="string"/>
+    <public name="insert_job_full" id="0x7f080030" type="string"/>
+    <public name="insert_job_no_duration" id="0x7f080031" type="string"/>
+    <public name="insert_job_no_date" id="0x7f080032" type="string"/>
+    <public name="insert_job" id="0x7f080033" type="string"/>
+    <public name="job_in_progress" id="0x7f080034" type="string"/>
+    <public name="jobs_in_progress" id="0x7f080035" type="string"/>
+    <public name="trial_version_description" id="0x7f080036" type="string"/>
+    <public name="enter_license_code" id="0x7f080037" type="string"/>
+    <public name="ok" id="0x7f080038" type="string"/>
+    <public name="alert" id="0x7f080039" type="string"/>
+    <public name="no_jobs" id="0x7f08003a" type="string"/>
+    <public name="spinner_prompt" id="0x7f08003b" type="string"/>
+    <public name="all_customers" id="0x7f08003c" type="string"/>
+    <public name="number_of_jobs_info" id="0x7f08003d" type="string"/>
+    <public name="invoice_item_type_spinner" id="0x7f08003e" type="string"/>
+    <public name="description" id="0x7f08003f" type="string"/>
+    <public name="value" id="0x7f080040" type="string"/>
+    <public name="general_type" id="0x7f080041" type="string"/>
+    <public name="start_value" id="0x7f080042" type="string"/>
+    <public name="end_value" id="0x7f080043" type="string"/>
+    <public name="add" id="0x7f080044" type="string"/>
+    <public name="delete" id="0x7f080045" type="string"/>
+    <public name="mileage" id="0x7f080046" type="string"/>
+    <public name="enter_digits_only" id="0x7f080047" type="string"/>
+    <public name="enter_numbers_only" id="0x7f080048" type="string"/>
+    <public name="rate_per_mile" id="0x7f080049" type="string"/>
+    <public name="no_extra_items" id="0x7f08004a" type="string"/>
+    <public name="error_title" id="0x7f08004b" type="string"/>
+    <public name="error_message" id="0x7f08004c" type="string"/>
+    <public name="menu_delete" id="0x7f08004d" type="string"/>
+    <public name="menu_insert" id="0x7f08004e" type="string"/>
+    <public name="menu_revert" id="0x7f08004f" type="string"/>
+    <public name="menu_discard" id="0x7f080050" type="string"/>
+    <public name="menu_list" id="0x7f080051" type="string"/>
+    <public name="menu_export" id="0x7f080052" type="string"/>
+    <public name="menu_delete_all" id="0x7f080053" type="string"/>
+    <public name="menu_start" id="0x7f080054" type="string"/>
+    <public name="menu_restart" id="0x7f080055" type="string"/>
+    <public name="menu_pause" id="0x7f080056" type="string"/>
+    <public name="menu_continue" id="0x7f080057" type="string"/>
+    <public name="menu_end" id="0x7f080058" type="string"/>
+    <public name="menu_preferences" id="0x7f080059" type="string"/>
+    <public name="menu_calendar" id="0x7f08005a" type="string"/>
+    <public name="menu_send" id="0x7f08005b" type="string"/>
+    <public name="menu_extra_items" id="0x7f08005c" type="string"/>
+    <public name="menu_timexchange" id="0x7f08005d" type="string"/>
+    <public name="dialog_delete_all" id="0x7f08005e" type="string"/>
+    <public name="dialog_delete_last" id="0x7f08005f" type="string"/>
+    <public name="delete_all" id="0x7f080060" type="string"/>
+    <public name="leave_template" id="0x7f080061" type="string"/>
+    <public name="received_job" id="0x7f080062" type="string"/>
+    <public name="accept" id="0x7f080063" type="string"/>
+    <public name="deny" id="0x7f080064" type="string"/>
+    <public name="duration" id="0x7f080065" type="string"/>
+    <public name="date_time_set" id="0x7f080066" type="string"/>
+    <public name="convert_csv" id="0x7f080067" type="string"/>
+    <public name="file_path" id="0x7f080068" type="string"/>
+    <public name="dir_path" id="0x7f080069" type="string"/>
+    <public name="file_import" id="0x7f08006a" type="string"/>
+    <public name="file_export" id="0x7f08006b" type="string"/>
+    <public name="error_writing_file" id="0x7f08006c" type="string"/>
+    <public name="export_finished" id="0x7f08006d" type="string"/>
+    <public name="export_for" id="0x7f08006e" type="string"/>
+    <public name="export_to_single_file" id="0x7f08006f" type="string"/>
+    <public name="export_to_directory" id="0x7f080070" type="string"/>
+    <public name="default_path" id="0x7f080071" type="string"/>
+    <public name="default_directory" id="0x7f080072" type="string"/>
+    <public name="calendar_entries_added_or_updated" id="0x7f080073" type="string"/>
+    <public name="file_exists" id="0x7f080074" type="string"/>
+    <public name="dont_ask_again" id="0x7f080075" type="string"/>
+    <public name="yes" id="0x7f080076" type="string"/>
+    <public name="no" id="0x7f080077" type="string"/>
+    <public name="convert_timexchange" id="0x7f080078" type="string"/>
+    <public name="header_date" id="0x7f080079" type="string"/>
+    <public name="header_time_started" id="0x7f08007a" type="string"/>
+    <public name="header_total" id="0x7f08007b" type="string"/>
+    <public name="header_work" id="0x7f08007c" type="string"/>
+    <public name="header_break_time" id="0x7f08007d" type="string"/>
+    <public name="header_earnings" id="0x7f08007e" type="string"/>
+    <public name="header_description" id="0x7f08007f" type="string"/>
+    <public name="header_rate" id="0x7f080080" type="string"/>
+    <public name="header_customer" id="0x7f080081" type="string"/>
+    <public name="export_total" id="0x7f080082" type="string"/>
+    <public name="preference_general" id="0x7f080083" type="string"/>
+    <public name="preference_general_summary" id="0x7f080084" type="string"/>
+    <public name="preference_export_completed_only" id="0x7f080085" type="string"/>
+    <public name="preference_export_completed_only_summary" id="0x7f080086" type="string"/>
+    <public name="preference_export_filename" id="0x7f080087" type="string"/>
+    <public name="preference_export_filename_summary" id="0x7f080088" type="string"/>
+    <public name="preference_export_directory" id="0x7f080089" type="string"/>
+    <public name="preference_export_directory_summary" id="0x7f08008a" type="string"/>
+    <public name="preference_export_replace_br" id="0x7f08008b" type="string"/>
+    <public name="preference_export_replace_br_summary" id="0x7f08008c" type="string"/>
+    <public name="preference_export_totals" id="0x7f08008d" type="string"/>
+    <public name="preference_export_totals_summary" id="0x7f08008e" type="string"/>
+    <public name="preference_export_csv" id="0x7f08008f" type="string"/>
+    <public name="preference_export_csv_summary" id="0x7f080090" type="string"/>
+    <public name="preference_export_single_file" id="0x7f080091" type="string"/>
+    <public name="preference_export_single_file_summary" id="0x7f080092" type="string"/>
+    <public name="preference_export_calendar" id="0x7f080093" type="string"/>
+    <public name="preference_export_calendar_summary" id="0x7f080094" type="string"/>
+    <public name="preference_date_format" id="0x7f080095" type="string"/>
+    <public name="preference_date_format_summary" id="0x7f080096" type="string"/>
+    <public name="preference_date_format_dialog_title" id="0x7f080097" type="string"/>
+    <public name="preference_time_format" id="0x7f080098" type="string"/>
+    <public name="preference_time_format_summary" id="0x7f080099" type="string"/>
+    <public name="preference_time_format_dialog_title" id="0x7f08009a" type="string"/>
+    <public name="preference_application" id="0x7f08009b" type="string"/>
+    <public name="preference_start_jobs_immediately" id="0x7f08009c" type="string"/>
+    <public name="preference_start_jobs_immediately_summary" id="0x7f08009d" type="string"/>
+    <public name="preference_ask_if_file_exists" id="0x7f08009e" type="string"/>
+    <public name="preference_ask_if_file_exists_summary" id="0x7f08009f" type="string"/>
+    <public name="preference_billing_unit" id="0x7f0800a0" type="string"/>
+    <public name="preference_billing_unit_summary" id="0x7f0800a1" type="string"/>
+    <public name="preference_billing_unit_dialog_title" id="0x7f0800a2" type="string"/>
+    <public name="preference_omit_templates" id="0x7f0800a3" type="string"/>
+    <public name="preference_omit_templates_summary" id="0x7f0800a4" type="string"/>
+    <public name="preference_show_notification" id="0x7f0800a5" type="string"/>
+    <public name="preference_show_notification_summary" id="0x7f0800a6" type="string"/>
+    <public name="preference_scheduled_jobs" id="0x7f0800a7" type="string"/>
+    <public name="preference_calendar" id="0x7f0800a8" type="string"/>
+    <public name="preference_calendar_summary" id="0x7f0800a9" type="string"/>
+    <public name="preference_calendar_dialog_title" id="0x7f0800aa" type="string"/>
+    <public name="preference_reminder" id="0x7f0800ab" type="string"/>
+    <public name="preference_reminder_summary" id="0x7f0800ac" type="string"/>
+    <public name="preference_reminder_dialog_title" id="0x7f0800ad" type="string"/>
+    <public name="preference_license" id="0x7f0800ae" type="string"/>
+    <public name="preference_get_license" id="0x7f0800af" type="string"/>
+    <public name="preference_get_license_summary" id="0x7f0800b0" type="string"/>
+    <public name="preference_get_license_from" id="0x7f0800b1" type="string"/>
+    <public name="preference_license_market" id="0x7f0800b2" type="string"/>
+    <public name="preference_license_market_summary" id="0x7f0800b3" type="string"/>
+    <public name="preference_license_developer" id="0x7f0800b4" type="string"/>
+    <public name="preference_license_developer_summary" id="0x7f0800b5" type="string"/>
+    <public name="preference_license_pdassi" id="0x7f0800b6" type="string"/>
+    <public name="preference_license_pdassi_summary" id="0x7f0800b7" type="string"/>
+    <public name="preference_extensions" id="0x7f0800b8" type="string"/>
+    <public name="preference_get_extensions" id="0x7f0800b9" type="string"/>
+    <public name="preference_get_extensions_summary" id="0x7f0800ba" type="string"/>
+    <public name="preference_get_extensions_from" id="0x7f0800bb" type="string"/>
+    <public name="preference_extensions_market" id="0x7f0800bc" type="string"/>
+    <public name="preference_extensions_market_summary" id="0x7f0800bd" type="string"/>
+    <public name="preference_extensions_developer" id="0x7f0800be" type="string"/>
+    <public name="preference_extensions_developer_summary" id="0x7f0800bf" type="string"/>
+    <public name="license_title" id="0x7f0800c0" type="string"/>
+    <public name="license_only_title" id="0x7f0800c1" type="string"/>
+    <public name="enter_license" id="0x7f0800c2" type="string"/>
+    <public name="buy_license" id="0x7f0800c3" type="string"/>
+    <public name="license_text" id="0x7f0800c4" type="string"/>
+    <public name="license_text_market" id="0x7f0800c5" type="string"/>
+    <public name="invalid_license" id="0x7f0800c6" type="string"/>
+    <public name="license_from_clipboard" id="0x7f0800c7" type="string"/>
+    <public name="license_valid" id="0x7f0800c8" type="string"/>
+    <public name="dialog_market_warning" id="0x7f0800c9" type="string"/>
+    <public name="about_comments" id="0x7f0800ca" type="string"/>
+    <public name="about_copyright" id="0x7f0800cb" type="string"/>
+    <public name="about_website_label" id="0x7f0800cc" type="string"/>
+    <public name="about_website_url" id="0x7f0800cd" type="string"/>
+    <public name="about_email" id="0x7f0800ce" type="string"/>
+    <public name="eula_title" id="0x7f0800cf" type="string"/>
+    <public name="eula_accept" id="0x7f0800d0" type="string"/>
+    <public name="eula_refuse" id="0x7f0800d1" type="string"/>
+    <public name="eula_description_open" id="0x7f0800d2" type="string"/>
+    <public name="update_box_text" id="0x7f0800d3" type="string"/>
+    <public name="update_check_now" id="0x7f0800d4" type="string"/>
+    <public name="update_get_updater" id="0x7f0800d5" type="string"/>
+    <public name="update_app_url" id="0x7f0800d6" type="string"/>
+    <public name="update_checker_url" id="0x7f0800d7" type="string"/>
+    <public name="update_app_developer_url" id="0x7f0800d8" type="string"/>
+    <public name="update_checker_developer_url" id="0x7f0800d9" type="string"/>
+    <public name="update_error" id="0x7f0800da" type="string"/>
+    <public name="update" id="0x7f0800db" type="string"/>
+    <public name="about" id="0x7f0800dc" type="string"/>
+    <public name="aboutapp_not_available" id="0x7f0800dd" type="string"/>
+    <public name="aboutapp_get" id="0x7f0800de" type="string"/>
+    <public name="aboutapp_market_uri" id="0x7f0800df" type="string"/>
+    <public name="aboutapp_developer_uri" id="0x7f0800e0" type="string"/>
+    <public name="about_title" id="0x7f0800e1" type="string"/>
+    <public name="about_text" id="0x7f0800e2" type="string"/>
+    <public name="preference_extensions_market_link" id="0x7f0800e3" type="string"/>
+    <public name="preference_extensions_developer_link" id="0x7f0800e4" type="string"/>
+    <public name="preference_license_market_link" id="0x7f0800e5" type="string"/>
+    <public name="preference_license_pdassi_link" id="0x7f0800e6" type="string"/>
+    <public name="permission_read" id="0x7f0800e7" type="string"/>
+    <public name="permission_read_descr" id="0x7f0800e8" type="string"/>
+    <public name="permission_write" id="0x7f0800e9" type="string"/>
+    <public name="permission_write_descr" id="0x7f0800ea" type="string"/>
+    <public name="DialogWindowTitle" id="0x7f090000" type="style"/>
+    <public name="TextAppearance" id="0x7f090001" type="style"/>
+    <public name="TextAppearance.DialogWindowTitle" id="0x7f090002" type="style"/>
+    <public name="MyThemeDialogAlert" id="0x7f090003" type="style"/>
+    <public name="context_menu_customer" id="0x7f0a0000" type="menu"/>
+    <public name="text" id="0x7f0b0000" type="id"/>
+    <public name="file_path_label" id="0x7f0b0001" type="id"/>
+    <public name="file_path" id="0x7f0b0002" type="id"/>
+    <public name="export_for" id="0x7f0b0003" type="id"/>
+    <public name="info" id="0x7f0b0004" type="id"/>
+    <public name="calendar_info" id="0x7f0b0005" type="id"/>
+    <public name="file_export" id="0x7f0b0006" type="id"/>
+    <public name="file_import" id="0x7f0b0007" type="id"/>
+    <public name="text1" id="0x7f0b0008" type="id"/>
+    <public name="container2" id="0x7f0b0009" type="id"/>
+    <public name="button1" id="0x7f0b000a" type="id"/>
+    <public name="button2" id="0x7f0b000b" type="id"/>
+    <public name="dont_ask_again" id="0x7f0b000c" type="id"/>
+    <public name="customer" id="0x7f0b000d" type="id"/>
+    <public name="hourly_rate" id="0x7f0b000e" type="id"/>
+    <public name="accept" id="0x7f0b000f" type="id"/>
+    <public name="deny" id="0x7f0b0010" type="id"/>
+    <public name="spinner" id="0x7f0b0011" type="id"/>
+    <public name="panel_frame" id="0x7f0b0012" type="id"/>
+    <public name="add_button" id="0x7f0b0013" type="id"/>
+    <public name="empty" id="0x7f0b0014" type="id"/>
+    <public name="customer_box" id="0x7f0b0015" type="id"/>
+    <public name="rate_button" id="0x7f0b0016" type="id"/>
+    <public name="info_panel1" id="0x7f0b0017" type="id"/>
+    <public name="timestamp" id="0x7f0b0018" type="id"/>
+    <public name="info_panel2" id="0x7f0b0019" type="id"/>
+    <public name="duration_info" id="0x7f0b001a" type="id"/>
+    <public name="extras_info" id="0x7f0b001b" type="id"/>
+    <public name="total_info" id="0x7f0b001c" type="id"/>
+    <public name="info_panel3" id="0x7f0b001d" type="id"/>
+    <public name="break_info" id="0x7f0b001e" type="id"/>
+    <public name="hourly_rate_info" id="0x7f0b001f" type="id"/>
+    <public name="edit_panel1" id="0x7f0b0020" type="id"/>
+    <public name="edit_hourlyrate" id="0x7f0b0021" type="id"/>
+    <public name="set_hourly_rate" id="0x7f0b0022" type="id"/>
+    <public name="rate_edit_button" id="0x7f0b0023" type="id"/>
+    <public name="edit_panel2" id="0x7f0b0024" type="id"/>
+    <public name="set_start_date" id="0x7f0b0025" type="id"/>
+    <public name="set_start_time" id="0x7f0b0026" type="id"/>
+    <public name="set_end_date" id="0x7f0b0027" type="id"/>
+    <public name="set_end_time" id="0x7f0b0028" type="id"/>
+    <public name="set_break_minutes" id="0x7f0b0029" type="id"/>
+    <public name="edit_panel3" id="0x7f0b002a" type="id"/>
+    <public name="set_planned_date" id="0x7f0b002b" type="id"/>
+    <public name="set_planned_time" id="0x7f0b002c" type="id"/>
+    <public name="set_planned_minutes" id="0x7f0b002d" type="id"/>
+    <public name="quick_panel" id="0x7f0b002e" type="id"/>
+    <public name="break_start_end" id="0x7f0b002f" type="id"/>
+    <public name="start_end" id="0x7f0b0030" type="id"/>
+    <public name="break2_start_end" id="0x7f0b0031" type="id"/>
+    <public name="note" id="0x7f0b0032" type="id"/>
+    <public name="recent_notes" id="0x7f0b0033" type="id"/>
+    <public name="set_mileage_start" id="0x7f0b0034" type="id"/>
+    <public name="set_mileage_end" id="0x7f0b0035" type="id"/>
+    <public name="set_mileage_total" id="0x7f0b0036" type="id"/>
+    <public name="set_mileage_rate" id="0x7f0b0037" type="id"/>
+    <public name="job_count_info" id="0x7f0b0038" type="id"/>
+    <public name="title" id="0x7f0b0039" type="id"/>
+    <public name="status" id="0x7f0b003a" type="id"/>
+    <public name="container" id="0x7f0b003b" type="id"/>
+    <public name="layout" id="0x7f0b003c" type="id"/>
+    <public name="lic1" id="0x7f0b003d" type="id"/>
+    <public name="lic2" id="0x7f0b003e" type="id"/>
+    <public name="lic3" id="0x7f0b003f" type="id"/>
+    <public name="lic4" id="0x7f0b0040" type="id"/>
+    <public name="ok" id="0x7f0b0041" type="id"/>
+    <public name="lic_text" id="0x7f0b0042" type="id"/>
+    <public name="request" id="0x7f0b0043" type="id"/>
+    <public name="increment" id="0x7f0b0044" type="id"/>
+    <public name="timepicker_input" id="0x7f0b0045" type="id"/>
+    <public name="decrement" id="0x7f0b0046" type="id"/>
+    <public name="hour" id="0x7f0b0047" type="id"/>
+    <public name="minute" id="0x7f0b0048" type="id"/>
+    <public name="amPm" id="0x7f0b0049" type="id"/>
+    <public name="timePicker" id="0x7f0b004a" type="id"/>
+    <public name="description" id="0x7f0b004b" type="id"/>
+    <public name="value" id="0x7f0b004c" type="id"/>
+    <public name="start_value" id="0x7f0b004d" type="id"/>
+    <public name="end_value" id="0x7f0b004e" type="id"/>
+    <public name="rate" id="0x7f0b004f" type="id"/>
+    <public name="pick_contact" id="0x7f0b0050" type="id"/>
+    <public name="call_contact" id="0x7f0b0051" type="id"/>
 </resources>

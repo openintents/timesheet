@@ -15,15 +15,18 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import java.util.HashMap;
-import java.util.Map;
+
 import org.openintents.intents.ProviderIntents;
 import org.openintents.intents.ProviderUtils;
 import org.openintents.timesheet.Timesheet.InvoiceItem;
 import org.openintents.timesheet.Timesheet.Job;
 import org.openintents.timesheet.Timesheet.Reminders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TimesheetProvider extends ContentProvider {
+    public static final String QUERY_EXTRAS_TOTAL = "extras_total";
     private static final String DATABASE_NAME = "timesheet.db";
     private static final int DATABASE_VERSION = 3;
     private static final int DELEGATED_JOBS = 3;
@@ -34,87 +37,63 @@ public class TimesheetProvider extends ContentProvider {
     private static final int JOBS = 1;
     private static final int JOB_ID = 2;
     private static final String JOB_TABLE_NAME = "jobs";
-    public static final String QUERY_EXTRAS_TOTAL = "extras_total";
     private static final String TAG = "TimesheetProvider";
+    private static final UriMatcher sUriMatcher;
     static Map<String, String> sInvoiceItemsProjectionMap;
     private static HashMap<String, String> sJobsProjectionMap;
-    private static final UriMatcher sUriMatcher;
-    private DatabaseHelper mOpenHelper;
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-        DatabaseHelper(Context context) {
-            super(context, TimesheetProvider.DATABASE_NAME, null, TimesheetProvider.DELEGATED_JOBS);
-        }
-
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE jobs (_id INTEGER PRIMARY KEY,title TEXT,note TEXT,customer TEXT,start_date INTEGER,end_date INTEGER,last_start_break INTEGER,break_duration INTEGER,last_start_break2 INTEGER,break2_duration INTEGER,break2_count INTEGER,hourly_rate INTEGER,hourly_rate2 INTEGER,hourly_rate2_Start INTEGER,hourly_rate3 INTEGER,hourly_rate3_Start INTEGER,planned_date INTEGER,planned_duration INTEGER,customer_ref TEXT,notes_ref TEXT,calendar_ref TEXT,tax_rate DECIMAL,extras_total INTEGER,delegatee_ref TEXT,status INTEGER,start_long INTEGER,end_long INTEGER,total_long INTEGER,rate_long INTEGER,parent_id INTEGER,external_system TEXT,external_ref TEXT,type INTEGER,created INTEGER,modified INTEGER);");
-            createInvoiceItemsTable(db);
-        }
-
-        private void createInvoiceItemsTable(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE invoice_items (_id INTEGER PRIMARY KEY,job_id INTEGER,description TEXT,extras TEXT,type INTEGER,value INTEGER,created INTEGER,modified INTEGER);");
-        }
-
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TimesheetProvider.TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-            if (newVersion > oldVersion) {
-                switch (oldVersion) {
-                    case TimesheetProvider.JOBS /*1*/:
-                        try {
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN last_start_break2 INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN break2_duration INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN break2_count INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN planned_date INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN planned_duration INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN customer_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN notes_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN calendar_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN tax_rate DECIMAL;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN extras_total INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN delegatee_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN status INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN start_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN end_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN rate_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN total_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN parent_id INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN type INTEGER;");
-                            createInvoiceItemsTable(db);
-                            break;
-                        } catch (SQLException e) {
-                            Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e);
-                            break;
-                        }
-                    case TimesheetProvider.JOB_ID /*2*/:
-                        break;
-                    case TimesheetProvider.DELEGATED_JOBS /*3*/:
-                        break;
-                    default:
-                        Log.w(TimesheetProvider.TAG, "Unknown version " + oldVersion + ". Creating new database.");
-                        db.execSQL("DROP TABLE IF EXISTS notes");
-                        onCreate(db);
-                        return;
-                }
-                try {
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate2 INTEGER;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate2_Start INTEGER;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate3 INTEGER;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate3_Start INTEGER;");
-                } catch (SQLException e2) {
-                    Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e2);
-                }
-                try {
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN external_system TEXT;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN external_ref TEXT;");
-                    return;
-                } catch (SQLException e22) {
-                    Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e22);
-                    return;
-                }
-            }
-            Log.w(TimesheetProvider.TAG, "Don't know how to downgrade. Will not touch database and hope they are compatible.");
-        }
+    static {
+        sUriMatcher = new UriMatcher(-1);
+        sUriMatcher.addURI(Timesheet.AUTHORITY, JOB_TABLE_NAME, JOBS);
+        sUriMatcher.addURI(Timesheet.AUTHORITY, "jobs/#", JOB_ID);
+        sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems", INVOICEITEMS);
+        sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems/#", INVOICEITEM_ID);
+        sInvoiceItemsProjectionMap = new HashMap();
+        sInvoiceItemsProjectionMap.put(Reminders._ID, Reminders._ID);
+        sInvoiceItemsProjectionMap.put(InvoiceItem.DESCRIPTION, InvoiceItem.DESCRIPTION);
+        sInvoiceItemsProjectionMap.put(InvoiceItem.EXTRAS, InvoiceItem.EXTRAS);
+        sInvoiceItemsProjectionMap.put(InvoiceItem.JOB_ID, InvoiceItem.JOB_ID);
+        sInvoiceItemsProjectionMap.put(Job.TYPE, Job.TYPE);
+        sInvoiceItemsProjectionMap.put(InvoiceItem.VALUE, InvoiceItem.VALUE);
+        sJobsProjectionMap = new HashMap();
+        sJobsProjectionMap.put(Reminders._ID, "jobs._id");
+        sJobsProjectionMap.put(Job.TITLE, Job.TITLE);
+        sJobsProjectionMap.put(TimesheetIntent.EXTRA_NOTE, TimesheetIntent.EXTRA_NOTE);
+        sJobsProjectionMap.put(TimesheetIntent.EXTRA_CUSTOMER, TimesheetIntent.EXTRA_CUSTOMER);
+        sJobsProjectionMap.put(Job.START_DATE, Job.START_DATE);
+        sJobsProjectionMap.put(Job.END_DATE, Job.END_DATE);
+        sJobsProjectionMap.put(Job.BREAK_DURATION, Job.BREAK_DURATION);
+        sJobsProjectionMap.put(Job.LAST_START_BREAK, Job.LAST_START_BREAK);
+        sJobsProjectionMap.put(Job.BREAK2_DURATION, Job.BREAK2_DURATION);
+        sJobsProjectionMap.put(Job.LAST_START_BREAK2, Job.LAST_START_BREAK2);
+        sJobsProjectionMap.put(Job.BREAK2_COUNT, Job.BREAK2_COUNT);
+        sJobsProjectionMap.put(Job.HOURLY_RATE, Job.HOURLY_RATE);
+        sJobsProjectionMap.put(Job.HOURLY_RATE2, Job.HOURLY_RATE2);
+        sJobsProjectionMap.put(Job.HOURLY_RATE2_START, Job.HOURLY_RATE2_START);
+        sJobsProjectionMap.put(Job.HOURLY_RATE3, Job.HOURLY_RATE3);
+        sJobsProjectionMap.put(Job.HOURLY_RATE3_START, Job.HOURLY_RATE3_START);
+        sJobsProjectionMap.put(Job.TAX_RATE, Job.TAX_RATE);
+        sJobsProjectionMap.put(Job.PLANNED_DATE, Job.PLANNED_DATE);
+        sJobsProjectionMap.put(Job.PLANNED_DURATION, Job.PLANNED_DURATION);
+        sJobsProjectionMap.put(Job.CUSTOMER_REF, Job.CUSTOMER_REF);
+        sJobsProjectionMap.put(Job.NOTES_REF, Job.NOTES_REF);
+        sJobsProjectionMap.put(Job.CALENDAR_REF, Job.CALENDAR_REF);
+        sJobsProjectionMap.put(QUERY_EXTRAS_TOTAL, QUERY_EXTRAS_TOTAL);
+        sJobsProjectionMap.put(Job.DELEGATEE_REF, Job.DELEGATEE_REF);
+        sJobsProjectionMap.put(Job.STATUS, Job.STATUS);
+        sJobsProjectionMap.put(Job.START_LONG, Job.START_LONG);
+        sJobsProjectionMap.put(Job.END_LONG, Job.END_LONG);
+        sJobsProjectionMap.put(Job.RATE_LONG, Job.RATE_LONG);
+        sJobsProjectionMap.put(Job.TOTAL_LONG, Job.TOTAL_LONG);
+        sJobsProjectionMap.put(Job.TYPE, Job.TYPE);
+        sJobsProjectionMap.put(Job.PARENT_ID, Job.PARENT_ID);
+        sJobsProjectionMap.put(Job.EXTERNAL_REF, Job.EXTERNAL_REF);
+        sJobsProjectionMap.put(Job.EXTERNAL_SYSTEM, Job.EXTERNAL_SYSTEM);
+        sJobsProjectionMap.put(Job.CREATED_DATE, Job.CREATED_DATE);
+        sJobsProjectionMap.put(Job.MODIFIED_DATE, Job.MODIFIED_DATE);
     }
+
+    private DatabaseHelper mOpenHelper;
 
     public boolean onCreate() {
         this.mOpenHelper = new DatabaseHelper(getContext());
@@ -339,54 +318,78 @@ public class TimesheetProvider extends ContentProvider {
         return count;
     }
 
-    static {
-        sUriMatcher = new UriMatcher(-1);
-        sUriMatcher.addURI(Timesheet.AUTHORITY, JOB_TABLE_NAME, JOBS);
-        sUriMatcher.addURI(Timesheet.AUTHORITY, "jobs/#", JOB_ID);
-        sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems", INVOICEITEMS);
-        sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems/#", INVOICEITEM_ID);
-        sInvoiceItemsProjectionMap = new HashMap();
-        sInvoiceItemsProjectionMap.put(Reminders._ID, Reminders._ID);
-        sInvoiceItemsProjectionMap.put(InvoiceItem.DESCRIPTION, InvoiceItem.DESCRIPTION);
-        sInvoiceItemsProjectionMap.put(InvoiceItem.EXTRAS, InvoiceItem.EXTRAS);
-        sInvoiceItemsProjectionMap.put(InvoiceItem.JOB_ID, InvoiceItem.JOB_ID);
-        sInvoiceItemsProjectionMap.put(Job.TYPE, Job.TYPE);
-        sInvoiceItemsProjectionMap.put(InvoiceItem.VALUE, InvoiceItem.VALUE);
-        sJobsProjectionMap = new HashMap();
-        sJobsProjectionMap.put(Reminders._ID, "jobs._id");
-        sJobsProjectionMap.put(Job.TITLE, Job.TITLE);
-        sJobsProjectionMap.put(TimesheetIntent.EXTRA_NOTE, TimesheetIntent.EXTRA_NOTE);
-        sJobsProjectionMap.put(TimesheetIntent.EXTRA_CUSTOMER, TimesheetIntent.EXTRA_CUSTOMER);
-        sJobsProjectionMap.put(Job.START_DATE, Job.START_DATE);
-        sJobsProjectionMap.put(Job.END_DATE, Job.END_DATE);
-        sJobsProjectionMap.put(Job.BREAK_DURATION, Job.BREAK_DURATION);
-        sJobsProjectionMap.put(Job.LAST_START_BREAK, Job.LAST_START_BREAK);
-        sJobsProjectionMap.put(Job.BREAK2_DURATION, Job.BREAK2_DURATION);
-        sJobsProjectionMap.put(Job.LAST_START_BREAK2, Job.LAST_START_BREAK2);
-        sJobsProjectionMap.put(Job.BREAK2_COUNT, Job.BREAK2_COUNT);
-        sJobsProjectionMap.put(Job.HOURLY_RATE, Job.HOURLY_RATE);
-        sJobsProjectionMap.put(Job.HOURLY_RATE2, Job.HOURLY_RATE2);
-        sJobsProjectionMap.put(Job.HOURLY_RATE2_START, Job.HOURLY_RATE2_START);
-        sJobsProjectionMap.put(Job.HOURLY_RATE3, Job.HOURLY_RATE3);
-        sJobsProjectionMap.put(Job.HOURLY_RATE3_START, Job.HOURLY_RATE3_START);
-        sJobsProjectionMap.put(Job.TAX_RATE, Job.TAX_RATE);
-        sJobsProjectionMap.put(Job.PLANNED_DATE, Job.PLANNED_DATE);
-        sJobsProjectionMap.put(Job.PLANNED_DURATION, Job.PLANNED_DURATION);
-        sJobsProjectionMap.put(Job.CUSTOMER_REF, Job.CUSTOMER_REF);
-        sJobsProjectionMap.put(Job.NOTES_REF, Job.NOTES_REF);
-        sJobsProjectionMap.put(Job.CALENDAR_REF, Job.CALENDAR_REF);
-        sJobsProjectionMap.put(QUERY_EXTRAS_TOTAL, QUERY_EXTRAS_TOTAL);
-        sJobsProjectionMap.put(Job.DELEGATEE_REF, Job.DELEGATEE_REF);
-        sJobsProjectionMap.put(Job.STATUS, Job.STATUS);
-        sJobsProjectionMap.put(Job.START_LONG, Job.START_LONG);
-        sJobsProjectionMap.put(Job.END_LONG, Job.END_LONG);
-        sJobsProjectionMap.put(Job.RATE_LONG, Job.RATE_LONG);
-        sJobsProjectionMap.put(Job.TOTAL_LONG, Job.TOTAL_LONG);
-        sJobsProjectionMap.put(Job.TYPE, Job.TYPE);
-        sJobsProjectionMap.put(Job.PARENT_ID, Job.PARENT_ID);
-        sJobsProjectionMap.put(Job.EXTERNAL_REF, Job.EXTERNAL_REF);
-        sJobsProjectionMap.put(Job.EXTERNAL_SYSTEM, Job.EXTERNAL_SYSTEM);
-        sJobsProjectionMap.put(Job.CREATED_DATE, Job.CREATED_DATE);
-        sJobsProjectionMap.put(Job.MODIFIED_DATE, Job.MODIFIED_DATE);
+    private static class DatabaseHelper extends SQLiteOpenHelper {
+        DatabaseHelper(Context context) {
+            super(context, TimesheetProvider.DATABASE_NAME, null, TimesheetProvider.DELEGATED_JOBS);
+        }
+
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE jobs (_id INTEGER PRIMARY KEY,title TEXT,note TEXT,customer TEXT,start_date INTEGER,end_date INTEGER,last_start_break INTEGER,break_duration INTEGER,last_start_break2 INTEGER,break2_duration INTEGER,break2_count INTEGER,hourly_rate INTEGER,hourly_rate2 INTEGER,hourly_rate2_Start INTEGER,hourly_rate3 INTEGER,hourly_rate3_Start INTEGER,planned_date INTEGER,planned_duration INTEGER,customer_ref TEXT,notes_ref TEXT,calendar_ref TEXT,tax_rate DECIMAL,extras_total INTEGER,delegatee_ref TEXT,status INTEGER,start_long INTEGER,end_long INTEGER,total_long INTEGER,rate_long INTEGER,parent_id INTEGER,external_system TEXT,external_ref TEXT,type INTEGER,created INTEGER,modified INTEGER);");
+            createInvoiceItemsTable(db);
+        }
+
+        private void createInvoiceItemsTable(SQLiteDatabase db) {
+            db.execSQL("CREATE TABLE invoice_items (_id INTEGER PRIMARY KEY,job_id INTEGER,description TEXT,extras TEXT,type INTEGER,value INTEGER,created INTEGER,modified INTEGER);");
+        }
+
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            Log.w(TimesheetProvider.TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+            if (newVersion > oldVersion) {
+                switch (oldVersion) {
+                    case TimesheetProvider.JOBS /*1*/:
+                        try {
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN last_start_break2 INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN break2_duration INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN break2_count INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN planned_date INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN planned_duration INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN customer_ref TEXT;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN notes_ref TEXT;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN calendar_ref TEXT;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN tax_rate DECIMAL;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN extras_total INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN delegatee_ref TEXT;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN status INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN start_long INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN end_long INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN rate_long INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN total_long INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN parent_id INTEGER;");
+                            db.execSQL("ALTER TABLE jobs ADD COLUMN type INTEGER;");
+                            createInvoiceItemsTable(db);
+                            break;
+                        } catch (SQLException e) {
+                            Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e);
+                            break;
+                        }
+                    case TimesheetProvider.JOB_ID /*2*/:
+                        break;
+                    case TimesheetProvider.DELEGATED_JOBS /*3*/:
+                        break;
+                    default:
+                        Log.w(TimesheetProvider.TAG, "Unknown version " + oldVersion + ". Creating new database.");
+                        db.execSQL("DROP TABLE IF EXISTS notes");
+                        onCreate(db);
+                        return;
+                }
+                try {
+                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate2 INTEGER;");
+                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate2_Start INTEGER;");
+                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate3 INTEGER;");
+                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate3_Start INTEGER;");
+                } catch (SQLException e2) {
+                    Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e2);
+                }
+                try {
+                    db.execSQL("ALTER TABLE jobs ADD COLUMN external_system TEXT;");
+                    db.execSQL("ALTER TABLE jobs ADD COLUMN external_ref TEXT;");
+                    return;
+                } catch (SQLException e22) {
+                    Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e22);
+                    return;
+                }
+            }
+            Log.w(TimesheetProvider.TAG, "Don't know how to downgrade. Will not touch database and hope they are compatible.");
+        }
     }
 }

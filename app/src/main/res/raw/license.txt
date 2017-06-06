@@ -1,4 +1,4 @@
-Copyright (C) 2008-2009 OpenIntents.org
+Copyright (C) 2008-2017 OpenIntents.org
 
 EULA - End User Software License Agreement for TIMESHEET Android application. 
 

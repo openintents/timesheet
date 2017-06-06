@@ -27,11 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+
 import org.openintents.distribution.LicenseUtils;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.Job;
@@ -41,7 +37,15 @@ import org.openintents.timesheet.animation.FadeAnimation;
 import org.openintents.util.DateTimeFormater;
 import org.openintents.util.MenuIntentOptionsWithIcons;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.Vector;
+
 public class JobActivityMileage extends Activity {
+    static final int DIALOG_ID_RECENT_NOTES = 1;
+    static final String TAG = "JobActivityMileage";
     private static final int ADD_EXTRA_ITEM_ID = 11;
     private static final int COLUMN_INDEX_CUSTOMER = 6;
     private static final int COLUMN_INDEX_END_LONG = 3;
@@ -50,7 +54,6 @@ public class JobActivityMileage extends Activity {
     private static final int COLUMN_INDEX_START_LONG = 2;
     private static final int COLUMN_INDEX_TOTAL_LONG = 4;
     private static final int DELETE_ID = 3;
-    static final int DIALOG_ID_RECENT_NOTES = 1;
     private static final int DISCARD_ID = 2;
     private static final int LIST_ID = 4;
     private static final String ORIGINAL_CONTENT = "origNote";
@@ -60,16 +63,20 @@ public class JobActivityMileage extends Activity {
     private static final String SHOW_RECENT_NOTES_BUTTON = "show_recent_notes";
     private static final int STATE_EDIT = 0;
     private static final int STATE_INSERT = 1;
-    static final String TAG = "JobActivityMileage";
+
+    static {
+        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_LONG, Job.END_LONG, Job.TOTAL_LONG, Job.RATE_LONG, TimesheetIntent.EXTRA_CUSTOMER};
+    }
+
+    NumberFormat mDecimalFormat;
+    String[] mRecentNoteList;
     private Cursor mCursor;
     private AutoCompleteTextView mCustomer;
     private String[] mCustomerList;
-    NumberFormat mDecimalFormat;
     private long mEndValue;
     private long mMileageRate;
     private String mOriginalContent;
     private String mPreselectedCustomer;
-    String[] mRecentNoteList;
     private Button mRecentNotes;
     private int mRecentNotesButtonState;
     private EditText mSetEndValue;
@@ -84,74 +91,83 @@ public class JobActivityMileage extends Activity {
     private EditText mText;
     private Uri mUri;
 
-    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.1 */
-    class C00271 implements TextWatcher {
-        C00271() {
-        }
-
-        public void afterTextChanged(Editable s) {
-            JobActivityMileage.this.mShowRecentNotesButton = false;
-            JobActivityMileage.this.updateRecentNotesButton(true);
-        }
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.2 */
-    class C00282 implements OnClickListener {
-        C00282() {
-        }
-
-        public void onClick(View v) {
-            JobActivityMileage.this.showRecentNotesDialog();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.3 */
-    class C00293 implements OnClickListener {
-        C00293() {
-        }
-
-        public void onClick(View v) {
-            if (JobActivityMileage.this.mCustomer.isPopupShowing()) {
-                JobActivityMileage.this.mCustomer.dismissDropDown();
-            } else {
-                JobActivityMileage.this.mCustomer.showDropDown();
-            }
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.4 */
-    class C00304 implements OnItemClickListener {
-        C00304() {
-        }
-
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.5 */
-    class C00315 implements DialogInterface.OnClickListener {
-        C00315() {
-        }
-
-        public void onClick(DialogInterface dialog, int which) {
-            JobActivityMileage.this.mText.setText(JobActivityMileage.getNote(JobActivityMileage.this, JobActivityMileage.this.mRecentNoteList[which]));
-        }
-    }
-
     public JobActivityMileage() {
         this.mDecimalFormat = new DecimalFormat("0.00");
         this.mShowRecentNotesButton = false;
         this.mRecentNoteList = null;
     }
 
-    static {
-        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_LONG, Job.END_LONG, Job.TOTAL_LONG, Job.RATE_LONG, TimesheetIntent.EXTRA_CUSTOMER};
+    public static String[] getCustomerList(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        Set<String> set = new TreeSet();
+        c.moveToPosition(-1);
+        while (c.moveToNext()) {
+            String customer = c.getString(STATE_EDIT);
+            if (!TextUtils.isEmpty(customer)) {
+                set.add(customer);
+            }
+        }
+        c.close();
+        return (String[]) set.toArray(new String[STATE_EDIT]);
+    }
+
+    public static String[] getTitlesList(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Job.TITLE;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        Vector<String> vec = new Vector();
+        c.moveToPosition(-1);
+        while (c.moveToNext()) {
+            String title = c.getString(STATE_EDIT);
+            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
+                vec.add(title);
+            }
+        }
+        c.close();
+        return (String[]) vec.toArray(new String[STATE_EDIT]);
+    }
+
+    public static String getNote(Context context, String title) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = Job.TITLE;
+        String[] strArr2 = new String[STATE_INSERT];
+        strArr2[STATE_EDIT] = title;
+        Cursor c = contentResolver.query(uri, strArr, "title = ?", strArr2, "modified DESC");
+        if (c != null && c.moveToFirst()) {
+            return c.getString(STATE_EDIT);
+        }
+        if (c != null) {
+            c.close();
+        }
+        return null;
+    }
+
+    public static String getLastCustomer(Context context) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Uri uri = Job.CONTENT_URI;
+        String[] strArr = new String[STATE_INSERT];
+        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
+        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
+        String customer = "";
+        while (c != null && c.moveToNext()) {
+            customer = c.getString(STATE_EDIT);
+            if (!TextUtils.isEmpty(customer)) {
+                break;
+            }
+        }
+        Log.i(TAG, "LastCustomer:" + customer);
+        if (c != null) {
+            c.close();
+        }
+        return customer;
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -264,79 +280,6 @@ public class JobActivityMileage extends Activity {
             FadeAnimation.fadeOut(this, this.mRecentNotes);
             this.mRecentNotesButtonState = 8;
         }
-    }
-
-    public static String[] getCustomerList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Set<String> set = new TreeSet();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            String customer = c.getString(STATE_EDIT);
-            if (!TextUtils.isEmpty(customer)) {
-                set.add(customer);
-            }
-        }
-        c.close();
-        return (String[]) set.toArray(new String[STATE_EDIT]);
-    }
-
-    public static String[] getTitlesList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Vector<String> vec = new Vector();
-        c.moveToPosition(-1);
-        while (c.moveToNext()) {
-            String title = c.getString(STATE_EDIT);
-            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
-                vec.add(title);
-            }
-        }
-        c.close();
-        return (String[]) vec.toArray(new String[STATE_EDIT]);
-    }
-
-    public static String getNote(Context context, String title) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        String[] strArr2 = new String[STATE_INSERT];
-        strArr2[STATE_EDIT] = title;
-        Cursor c = contentResolver.query(uri, strArr, "title = ?", strArr2, "modified DESC");
-        if (c != null && c.moveToFirst()) {
-            return c.getString(STATE_EDIT);
-        }
-        if (c != null) {
-            c.close();
-        }
-        return null;
-    }
-
-    public static String getLastCustomer(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        String customer = "";
-        while (c != null && c.moveToNext()) {
-            customer = c.getString(STATE_EDIT);
-            if (!TextUtils.isEmpty(customer)) {
-                break;
-            }
-        }
-        Log.i(TAG, "LastCustomer:" + customer);
-        if (c != null) {
-            c.close();
-        }
-        return customer;
     }
 
     protected void onResume() {
@@ -503,6 +446,66 @@ public class JobActivityMileage extends Activity {
             this.mCursor = null;
             getContentResolver().delete(this.mUri, null, null);
             this.mText.setText("");
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.1 */
+    class C00271 implements TextWatcher {
+        C00271() {
+        }
+
+        public void afterTextChanged(Editable s) {
+            JobActivityMileage.this.mShowRecentNotesButton = false;
+            JobActivityMileage.this.updateRecentNotesButton(true);
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.2 */
+    class C00282 implements OnClickListener {
+        C00282() {
+        }
+
+        public void onClick(View v) {
+            JobActivityMileage.this.showRecentNotesDialog();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.3 */
+    class C00293 implements OnClickListener {
+        C00293() {
+        }
+
+        public void onClick(View v) {
+            if (JobActivityMileage.this.mCustomer.isPopupShowing()) {
+                JobActivityMileage.this.mCustomer.dismissDropDown();
+            } else {
+                JobActivityMileage.this.mCustomer.showDropDown();
+            }
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.4 */
+    class C00304 implements OnItemClickListener {
+        C00304() {
+        }
+
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobActivityMileage.5 */
+    class C00315 implements DialogInterface.OnClickListener {
+        C00315() {
+        }
+
+        public void onClick(DialogInterface dialog, int which) {
+            JobActivityMileage.this.mText.setText(JobActivityMileage.getNote(JobActivityMileage.this, JobActivityMileage.this.mRecentNoteList[which]));
         }
     }
 }

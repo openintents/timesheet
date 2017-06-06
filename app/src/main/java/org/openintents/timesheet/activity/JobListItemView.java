@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.openintents.timesheet.R;
 
 public class JobListItemView extends LinearLayout {
@@ -15,8 +16,8 @@ public class JobListItemView extends LinearLayout {
     public static final int STATUS_NEW = 1;
     public static final int STATUS_STARTED = 2;
     private static final String TAG = "UpdateListListItemView";
-    private boolean isSyncItem;
     Context mContext;
+    private boolean isSyncItem;
     private TextView mInfo;
     private ImageView mStatus;
     private TextView mTitle;

@@ -1,5 +1,10 @@
 package org.openintents.distribution;
 
+/**
+ * OpenIntents License Generator
+ *
+ * @author Peli
+ */
 public class Decrypt {
     private static final int f0g = 1833515560;
     private static final int f1m = 2083906715;

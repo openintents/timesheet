@@ -81,15 +81,4 @@
         <item>Kilometer</item>
         <item>Kosten</item>
     </string-array>
-    <string-array name="about_authors">
-        <item>Friedger</item>
-        <item>Peli</item>
-    </string-array>
-    <array name="about_documenters" />
-    <string-array name="about_translators">
-        <item>Friedger</item>
-    </string-array>
-    <string-array name="about_artists">
-        <item>Peli</item>
-    </string-array>
 </resources>

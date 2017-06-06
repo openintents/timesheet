@@ -17,13 +17,14 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.openintents.timesheet.Application;
-import org.openintents.timesheet.R;
 import org.openintents.timesheet.PreferenceActivity;
+import org.openintents.timesheet.R;
 
 public class LicenseActivity extends Activity {
-    static final int DIALOG_ID_MARKET_WARNING = 1;
     public static final String EXTRA_TITLE = "title";
+    static final int DIALOG_ID_MARKET_WARNING = 1;
     private static final String LICENSE_URL = "http://www.openintents.org/licenses/oitimesheet.php";
     private String mAppCode;
     private String mCtmCode;
@@ -32,76 +33,6 @@ public class LicenseActivity extends Activity {
     private TextView mLic3;
     private TextView mLic4;
     private String mLicCode;
-
-    /* renamed from: org.openintents.distribution.LicenseActivity.1 */
-    class C00021 implements OnClickListener {
-        C00021() {
-        }
-
-        public void onClick(View view) {
-            LicenseActivity.this.storeLicenseAndFinish();
-        }
-    }
-
-    /* renamed from: org.openintents.distribution.LicenseActivity.2 */
-    class C00032 implements OnClickListener {
-        C00032() {
-        }
-
-        public void onClick(View view) {
-            if (Application.mApplicationVariant == LicenseActivity.DIALOG_ID_MARKET_WARNING) {
-                LicenseActivity.this.showDialog(LicenseActivity.DIALOG_ID_MARKET_WARNING);
-                return;
-            }
-            LicenseActivity.this.requestLicense();
-            LicenseActivity.this.finish();
-        }
-    }
-
-    /* renamed from: org.openintents.distribution.LicenseActivity.3 */
-    class C00043 implements DialogInterface.OnClickListener {
-        C00043() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            LicenseActivity.this.requestLicense();
-            LicenseActivity.this.finish();
-        }
-    }
-
-    /* renamed from: org.openintents.distribution.LicenseActivity.4 */
-    class C00054 implements DialogInterface.OnClickListener {
-        C00054() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-        }
-    }
-
-    private class TextChangedWatcher implements TextWatcher {
-        TextView mNextTextView;
-        TextView mPrevTextView;
-
-        public TextChangedWatcher(TextView prevTextView, TextView nextTextView) {
-            this.mPrevTextView = prevTextView;
-            this.mNextTextView = nextTextView;
-        }
-
-        public void afterTextChanged(Editable s) {
-            if (s.toString().length() == 4 && this.mNextTextView != null) {
-                this.mNextTextView.requestFocus();
-            }
-            if (s.toString().length() == 0 && this.mPrevTextView != null) {
-                this.mPrevTextView.requestFocus();
-            }
-        }
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +124,76 @@ public class LicenseActivity extends Activity {
                 return new Builder(this).setIcon(17301543).setTitle(R.string.alert).setMessage(R.string.dialog_market_warning).setPositiveButton(17039370, new C00043()).setNegativeButton(17039360, new C00054()).create();
             default:
                 return null;
+        }
+    }
+
+    /* renamed from: org.openintents.distribution.LicenseActivity.1 */
+    class C00021 implements OnClickListener {
+        C00021() {
+        }
+
+        public void onClick(View view) {
+            LicenseActivity.this.storeLicenseAndFinish();
+        }
+    }
+
+    /* renamed from: org.openintents.distribution.LicenseActivity.2 */
+    class C00032 implements OnClickListener {
+        C00032() {
+        }
+
+        public void onClick(View view) {
+            if (Application.mApplicationVariant == LicenseActivity.DIALOG_ID_MARKET_WARNING) {
+                LicenseActivity.this.showDialog(LicenseActivity.DIALOG_ID_MARKET_WARNING);
+                return;
+            }
+            LicenseActivity.this.requestLicense();
+            LicenseActivity.this.finish();
+        }
+    }
+
+    /* renamed from: org.openintents.distribution.LicenseActivity.3 */
+    class C00043 implements DialogInterface.OnClickListener {
+        C00043() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            LicenseActivity.this.requestLicense();
+            LicenseActivity.this.finish();
+        }
+    }
+
+    /* renamed from: org.openintents.distribution.LicenseActivity.4 */
+    class C00054 implements DialogInterface.OnClickListener {
+        C00054() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+        }
+    }
+
+    private class TextChangedWatcher implements TextWatcher {
+        TextView mNextTextView;
+        TextView mPrevTextView;
+
+        public TextChangedWatcher(TextView prevTextView, TextView nextTextView) {
+            this.mPrevTextView = prevTextView;
+            this.mNextTextView = nextTextView;
+        }
+
+        public void afterTextChanged(Editable s) {
+            if (s.toString().length() == 4 && this.mNextTextView != null) {
+                this.mNextTextView.requestFocus();
+            }
+            if (s.toString().length() == 0 && this.mPrevTextView != null) {
+                this.mPrevTextView.requestFocus();
+            }
+        }
+
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
     }
 }

@@ -8,11 +8,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.Date;
+
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.Job;
 import org.openintents.timesheet.TimesheetIntent;
 import org.openintents.util.DateTimeFormater;
+
+import java.util.Date;
 
 public class InsertJobActivity extends Activity {
     private String mCustomer;
@@ -20,27 +22,6 @@ public class InsertJobActivity extends Activity {
     private String mNote;
     private long mPlannedDate;
     private long mPlannedDuration;
-
-    /* renamed from: org.openintents.timesheet.activity.InsertJobActivity.1 */
-    class C00091 implements OnClickListener {
-        C00091() {
-        }
-
-        public void onClick(View view) {
-            InsertJobActivity.this.insertJob();
-            InsertJobActivity.this.finish();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.InsertJobActivity.2 */
-    class C00102 implements OnClickListener {
-        C00102() {
-        }
-
-        public void onClick(View view) {
-            InsertJobActivity.this.finish();
-        }
-    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,5 +65,26 @@ public class InsertJobActivity extends Activity {
         getIntent().setAction("android.intent.action.INSERT");
         getIntent().setData(Job.CONTENT_URI);
         startActivity(getIntent());
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.InsertJobActivity.1 */
+    class C00091 implements OnClickListener {
+        C00091() {
+        }
+
+        public void onClick(View view) {
+            InsertJobActivity.this.insertJob();
+            InsertJobActivity.this.finish();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.InsertJobActivity.2 */
+    class C00102 implements OnClickListener {
+        C00102() {
+        }
+
+        public void onClick(View view) {
+            InsertJobActivity.this.finish();
+        }
     }
 }

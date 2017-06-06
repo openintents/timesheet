@@ -73,6 +73,8 @@ public class JobList extends ListActivity {
     static final int DIALOG_ID_DELETE_ALL = 1;
     static final int DIALOG_ID_DELETE_LAST = 3;
     static final int DIALOG_ID_TRIAL_LICENSE = 2;
+    static final String PREFERENCES = "preferences";
+    static final String PREFERENCE_SPINNER = "spinner";
     private static final int MENU_ABOUT = 6;
     private static final int MENU_DELETE_ALL = 5;
     private static final int MENU_EXPORT = 4;
@@ -81,21 +83,24 @@ public class JobList extends ListActivity {
     private static final int MENU_SETTINGS = 8;
     private static final int MENU_TIMEXCHANGE = 9;
     private static final int MENU_UPDATE = 7;
-    static final String PREFERENCES = "preferences";
-    static final String PREFERENCE_SPINNER = "spinner";
     private static final String[] PROJECTION;
     private static final int RESULT_CODE_NEW_JOB = 1;
     private static final int RESULT_CODE_SETTINGS = 2;
     private static final String TAG = "JobList";
+
+    static {
+        PROJECTION = new String[]{Reminders._ID, Job.TITLE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, TimesheetIntent.EXTRA_CUSTOMER, Job.HOURLY_RATE, TimesheetProvider.QUERY_EXTRAS_TOTAL, Job.TYPE, Job.TOTAL_LONG, Job.RATE_LONG, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.EXTERNAL_REF, Job.STATUS, Job.CUSTOMER_REF};
+    }
+
+    protected Class mJobActivityClass;
+    NumberFormat mDecimalFormat;
     private TextView mBreakInfo;
     private boolean mContinueUpdate;
     private Cursor mCursor;
     private String[] mCustomerList;
-    NumberFormat mDecimalFormat;
     private Runnable mDisplayUpdater;
     private TextView mDurationInfo;
     private Handler mHandler;
-    protected Class mJobActivityClass;
     private TextView mJobCountInfo;
     private String mSelectedCustomer;
     private Spinner mSpinner;
@@ -103,117 +108,11 @@ public class JobList extends ListActivity {
     private String[] mWhereArguments;
     private String mWhereClause;
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.1 */
-    class C00321 implements OnItemSelectedListener {
-        C00321() {
-        }
-
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            JobList.this.updateChoice(position);
-            JobList.this.refreshList();
-        }
-
-        public void onNothingSelected(AdapterView<?> adapterView) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.2 */
-    class C00332 implements OnClickListener {
-        C00332() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.deleteAll();
-            JobList.this.refreshSpinner();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.3 */
-    class C00343 implements OnClickListener {
-        C00343() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.leaveTemplate();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.4 */
-    class C00354 implements OnClickListener {
-        C00354() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.5 */
-    class C00365 implements OnClickListener {
-        C00365() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.startActivity(new Intent(JobList.this, LicenseActivity.class));
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.6 */
-    class C00376 implements OnClickListener {
-        C00376() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.deleteAll();
-            JobList.this.refreshSpinner();
-            JobList.this.updateTotal();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.7 */
-    class C00387 implements OnClickListener {
-        C00387() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.leaveTemplate();
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.8 */
-    class C00398 implements OnClickListener {
-        C00398() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobList.9 */
-    class C00409 implements OnClickListener {
-        C00409() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.insertNewJobInternal(JobList.this.mJobActivityClass);
-        }
-    }
-
-    public class DisplayUpdater implements Runnable {
-        public void run() {
-            JobList.this.updateTotal();
-            JobList.this.updateDisplay(1000);
-        }
-    }
-
     public JobList() {
         this.mDecimalFormat = new DecimalFormat("0.00");
         this.mHandler = new Handler();
         this.mDisplayUpdater = new DisplayUpdater();
         this.mJobActivityClass = JobActivity.class;
-    }
-
-    static {
-        PROJECTION = new String[]{Reminders._ID, Job.TITLE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, TimesheetIntent.EXTRA_CUSTOMER, Job.HOURLY_RATE, TimesheetProvider.QUERY_EXTRAS_TOTAL, Job.TYPE, Job.TOTAL_LONG, Job.RATE_LONG, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.EXTERNAL_REF, Job.STATUS, Job.CUSTOMER_REF};
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -667,6 +566,108 @@ public class JobList extends ListActivity {
                 return JobActivityExpense.class;
             default:
                 return JobActivity.class;
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.1 */
+    class C00321 implements OnItemSelectedListener {
+        C00321() {
+        }
+
+        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+            JobList.this.updateChoice(position);
+            JobList.this.refreshList();
+        }
+
+        public void onNothingSelected(AdapterView<?> adapterView) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.2 */
+    class C00332 implements OnClickListener {
+        C00332() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            JobList.this.deleteAll();
+            JobList.this.refreshSpinner();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.3 */
+    class C00343 implements OnClickListener {
+        C00343() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            JobList.this.leaveTemplate();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.4 */
+    class C00354 implements OnClickListener {
+        C00354() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.5 */
+    class C00365 implements OnClickListener {
+        C00365() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            JobList.this.startActivity(new Intent(JobList.this, LicenseActivity.class));
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.6 */
+    class C00376 implements OnClickListener {
+        C00376() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            JobList.this.deleteAll();
+            JobList.this.refreshSpinner();
+            JobList.this.updateTotal();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.7 */
+    class C00387 implements OnClickListener {
+        C00387() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            JobList.this.leaveTemplate();
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.8 */
+    class C00398 implements OnClickListener {
+        C00398() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.JobList.9 */
+    class C00409 implements OnClickListener {
+        C00409() {
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            JobList.this.insertNewJobInternal(JobList.this.mJobActivityClass);
+        }
+    }
+
+    public class DisplayUpdater implements Runnable {
+        public void run() {
+            JobList.this.updateTotal();
+            JobList.this.updateDisplay(1000);
         }
     }
 }

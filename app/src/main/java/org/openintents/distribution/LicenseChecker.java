@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.telephony.TelephonyManager;
+
 import java.lang.reflect.InvocationTargetException;
 
 public class LicenseChecker {
+    public static final String PREFS_LICENSE_KEY = "org.openintents.lickey";
     private static final String APP_CODE = "org.openintents.appcode";
     private static final String LIC_CODE = "org.openintents.liccode";
-    public static final String PREFS_LICENSE_KEY = "org.openintents.lickey";
 
     public static boolean checkLicense(Context context, String license) {
         if (license == null || license.length() != 19) {

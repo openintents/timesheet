@@ -15,127 +15,41 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.openintents.timesheet.R;
 
 public class NumberPicker extends LinearLayout implements OnClickListener, OnFocusChangeListener, OnLongClickListener {
-    private static final char[] DIGIT_CHARACTERS;
     public static final Formatter TWO_DIGIT_FORMATTER;
+    private static final char[] DIGIT_CHARACTERS;
+
+    static {
+        TWO_DIGIT_FORMATTER = new C00471();
+        DIGIT_CHARACTERS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    }
+
+    private final Handler mHandler;
+    private final LayoutInflater mInflater;
+    private final InputFilter mInputFilter;
+    private final InputFilter mNumberInputFilter;
+    private final Runnable mRunnable;
+    private final Animation mSlideDownInAnimation;
+    private final Animation mSlideDownOutAnimation;
+    private final Animation mSlideUpInAnimation;
+    private final Animation mSlideUpOutAnimation;
+    private final TextView mText;
     private int mCurrent;
     private boolean mDecrement;
     private NumberPickerButton mDecrementButton;
     private String[] mDisplayedValues;
     private int mEnd;
     private Formatter mFormatter;
-    private final Handler mHandler;
     private boolean mIncrement;
     private NumberPickerButton mIncrementButton;
-    private final LayoutInflater mInflater;
-    private final InputFilter mInputFilter;
     private OnChangedListener mListener;
-    private final InputFilter mNumberInputFilter;
     private int mPrevious;
-    private final Runnable mRunnable;
-    private final Animation mSlideDownInAnimation;
-    private final Animation mSlideDownOutAnimation;
-    private final Animation mSlideUpInAnimation;
-    private final Animation mSlideUpOutAnimation;
     private long mSpeed;
     private int mStart;
     private int mStep;
-    private final TextView mText;
-
-    public interface Formatter {
-        String toString(int i);
-    }
-
-    /* renamed from: org.openintents.widget.NumberPicker.1 */
-    public static class C00471 implements Formatter {
-        final Object[] mArgs;
-        final StringBuilder mBuilder;
-        final java.util.Formatter mFmt;
-
-        C00471() {
-            this.mBuilder = new StringBuilder();
-            this.mFmt = new java.util.Formatter(this.mBuilder);
-            this.mArgs = new Object[1];
-        }
-
-        public String toString(int value) {
-            this.mArgs[0] = Integer.valueOf(value);
-            this.mBuilder.delete(0, this.mBuilder.length());
-            this.mFmt.format("%02d", this.mArgs);
-            return this.mFmt.toString();
-        }
-    }
-
-    /* renamed from: org.openintents.widget.NumberPicker.2 */
-    public class C00482 implements Runnable {
-        C00482() {
-        }
-
-        public void run() {
-            if (NumberPicker.this.mIncrement) {
-                NumberPicker.this.changeCurrent(NumberPicker.this.mCurrent + 1, NumberPicker.this.mSlideUpInAnimation, NumberPicker.this.mSlideUpOutAnimation);
-                NumberPicker.this.mHandler.postDelayed(this, NumberPicker.this.mSpeed);
-            } else if (NumberPicker.this.mDecrement) {
-                NumberPicker.this.changeCurrent(NumberPicker.this.mCurrent - 1, NumberPicker.this.mSlideDownInAnimation, NumberPicker.this.mSlideDownOutAnimation);
-                NumberPicker.this.mHandler.postDelayed(this, NumberPicker.this.mSpeed);
-            }
-        }
-    }
-
-    private class NumberPickerInputFilter implements InputFilter {
-        private NumberPickerInputFilter() {
-        }
-
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            if (NumberPicker.this.mDisplayedValues == null) {
-                return NumberPicker.this.mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
-            }
-            CharSequence filtered = String.valueOf(source.subSequence(start, end));
-            String str = String.valueOf(new StringBuilder(String.valueOf(String.valueOf(dest.subSequence(0, dstart)))).append(filtered).append(dest.subSequence(dend, dest.length())).toString()).toLowerCase();
-            for (String val : NumberPicker.this.mDisplayedValues) {
-                if (val.toLowerCase().startsWith(str)) {
-                    return filtered;
-                }
-            }
-            return "";
-        }
-    }
-
-    private class NumberRangeKeyListener extends NumberKeyListener {
-        private NumberRangeKeyListener() {
-        }
-
-        protected char[] getAcceptedChars() {
-            return NumberPicker.DIGIT_CHARACTERS;
-        }
-
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            CharSequence filtered = super.filter(source, start, end, dest, dstart, dend);
-            if (filtered == null) {
-                filtered = source.subSequence(start, end);
-            }
-            String result = new StringBuilder(String.valueOf(String.valueOf(dest.subSequence(0, dstart)))).append(filtered).append(dest.subSequence(dend, dest.length())).toString();
-            if ("".equals(result)) {
-                return result;
-            }
-            return NumberPicker.this.getSelectedPos(result) > NumberPicker.this.mEnd ? "" : filtered;
-        }
-
-        public int getInputType() {
-            return 2;
-        }
-    }
-
-    public interface OnChangedListener {
-        void onChanged(NumberPicker numberPicker, int i, int i2);
-    }
-
-    static {
-        TWO_DIGIT_FORMATTER = new C00471();
-        DIGIT_CHARACTERS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    }
 
     public NumberPicker(Context context) {
         this(context, null);
@@ -325,5 +239,93 @@ public class NumberPicker extends LinearLayout implements OnClickListener, OnFoc
 
     public void setStep(int step) {
         this.mStep = step;
+    }
+
+    public interface Formatter {
+        String toString(int i);
+    }
+
+    public interface OnChangedListener {
+        void onChanged(NumberPicker numberPicker, int i, int i2);
+    }
+
+    /* renamed from: org.openintents.widget.NumberPicker.1 */
+    public static class C00471 implements Formatter {
+        final Object[] mArgs;
+        final StringBuilder mBuilder;
+        final java.util.Formatter mFmt;
+
+        C00471() {
+            this.mBuilder = new StringBuilder();
+            this.mFmt = new java.util.Formatter(this.mBuilder);
+            this.mArgs = new Object[1];
+        }
+
+        public String toString(int value) {
+            this.mArgs[0] = Integer.valueOf(value);
+            this.mBuilder.delete(0, this.mBuilder.length());
+            this.mFmt.format("%02d", this.mArgs);
+            return this.mFmt.toString();
+        }
+    }
+
+    /* renamed from: org.openintents.widget.NumberPicker.2 */
+    public class C00482 implements Runnable {
+        C00482() {
+        }
+
+        public void run() {
+            if (NumberPicker.this.mIncrement) {
+                NumberPicker.this.changeCurrent(NumberPicker.this.mCurrent + 1, NumberPicker.this.mSlideUpInAnimation, NumberPicker.this.mSlideUpOutAnimation);
+                NumberPicker.this.mHandler.postDelayed(this, NumberPicker.this.mSpeed);
+            } else if (NumberPicker.this.mDecrement) {
+                NumberPicker.this.changeCurrent(NumberPicker.this.mCurrent - 1, NumberPicker.this.mSlideDownInAnimation, NumberPicker.this.mSlideDownOutAnimation);
+                NumberPicker.this.mHandler.postDelayed(this, NumberPicker.this.mSpeed);
+            }
+        }
+    }
+
+    private class NumberPickerInputFilter implements InputFilter {
+        private NumberPickerInputFilter() {
+        }
+
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (NumberPicker.this.mDisplayedValues == null) {
+                return NumberPicker.this.mNumberInputFilter.filter(source, start, end, dest, dstart, dend);
+            }
+            CharSequence filtered = String.valueOf(source.subSequence(start, end));
+            String str = String.valueOf(new StringBuilder(String.valueOf(String.valueOf(dest.subSequence(0, dstart)))).append(filtered).append(dest.subSequence(dend, dest.length())).toString()).toLowerCase();
+            for (String val : NumberPicker.this.mDisplayedValues) {
+                if (val.toLowerCase().startsWith(str)) {
+                    return filtered;
+                }
+            }
+            return "";
+        }
+    }
+
+    private class NumberRangeKeyListener extends NumberKeyListener {
+        private NumberRangeKeyListener() {
+        }
+
+        protected char[] getAcceptedChars() {
+            return NumberPicker.DIGIT_CHARACTERS;
+        }
+
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            CharSequence filtered = super.filter(source, start, end, dest, dstart, dend);
+            if (filtered == null) {
+                filtered = source.subSequence(start, end);
+            }
+            String result = new StringBuilder(String.valueOf(String.valueOf(dest.subSequence(0, dstart)))).append(filtered).append(dest.subSequence(dend, dest.length())).toString();
+            if ("".equals(result)) {
+                return result;
+            }
+            return NumberPicker.this.getSelectedPos(result) > NumberPicker.this.mEnd ? "" : filtered;
+        }
+
+        public int getInputType() {
+            return 2;
+        }
     }
 }

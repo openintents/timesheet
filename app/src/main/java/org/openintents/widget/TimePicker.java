@@ -17,137 +17,21 @@ import java.util.Calendar;
 
 public class TimePicker extends FrameLayout {
     private static final OnTimeChangedListener NO_OP_CHANGE_LISTENER;
-    private final Button mAmPmButton;
-    private final String mAmText;
-    private int mCurrentHour;
-    private int mCurrentMinute;
-    private final NumberPicker mHourPicker;
-    private Boolean mIs24HourView;
-    private boolean mIsAm;
-    private final NumberPicker mMinutePicker;
-    private OnTimeChangedListener mOnTimeChangedListener;
-    private final String mPmText;
-
-    public interface OnTimeChangedListener {
-        void onTimeChanged(TimePicker timePicker, int i, int i2);
-    }
-
-    /* renamed from: org.openintents.widget.TimePicker.1 */
-    public static class C00491 implements OnTimeChangedListener {
-        C00491() {
-        }
-
-        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-        }
-    }
-
-    /* renamed from: org.openintents.widget.TimePicker.2 */
-    class C00502 implements OnChangedListener {
-        C00502() {
-        }
-
-        public void onChanged(NumberPicker spinner, int oldVal, int newVal) {
-            TimePicker.this.mCurrentHour = newVal;
-            if (!TimePicker.this.mIs24HourView.booleanValue()) {
-                if (TimePicker.this.mCurrentHour == 12) {
-                    TimePicker.this.mCurrentHour = 0;
-                }
-                if (!TimePicker.this.mIsAm) {
-                    TimePicker timePicker = TimePicker.this;
-                    timePicker.mCurrentHour = timePicker.mCurrentHour + 12;
-                }
-            }
-            TimePicker.this.onTimeChanged();
-        }
-    }
-
-    /* renamed from: org.openintents.widget.TimePicker.3 */
-    class C00513 implements OnChangedListener {
-        C00513() {
-        }
-
-        public void onChanged(NumberPicker spinner, int oldVal, int newVal) {
-            TimePicker.this.mCurrentMinute = newVal;
-            TimePicker.this.onTimeChanged();
-        }
-    }
-
-    /* renamed from: org.openintents.widget.TimePicker.4 */
-    class C00524 implements OnClickListener {
-        C00524() {
-        }
-
-        public void onClick(View v) {
-            TimePicker.this.requestFocus();
-            TimePicker timePicker;
-            if (TimePicker.this.mIsAm) {
-                if (TimePicker.this.mCurrentHour < 12) {
-                    timePicker = TimePicker.this;
-                    timePicker.mCurrentHour = timePicker.mCurrentHour + 12;
-                }
-            } else if (TimePicker.this.mCurrentHour >= 12) {
-                timePicker = TimePicker.this;
-                timePicker.mCurrentHour = timePicker.mCurrentHour - 12;
-            }
-            TimePicker.this.mIsAm = !TimePicker.this.mIsAm;
-            TimePicker.this.mAmPmButton.setText(TimePicker.this.mIsAm ? TimePicker.this.mAmText : TimePicker.this.mPmText);
-            TimePicker.this.onTimeChanged();
-        }
-    }
-
-    private static class SavedState extends BaseSavedState {
-        public static final Creator<SavedState> CREATOR;
-        private final int mHour;
-        private final int mMinute;
-
-        /* renamed from: org.openintents.widget.TimePicker.SavedState.1 */
-        public static class C00531 implements Creator<SavedState> {
-            C00531() {
-            }
-
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(null);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        }
-
-        private SavedState(Parcelable superState, int hour, int minute) {
-            super(superState);
-            this.mHour = hour;
-            this.mMinute = minute;
-        }
-
-        private SavedState(Parcel in) {
-            super(in);
-            this.mHour = in.readInt();
-            this.mMinute = in.readInt();
-        }
-
-        public int getHour() {
-            return this.mHour;
-        }
-
-        public int getMinute() {
-            return this.mMinute;
-        }
-
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(this.mHour);
-            dest.writeInt(this.mMinute);
-        }
-
-        static {
-            CREATOR = new C00531();
-        }
-    }
 
     static {
         NO_OP_CHANGE_LISTENER = new C00491();
     }
+
+    private final Button mAmPmButton;
+    private final String mAmText;
+    private final NumberPicker mHourPicker;
+    private final NumberPicker mMinutePicker;
+    private final String mPmText;
+    private int mCurrentHour;
+    private int mCurrentMinute;
+    private Boolean mIs24HourView;
+    private boolean mIsAm;
+    private OnTimeChangedListener mOnTimeChangedListener;
 
     public TimePicker(Context context) {
         this(context, null);
@@ -284,5 +168,123 @@ public class TimePicker extends FrameLayout {
     private void updateMinuteDisplay() {
         this.mMinutePicker.setCurrent(this.mCurrentMinute);
         this.mOnTimeChangedListener.onTimeChanged(this, getCurrentHour().intValue(), getCurrentMinute().intValue());
+    }
+
+    public interface OnTimeChangedListener {
+        void onTimeChanged(TimePicker timePicker, int i, int i2);
+    }
+
+    /* renamed from: org.openintents.widget.TimePicker.1 */
+    public static class C00491 implements OnTimeChangedListener {
+        C00491() {
+        }
+
+        public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+        }
+    }
+
+    private static class SavedState extends BaseSavedState {
+        public static final Creator<SavedState> CREATOR;
+
+        static {
+            CREATOR = new C00531();
+        }
+
+        private final int mHour;
+        private final int mMinute;
+
+        private SavedState(Parcelable superState, int hour, int minute) {
+            super(superState);
+            this.mHour = hour;
+            this.mMinute = minute;
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            this.mHour = in.readInt();
+            this.mMinute = in.readInt();
+        }
+
+        public int getHour() {
+            return this.mHour;
+        }
+
+        public int getMinute() {
+            return this.mMinute;
+        }
+
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeInt(this.mHour);
+            dest.writeInt(this.mMinute);
+        }
+
+        /* renamed from: org.openintents.widget.TimePicker.SavedState.1 */
+        public static class C00531 implements Creator<SavedState> {
+            C00531() {
+            }
+
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(null);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        }
+    }
+
+    /* renamed from: org.openintents.widget.TimePicker.2 */
+    class C00502 implements OnChangedListener {
+        C00502() {
+        }
+
+        public void onChanged(NumberPicker spinner, int oldVal, int newVal) {
+            TimePicker.this.mCurrentHour = newVal;
+            if (!TimePicker.this.mIs24HourView.booleanValue()) {
+                if (TimePicker.this.mCurrentHour == 12) {
+                    TimePicker.this.mCurrentHour = 0;
+                }
+                if (!TimePicker.this.mIsAm) {
+                    TimePicker timePicker = TimePicker.this;
+                    timePicker.mCurrentHour = timePicker.mCurrentHour + 12;
+                }
+            }
+            TimePicker.this.onTimeChanged();
+        }
+    }
+
+    /* renamed from: org.openintents.widget.TimePicker.3 */
+    class C00513 implements OnChangedListener {
+        C00513() {
+        }
+
+        public void onChanged(NumberPicker spinner, int oldVal, int newVal) {
+            TimePicker.this.mCurrentMinute = newVal;
+            TimePicker.this.onTimeChanged();
+        }
+    }
+
+    /* renamed from: org.openintents.widget.TimePicker.4 */
+    class C00524 implements OnClickListener {
+        C00524() {
+        }
+
+        public void onClick(View v) {
+            TimePicker.this.requestFocus();
+            TimePicker timePicker;
+            if (TimePicker.this.mIsAm) {
+                if (TimePicker.this.mCurrentHour < 12) {
+                    timePicker = TimePicker.this;
+                    timePicker.mCurrentHour = timePicker.mCurrentHour + 12;
+                }
+            } else if (TimePicker.this.mCurrentHour >= 12) {
+                timePicker = TimePicker.this;
+                timePicker.mCurrentHour = timePicker.mCurrentHour - 12;
+            }
+            TimePicker.this.mIsAm = !TimePicker.this.mIsAm;
+            TimePicker.this.mAmPmButton.setText(TimePicker.this.mIsAm ? TimePicker.this.mAmText : TimePicker.this.mPmText);
+            TimePicker.this.onTimeChanged();
+        }
     }
 }

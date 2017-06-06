@@ -22,8 +22,9 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.openintents.timesheet.R;
+
 import org.openintents.timesheet.PreferenceActivity;
+import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.InvoiceItem;
 import org.openintents.timesheet.Timesheet.Job;
 import org.openintents.timesheet.Timesheet.Reminders;
@@ -41,29 +42,6 @@ public class InvoiceItemActivity extends ListActivity {
     private Spinner mTypeSpinner;
     private ArrayAdapter<CharSequence> typeAdapter;
     private int[] type_panels;
-
-    /* renamed from: org.openintents.timesheet.activity.InvoiceItemActivity.1 */
-    class C00111 implements OnItemSelectedListener {
-        C00111() {
-        }
-
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            InvoiceItemActivity.this.setType(position);
-        }
-
-        public void onNothingSelected(AdapterView<?> adapterView) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.InvoiceItemActivity.2 */
-    class C00122 implements OnClickListener {
-        C00122() {
-        }
-
-        public void onClick(View arg0) {
-            InvoiceItemActivity.this.addInvoiceItem();
-        }
-    }
 
     public InvoiceItemActivity() {
         this.type_panels = new int[]{R.layout.type_panel_general, R.layout.type_panel_mileage};
@@ -165,6 +143,29 @@ public class InvoiceItemActivity extends ListActivity {
             } else {
                 setRate.setVisibility(8);
             }
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.InvoiceItemActivity.1 */
+    class C00111 implements OnItemSelectedListener {
+        C00111() {
+        }
+
+        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+            InvoiceItemActivity.this.setType(position);
+        }
+
+        public void onNothingSelected(AdapterView<?> adapterView) {
+        }
+    }
+
+    /* renamed from: org.openintents.timesheet.activity.InvoiceItemActivity.2 */
+    class C00122 implements OnClickListener {
+        C00122() {
+        }
+
+        public void onClick(View arg0) {
+            InvoiceItemActivity.this.addInvoiceItem();
         }
     }
 }

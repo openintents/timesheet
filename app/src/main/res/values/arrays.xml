@@ -85,8 +85,8 @@
         <item>Friedger</item>
         <item>Peli</item>
     </string-array>
-    <array name="about_documenters" />
-    <array name="about_translators" />
+    <array name="about_documenters"/>
+    <array name="about_translators"/>
     <string-array name="about_artists">
         <item>Peli</item>
     </string-array>
