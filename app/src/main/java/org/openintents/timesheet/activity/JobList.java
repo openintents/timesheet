@@ -122,6 +122,7 @@ public class JobList extends ListActivity {
             Job.EXTRAS_TOTAL, Job.TYPE, Job.TOTAL_LONG, Job.RATE_LONG,
             Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.EXTERNAL_REF,
             Job.STATUS, Job.CUSTOMER_REF};
+    private static final String PRIVACY_URL = "http://www.openintents.org/privacy-for-apps";
     protected Class mJobActivityClass;
     NumberFormat mDecimalFormat;
     private TextView mBreakInfo;
@@ -327,8 +328,8 @@ public class JobList extends ListActivity {
         menu.add(0, MENU_EXPORT, 0, R.string.menu_export).setShortcut('2', 'e').setIcon(android.R.drawable.ic_menu_save);
         menu.add(0, MENU_SETTINGS, 0, R.string.menu_preferences).setShortcut('4', 's').setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(0, MENU_DELETE_ALL, 0, R.string.menu_delete_all).setShortcut('3', 'd').setIcon(android.R.drawable.ic_menu_delete);
-        menu.add(0, MENU_ABOUT, 0, R.string.about).setIcon(android.R.drawable.ic_menu_info_details).setShortcut('0', 'a');
         menu.add(0, MENU_PRIVACY, 0, R.string.privacy).setIcon(android.R.drawable.ic_menu_info_details);
+        menu.add(0, MENU_ABOUT, 0, R.string.about).setIcon(android.R.drawable.ic_menu_info_details).setShortcut('0', 'a');
         return true;
     }
 
@@ -371,6 +372,7 @@ public class JobList extends ListActivity {
                 startActivityForResult(new Intent(this, PreferenceActivity.class), RESULT_CODE_SETTINGS);
                 return true;
             case MENU_PRIVACY:
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL)));
                 return false;
             default:
                 return super.onOptionsItemSelected(item);

@@ -36,7 +36,7 @@ public class LicenseActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTheme(16973835);
+        setTheme(android.R.style.Theme_Dialog);
         setContentView(R.layout.license);
         String title = getIntent().getStringExtra(EXTRA_TITLE);
         if (title != null) {
@@ -64,9 +64,10 @@ public class LicenseActivity extends Activity {
             objArr[0] = this.mCtmCode;
             t.setText(getString(R.string.license_text, objArr));
         }
-        setLicenseText(PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceActivity.PREFS_LICENSE_DEVELOPER, null));
-        ((Button) findViewById(R.id.ok)).setOnClickListener(new C00021());
-        ((Button) findViewById(R.id.request)).setOnClickListener(new C00032());
+        String licensekey = null; //PreferenceManager.getDefaultSharedPreferences(this).getString(PreferenceActivity.PREFS_LICENSE_DEVELOPER, null);
+        setLicenseText(licensekey);
+        findViewById(R.id.ok).setOnClickListener(new C00021());
+        findViewById(R.id.request).setOnClickListener(new C00032());
     }
 
     protected void onResume() {
@@ -75,7 +76,8 @@ public class LicenseActivity extends Activity {
     }
 
     private void checkClipboard() {
-        ClipboardManager clippy = (ClipboardManager) getSystemService("clipboard");
+        // If someone copied a license, paste it now:
+        ClipboardManager clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         if (clippy.hasText()) {
             String clip = clippy.getText().toString().trim();
             if (clip.length() == 19 && clip.substring(4, 5).equals("-") && clip.substring(9, 10).equals("-") && clip.substring(14, 15).equals("-")) {
@@ -95,7 +97,11 @@ public class LicenseActivity extends Activity {
     }
 
     protected void requestLicense() {
-        startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://www.openintents.org/licenses/oitimesheet.php?ctmcode=" + this.mCtmCode + "&appcode=" + this.mAppCode + "&liccode=" + this.mLicCode)));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(LICENSE_URL
+                + "?ctmcode=" + mCtmCode + "&appcode=" + mAppCode + "&liccode="
+                + mLicCode));
+        startActivity(intent);
+
     }
 
     protected void storeLicenseAndFinish() {
@@ -109,19 +115,21 @@ public class LicenseActivity extends Activity {
         sb.append('-');
         sb.append(this.mLic4.getText());
         if (LicenseChecker.checkLicense(this, sb.toString())) {
-            editor.putString(PreferenceActivity.PREFS_LICENSE_DEVELOPER, sb.toString());
-            editor.commit();
+            //editor.putString(PreferenceActivity.PREFS_LICENSE_DEVELOPER, sb.toString());
+            editor.apply();
             ((LicensedApplication) getApplication()).newLicense();
             finish();
             return;
         }
-        Toast.makeText(this, getString(R.string.invalid_license), DIALOG_ID_MARKET_WARNING).show();
+        Toast.makeText(this, getString(R.string.invalid_license), Toast.LENGTH_LONG).show();
     }
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case DIALOG_ID_MARKET_WARNING /*1*/:
-                return new Builder(this).setIcon(17301543).setTitle(R.string.alert).setMessage(R.string.dialog_market_warning).setPositiveButton(17039370, new C00043()).setNegativeButton(17039360, new C00054()).create();
+                return new Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.alert).setMessage(R.string.dialog_market_warning)
+                        .setPositiveButton(android.R.string.ok, new C00043())
+                        .setNegativeButton(android.R.string.cancel, new C00054()).create();
             default:
                 return null;
         }

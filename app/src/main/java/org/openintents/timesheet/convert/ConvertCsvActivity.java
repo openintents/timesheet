@@ -42,21 +42,23 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 
 public class ConvertCsvActivity extends Activity {
-    private static final int COLUMN_INDEX_ID = 0;
     private static final double HOUR_FACTOR = 2.7777777777E-7d;
-    private static final int II_COLUMN_INDEX_DESCRIPTION = 2;
-    private static final int II_COLUMN_INDEX_VALUE = 1;
-    private static final String[] INVOICE_ITEMS_PROJECTION;
-    private static final int MENU_SETTINGS = 1;
-    private static final String[] PROJECTION;
     private static final double RATE_FACTOR = 0.01d;
+    private static final int MENU_SETTINGS = Menu.FIRST;
+    private static final String[] PROJECTION = new String[]{Job._ID,
+            Job.TITLE, Job.NOTE, Job.START_DATE, Job.END_DATE,
+            Job.LAST_START_BREAK, Job.BREAK_DURATION, Job.CUSTOMER,
+            Job.HOURLY_RATE, Job.LAST_START_BREAK2, Job.BREAK2_DURATION,
+            Job.CALENDAR_REF};
+    private static final int COLUMN_INDEX_ID = 0;
+    private static final String[] INVOICE_ITEMS_PROJECTION = new String[]{//
+            InvoiceItem._ID,// 0
+            InvoiceItem.VALUE, // 1
+            InvoiceItem.DESCRIPTION // 2
+    };
+    private static final int II_COLUMN_INDEX_VALUE = 1;
+    private static final int II_COLUMN_INDEX_DESCRIPTION = 2;
     private static final String TAG = "ConvertCsvActivity";
-
-    static {
-        PROJECTION = new String[]{Reminders._ID, Job.TITLE, TimesheetIntent.EXTRA_NOTE, Job.START_DATE, Job.END_DATE, Job.LAST_START_BREAK, Job.BREAK_DURATION, TimesheetIntent.EXTRA_CUSTOMER, Job.HOURLY_RATE, Job.LAST_START_BREAK2, Job.BREAK2_DURATION, Job.CALENDAR_REF};
-        INVOICE_ITEMS_PROJECTION = new String[]{Reminders._ID, InvoiceItem.VALUE, InvoiceItem.DESCRIPTION};
-    }
-
     String mCustomer;
     EditText mEditText;
     TextView mExportFor;
@@ -64,45 +66,56 @@ public class ConvertCsvActivity extends Activity {
     private TextView mFilePathLabel;
     private TextView mInfo;
 
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.convertcsv);
-        this.mCustomer = getIntent().getStringExtra(TimesheetIntent.EXTRA_CUSTOMER);
-        if (TextUtils.isEmpty(this.mCustomer)) {
-            this.mCustomer = getString(R.string.all_customers);
+        mCustomer = getIntent().getStringExtra(TimesheetIntent.EXTRA_CUSTOMER);
+        if (TextUtils.isEmpty(mCustomer)) {
+            mCustomer = getString(R.string.all_customers);
         }
-        this.mEditText = (EditText) findViewById(R.id.file_path);
-        this.mExportFor = (TextView) findViewById(R.id.export_for);
-        TextView textView = this.mExportFor;
-        Object[] objArr = new Object[MENU_SETTINGS];
-        objArr[COLUMN_INDEX_ID] = this.mCustomer;
-        textView.setText(getString(R.string.export_for, objArr));
-        this.mInfo = (TextView) findViewById(R.id.info);
-        this.mFilePathLabel = (TextView) findViewById(R.id.file_path_label);
-        this.mCalendar = (TextView) findViewById(R.id.calendar_info);
-        ((Button) findViewById(R.id.file_export)).setOnClickListener(new C00431());
-        ((Button) findViewById(R.id.file_import)).setOnClickListener(new C00442());
+        mEditText = (EditText) findViewById(R.id.file_path);
+        
+        mExportFor = (TextView) findViewById(R.id.export_for);
+        mExportFor.setText(getString(R.string.export_for, mCustomer));
+        
+        mInfo = (TextView) findViewById(R.id.info);
+        mFilePathLabel = (TextView) findViewById(R.id.file_path_label);
+        mCalendar = (TextView) findViewById(R.id.calendar_info);
+        findViewById(R.id.file_export).setOnClickListener(new C00431());
+        findViewById(R.id.file_import).setOnClickListener(new C00442());
     }
 
     public void onResume() {
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean(PreferenceActivity.PREFS_EXPORT_SINGLE_FILE, true)) {
-            this.mInfo.setText(R.string.export_to_single_file);
-            this.mFilePathLabel.setText(R.string.file_path);
-            this.mEditText.setText(prefs.getString(PreferenceActivity.PREFS_EXPORT_FILENAME, getString(R.string.default_path)));
+        boolean singleFile = prefs.getBoolean(
+                PreferenceActivity.PREFS_EXPORT_SINGLE_FILE, true);
+        if (singleFile) {
+            mInfo.setText(R.string.export_to_single_file);
+            mFilePathLabel.setText(R.string.file_path);
+            mEditText.setText(prefs.getString(PreferenceActivity.PREFS_EXPORT_FILENAME, getString(R.string.default_path)));
         } else {
-            this.mInfo.setText(R.string.export_to_directory);
-            this.mFilePathLabel.setText(R.string.dir_path);
-            this.mEditText.setText(prefs.getString(PreferenceActivity.PREFS_EXPORT_DIRECTORY, getString(R.string.default_directory)));
+            mInfo.setText(R.string.export_to_directory);
+            mFilePathLabel.setText(R.string.dir_path);
+            mEditText.setText(prefs.getString(PreferenceActivity.PREFS_EXPORT_DIRECTORY, getString(R.string.default_directory)));
         }
-        if (prefs.getBoolean(PreferenceActivity.PREFS_EXPORT_CALENDAR, false)) {
-            this.mCalendar.setVisibility(COLUMN_INDEX_ID);
+        final boolean updateCalendar = prefs.getBoolean(
+                PreferenceActivity.PREFS_EXPORT_CALENDAR, false);
+        if (updateCalendar) {
+            mCalendar.setVisibility(View.VISIBLE);
         } else {
-            this.mCalendar.setVisibility(8);
+            mCalendar.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * start export, overwrite fileName if exists
+     *
+     */
     private void startExportAndFinish() {
         int calendarAuthority = JobActivity.getCalendarAuthority(this);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -115,7 +128,7 @@ public class ConvertCsvActivity extends Activity {
         boolean updateCalendar = prefs.getBoolean(PreferenceActivity.PREFS_EXPORT_CALENDAR, false);
         DateTimeFormater.getFormatFromPreferences(this);
         NumberFormat decimalFormat = new DecimalFormat("0.00");
-        String fileName = this.mEditText.getText().toString();
+        String fileName = mEditText.getText().toString();
         Editor editor = prefs.edit();
         if (singleFile) {
             editor.putString(PreferenceActivity.PREFS_EXPORT_FILENAME, fileName);
@@ -729,7 +742,7 @@ public class ConvertCsvActivity extends Activity {
 
     public void doImport() throws IOException {
         Reader reader;
-        File file = new File(this.mEditText.getText().toString());
+        File file = new File(mEditText.getText().toString());
         String enc = "utf-8";
         if (enc == null) {
             reader = new InputStreamReader(new FileInputStream(file));
@@ -757,7 +770,8 @@ public class ConvertCsvActivity extends Activity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(COLUMN_INDEX_ID, MENU_SETTINGS, COLUMN_INDEX_ID, R.string.menu_preferences).setShortcut('1', 's').setIcon(17301577);
+        menu.add(0, MENU_SETTINGS, 0, R.string.menu_preferences).setShortcut('1', 's')
+                .setIcon(android.R.drawable.ic_menu_preferences);
         return true;
     }
 
@@ -859,32 +873,32 @@ public class ConvertCsvActivity extends Activity {
         HashMap<String, Writer> mWriter;
 
         ExportContext(File file, boolean singleFile) {
-            this.mSingleFile = true;
-            this.mWriter = new HashMap();
-            this.mCSVWriter = new HashMap();
-            this.mFile = file;
-            this.mSingleFile = singleFile;
+            mSingleFile = true;
+            mWriter = new HashMap();
+            mCSVWriter = new HashMap();
+            mFile = file;
+            mSingleFile = singleFile;
         }
 
         private void closeCsvWriter(String customer) throws IOException {
-            if (this.mSingleFile) {
+            if (mSingleFile) {
                 customer = "";
             }
-            ((Writer) this.mWriter.get(customer)).close();
+            ((Writer) mWriter.get(customer)).close();
         }
 
         private CSVWriter<Totals> getCsvWriter(String customer) throws IOException {
-            if (this.mSingleFile) {
+            if (mSingleFile) {
                 customer = "";
             }
-            if (this.mWriter.containsKey(customer)) {
-                return (CSVWriter) this.mCSVWriter.get(customer);
+            if (mWriter.containsKey(customer)) {
+                return (CSVWriter) mCSVWriter.get(customer);
             }
             File file;
-            if (this.mSingleFile) {
-                file = this.mFile;
+            if (mSingleFile) {
+                file = mFile;
             } else {
-                file = new File(this.mFile + "/" + customer + ".csv");
+                file = new File(mFile + "/" + customer + ".csv");
             }
             FileWriter writer = new FileWriter(file);
             CSVWriter<Totals> csvwriter = new CSVWriter(writer);
@@ -899,8 +913,8 @@ public class ConvertCsvActivity extends Activity {
             csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_description), false);
             csvwriter.write(ConvertCsvActivity.this.getString(R.string.header_customer), false);
             csvwriter.writeNewline();
-            this.mWriter.put(customer, writer);
-            this.mCSVWriter.put(customer, csvwriter);
+            mWriter.put(customer, writer);
+            mCSVWriter.put(customer, csvwriter);
             return csvwriter;
         }
     }

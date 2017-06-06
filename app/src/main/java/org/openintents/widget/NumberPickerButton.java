@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 
 import org.openintents.timesheet.R;
 
-public class NumberPickerButton extends ImageButton {
+public class NumberPickerButton extends android.support.v7.widget.AppCompatImageButton {
     private NumberPicker mNumberPicker;
 
     public NumberPickerButton(Context context, AttributeSet attrs, int defStyle) {
@@ -24,37 +24,42 @@ public class NumberPickerButton extends ImageButton {
     }
 
     public void setNumberPicker(NumberPicker picker) {
-        this.mNumberPicker = picker;
+        mNumberPicker = picker;
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         cancelLongpressIfRequired(event);
         return super.onTouchEvent(event);
     }
 
+    @Override
     public boolean onTrackballEvent(MotionEvent event) {
         cancelLongpressIfRequired(event);
         return super.onTrackballEvent(event);
     }
 
+    @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == 23 || keyCode == 66) {
+        if ((keyCode == KeyEvent.KEYCODE_DPAD_CENTER)
+                || (keyCode == KeyEvent.KEYCODE_ENTER)) {
             cancelLongpress();
         }
         return super.onKeyUp(keyCode, event);
     }
 
     private void cancelLongpressIfRequired(MotionEvent event) {
-        if (event.getAction() == 3 || event.getAction() == 1) {
+        if ((event.getAction() == MotionEvent.ACTION_CANCEL)
+                || (event.getAction() == MotionEvent.ACTION_UP)) {
             cancelLongpress();
         }
     }
 
     private void cancelLongpress() {
         if (R.id.increment == getId()) {
-            this.mNumberPicker.cancelIncrement();
+            mNumberPicker.cancelIncrement();
         } else if (R.id.decrement == getId()) {
-            this.mNumberPicker.cancelDecrement();
+            mNumberPicker.cancelDecrement();
         }
     }
 }

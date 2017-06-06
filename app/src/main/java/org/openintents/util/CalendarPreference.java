@@ -29,8 +29,8 @@ public class CalendarPreference extends ListPreference {
         } else if (calendarAuthority == 2) {
             cursor = getContext().getContentResolver().query(Calendars.CONTENT_URI_2, Calendars.NAME_PROJECTION, null, null, null);
         } else {
-            Toast.makeText(getContext(), R.string.calendar_missing, 0).show();
-            return;
+            Toast.makeText(getContext(), R.string.calendar_missing, Toast.LENGTH_SHORT).show();
+            cursor = null;
         }
         if (cursor != null) {
             mEntries = new CharSequence[cursor.getCount()];

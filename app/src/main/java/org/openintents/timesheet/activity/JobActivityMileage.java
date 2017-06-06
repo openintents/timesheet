@@ -29,8 +29,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.openintents.timesheet.R;
+import org.openintents.timesheet.Timesheet;
 import org.openintents.timesheet.Timesheet.Job;
-import org.openintents.timesheet.Timesheet.Reminders;
 import org.openintents.timesheet.TimesheetIntent;
 import org.openintents.timesheet.animation.FadeAnimation;
 import org.openintents.util.DateTimeFormater;
@@ -43,32 +43,45 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 public class JobActivityMileage extends Activity {
-    static final int DIALOG_ID_RECENT_NOTES = 1;
+
     static final String TAG = "JobActivityMileage";
-    private static final int ADD_EXTRA_ITEM_ID = 11;
-    private static final int COLUMN_INDEX_CUSTOMER = 6;
-    private static final int COLUMN_INDEX_END_LONG = 3;
+    static final int DIALOG_ID_RECENT_NOTES = 1;
+    /**
+     * Standard projection for the interesting columns of a normal job.
+     */
+    private static final String[] PROJECTION = new String[]{Job._ID, // 0
+            Job.NOTE, // 1
+            Job.START_LONG, // 2
+            Job.END_LONG, // 3
+            Job.TOTAL_LONG, // 4
+            Job.RATE_LONG, // 5
+            Job.CUSTOMER // 6
+    };
+    /**
+     * The index of the columns
+     */
     private static final int COLUMN_INDEX_NOTE = 1;
-    private static final int COLUMN_INDEX_RATE_LONG = 5;
     private static final int COLUMN_INDEX_START_LONG = 2;
+    private static final int COLUMN_INDEX_END_LONG = 3;
     private static final int COLUMN_INDEX_TOTAL_LONG = 4;
-    private static final int DELETE_ID = 3;
-    private static final int DISCARD_ID = 2;
-    private static final int LIST_ID = 4;
+    private static final int COLUMN_INDEX_RATE_LONG = 5;
+    private static final int COLUMN_INDEX_CUSTOMER = 6;
+    // This is our state data that is stored when freezing.
     private static final String ORIGINAL_CONTENT = "origNote";
     private static final String ORIGINAL_STATE = "origState";
-    private static final String[] PROJECTION;
-    private static final int REVERT_ID = 1;
     private static final String SHOW_RECENT_NOTES_BUTTON = "show_recent_notes";
+    // Identifiers for our menu items.
+    private static final int REVERT_ID = Menu.FIRST;
+    private static final int DISCARD_ID = Menu.FIRST + 1;
+    private static final int DELETE_ID = Menu.FIRST + 2;
+    private static final int LIST_ID = Menu.FIRST + 3;
+    private static final int ADD_EXTRA_ITEM_ID = Menu.FIRST + 10;
+
+    // The different distinct states the activity can be run in.
     private static final int STATE_EDIT = 0;
     private static final int STATE_INSERT = 1;
-
-    static {
-        PROJECTION = new String[]{Reminders._ID, TimesheetIntent.EXTRA_NOTE, Job.START_LONG, Job.END_LONG, Job.TOTAL_LONG, Job.RATE_LONG, TimesheetIntent.EXTRA_CUSTOMER};
-    }
-
-    NumberFormat mDecimalFormat;
-    String[] mRecentNoteList;
+    NumberFormat mDecimalFormat = new DecimalFormat("0.00"); // TODO localize
+    String[] mRecentNoteList = null;
     private Cursor mCursor;
     private AutoCompleteTextView mCustomer;
     private String[] mCustomerList;
@@ -84,52 +97,61 @@ public class JobActivityMileage extends Activity {
     private EditText mSetMileageStart;
     private EditText mSetMileageTotal;
     private EditText mSetStartValue;
-    private boolean mShowRecentNotesButton;
+    private boolean mShowRecentNotesButton = false;
     private long mStartValue;
     private int mState;
     private EditText mText;
     private Uri mUri;
 
-    public JobActivityMileage() {
-        this.mDecimalFormat = new DecimalFormat("0.00");
-        this.mShowRecentNotesButton = false;
-        this.mRecentNoteList = null;
-    }
-
+    /**
+     * Create a list of all customers.
+     *
+     * @return
+     */
     public static String[] getCustomerList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = TimesheetIntent.EXTRA_CUSTOMER;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Set<String> set = new TreeSet();
+
+        Cursor c = context.getContentResolver().query(
+                Timesheet.Job.CONTENT_URI, new String[]{Job.CUSTOMER}, null,
+                null, Job.MODIFIED_DATE + " DESC");
+
+        Set<String> set = new TreeSet<>();
+
         c.moveToPosition(-1);
+
         while (c.moveToNext()) {
-            String customer = c.getString(STATE_EDIT);
+            String customer = c.getString(0);
             if (!TextUtils.isEmpty(customer)) {
                 set.add(customer);
             }
         }
+
         c.close();
-        return (String[]) set.toArray(new String[STATE_EDIT]);
+        return set.toArray(new String[0]);
     }
 
+    /**
+     * Create a list of recent titles.
+     *
+     * @return
+     */
     public static String[] getTitlesList(Context context) {
-        ContentResolver contentResolver = context.getContentResolver();
-        Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
-        Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
-        Vector<String> vec = new Vector();
+
+        Cursor c = context.getContentResolver().query(
+                Timesheet.Job.CONTENT_URI, new String[]{Job.TITLE}, null,
+                null, Job.MODIFIED_DATE + " DESC");
+
+        Vector<String> vec = new Vector<String>();
+
         c.moveToPosition(-1);
+
         while (c.moveToNext()) {
-            String title = c.getString(STATE_EDIT);
-            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
+            String title = c.getString(0);
+            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(android.R.string.untitled)) || vec.contains(title))) {
                 vec.add(title);
             }
         }
         c.close();
-        return (String[]) vec.toArray(new String[STATE_EDIT]);
+        return vec.toArray(new String[0]);
     }
 
     public static String getNote(Context context, String title) {
@@ -231,8 +253,8 @@ public class JobActivityMileage extends Activity {
         this.mSetMileageTotal = (EditText) findViewById(R.id.set_mileage_total);
         this.mCursor = managedQuery(this.mUri, PROJECTION, null, null, null);
         this.mCustomerList = getCustomerList(this);
-        this.mCustomer.setAdapter(new ArrayAdapter(this, 17367050, this.mCustomerList));
-        this.mCustomer.setThreshold(STATE_EDIT);
+        this.mCustomer.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, this.mCustomerList));
+        this.mCustomer.setThreshold(0);
         this.mCustomer.setOnClickListener(new C00293());
         if (this.mCustomerList.length < STATE_INSERT) {
             this.mCustomer.setHint(R.string.customer_hint_first_time);
@@ -254,30 +276,30 @@ public class JobActivityMileage extends Activity {
         }
         if (this.mRecentNoteList.length > 0) {
             Log.d(TAG, "show Dialog + " + this.mRecentNoteList.length);
-            showDialog(STATE_INSERT);
+            showDialog(DIALOG_ID_RECENT_NOTES);
             return;
         }
-        Toast.makeText(this, getString(R.string.no_recent_notes_available), STATE_EDIT).show();
+        Toast.makeText(this, getString(R.string.no_recent_notes_available), Toast.LENGTH_SHORT).show();
     }
 
     private void updateRecentNotesButton(boolean animate) {
         if (this.mShowRecentNotesButton || TextUtils.isEmpty(this.mText.getText())) {
             this.mShowRecentNotesButton = true;
             if (!animate) {
-                this.mRecentNotes.setVisibility(STATE_EDIT);
+                this.mRecentNotes.setVisibility(View.VISIBLE);
                 this.mRecentNotesButtonState = STATE_EDIT;
-            } else if (this.mRecentNotesButtonState == 8) {
+            } else if (this.mRecentNotesButtonState == View.GONE) {
                 Log.i(TAG, "Fade in");
                 FadeAnimation.fadeIn(this, this.mRecentNotes);
                 this.mRecentNotesButtonState = STATE_EDIT;
             }
         } else if (!animate) {
-            this.mRecentNotes.setVisibility(8);
-            this.mRecentNotesButtonState = 8;
+            this.mRecentNotes.setVisibility(View.GONE);
+            this.mRecentNotesButtonState = View.GONE;
         } else if (this.mRecentNotesButtonState == 0) {
             Log.i(TAG, "Fade out");
             FadeAnimation.fadeOut(this, this.mRecentNotes);
-            this.mRecentNotesButtonState = 8;
+            this.mRecentNotesButtonState = View.GONE;
         }
     }
 
@@ -370,38 +392,42 @@ public class JobActivityMileage extends Activity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(STATE_EDIT, STATE_INSERT, STATE_EDIT, R.string.menu_revert).setShortcut('0', 'r').setIcon(17301580);
-        menu.add(STATE_INSERT, DELETE_ID, STATE_EDIT, R.string.menu_delete).setShortcut('1', 'd').setIcon(17301564);
-        menu.add(STATE_INSERT, ADD_EXTRA_ITEM_ID, STATE_EDIT, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(17301555);
+        menu.add(STATE_EDIT, STATE_INSERT, STATE_EDIT, R.string.menu_revert).setShortcut('0', 'r').setIcon(android.R.drawable.ic_menu_revert);
+        menu.add(STATE_INSERT, DELETE_ID, STATE_EDIT, R.string.menu_delete).setShortcut('1', 'd').setIcon(android.R.drawable.ic_menu_delete);
+        menu.add(STATE_INSERT, ADD_EXTRA_ITEM_ID, STATE_EDIT, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(android.R.drawable.ic_menu_add);
         Intent intent = new Intent(null, getIntent().getData());
-        intent.addCategory("android.intent.category.ALTERNATIVE");
-        new MenuIntentOptionsWithIcons(this, menu).addIntentOptions(262144, STATE_EDIT, STATE_EDIT, new ComponentName(this, JobActivityMileage.class), null, intent, STATE_EDIT, null);
+        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        new MenuIntentOptionsWithIcons(this, menu).addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
+                new ComponentName(this, JobActivityMileage.class), null, intent, 0, null);
         return true;
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.setGroupVisible(STATE_EDIT, !this.mOriginalContent.equals(this.mText.getText().toString()));
+        menu.setGroupVisible(0, !this.mOriginalContent.equals(this.mText.getText().toString()));
         return super.onPrepareOptionsMenu(menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case STATE_INSERT /*1*/:
-                cancelJob();
-                break;
-            case DISCARD_ID /*2*/:
-                cancelJob();
-                break;
-            case DELETE_ID /*3*/:
+            case DELETE_ID:
                 deleteJob();
                 finish();
                 break;
-            case LIST_ID /*4*/:
-                startActivity(new Intent(this, JobList.class));
+            case DISCARD_ID:
+                cancelJob();
                 break;
-            case ADD_EXTRA_ITEM_ID /*11*/:
-                Intent intent = new Intent(this, InvoiceItemActivity.class);
-                intent.putExtra("jobid", Long.parseLong(this.mUri.getLastPathSegment()));
+            case REVERT_ID:
+                cancelJob();
+                break;
+            case LIST_ID:
+                Intent intent = new Intent(this, JobList.class);
+                startActivity(intent);
+                break;
+
+            case ADD_EXTRA_ITEM_ID:
+                intent = new Intent(this, InvoiceItemActivity.class);
+                long jobId = Long.parseLong(mUri.getLastPathSegment());
+                intent.putExtra("jobid", jobId);
                 startActivity(intent);
                 break;
         }
@@ -410,7 +436,7 @@ public class JobActivityMileage extends Activity {
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-            case STATE_INSERT /*1*/:
+            case DIALOG_ID_RECENT_NOTES:
                 if (this.mRecentNoteList == null) {
                     Log.d(TAG, "getTitlesList");
                     this.mRecentNoteList = getTitlesList(this);
@@ -422,15 +448,17 @@ public class JobActivityMileage extends Activity {
         }
     }
 
+    @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         switch (id) {
-            case STATE_INSERT /*1*/:
+            case DIALOG_ID_RECENT_NOTES /*1*/:
                 Log.i(TAG, "Show recent notes prepare");
+                break;
             default:
         }
     }
 
-    private final void cancelJob() {
+    private void cancelJob() {
         if (this.mCursor != null) {
             String tmp = this.mText.getText().toString();
             this.mText.setText(this.mOriginalContent);
@@ -438,7 +466,7 @@ public class JobActivityMileage extends Activity {
         }
     }
 
-    private final void deleteJob() {
+    private void deleteJob() {
         if (this.mCursor != null) {
             this.mCursor.close();
             this.mCursor = null;

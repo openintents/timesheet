@@ -84,9 +84,9 @@ public class JobActivityExpense extends Activity {
     private Uri mUri;
 
     public JobActivityExpense() {
-        this.mDecimalFormat = new DecimalFormat("0.00");
-        this.mShowRecentNotesButton = false;
-        this.mRecentNoteList = null;
+        mDecimalFormat = new DecimalFormat("0.00");
+        mShowRecentNotesButton = false;
+        mRecentNoteList = null;
     }
 
     public static String[] getCustomerList(Context context) {
@@ -98,31 +98,31 @@ public class JobActivityExpense extends Activity {
         Set<String> set = new TreeSet();
         c.moveToPosition(-1);
         while (c.moveToNext()) {
-            String customer = c.getString(STATE_EDIT);
+            String customer = c.getString(0);
             if (!TextUtils.isEmpty(customer)) {
                 set.add(customer);
             }
         }
         c.close();
-        return (String[]) set.toArray(new String[STATE_EDIT]);
+        return set.toArray(new String[0]);
     }
 
     public static String[] getTitlesList(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
         Uri uri = Job.CONTENT_URI;
-        String[] strArr = new String[STATE_INSERT];
-        strArr[STATE_EDIT] = Job.TITLE;
+        String[] strArr = new String[1];
+        strArr[0] = Job.TITLE;
         Cursor c = contentResolver.query(uri, strArr, null, null, "modified DESC");
         Vector<String> vec = new Vector();
         c.moveToPosition(-1);
         while (c.moveToNext()) {
-            String title = c.getString(STATE_EDIT);
-            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(17039375)) || vec.contains(title))) {
+            String title = c.getString(0);
+            if (!(TextUtils.isEmpty(title) || title.equals(context.getString(android.R.string.untitled)) || vec.contains(title))) {
                 vec.add(title);
             }
         }
         c.close();
-        return (String[]) vec.toArray(new String[STATE_EDIT]);
+        return vec.toArray(new String[0]);
     }
 
     public static String getNote(Context context, String title) {
@@ -165,25 +165,25 @@ public class JobActivityExpense extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        this.mRecentNoteList = null;
+        mRecentNoteList = null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String action = intent.getAction();
         if ("android.intent.action.EDIT".equals(action) || "android.intent.action.VIEW".equals(action)) {
-            this.mState = STATE_EDIT;
-            this.mUri = intent.getData();
+            mState = STATE_EDIT;
+            mUri = intent.getData();
         } else if ("android.intent.action.INSERT".equals(action) || "android.intent.action.MAIN".equals(action) || action == null) {
-            this.mState = STATE_INSERT;
+            mState = STATE_INSERT;
             if (intent.getData() == null) {
                 intent.setData(Job.CONTENT_URI);
             }
             ContentValues values = new ContentValues();
-            this.mPreselectedCustomer = intent.getStringExtra(TimesheetIntent.EXTRA_CUSTOMER);
-            Log.i(TAG, "Intent extra: Customer = " + this.mPreselectedCustomer);
-            if (!TextUtils.isEmpty(this.mPreselectedCustomer)) {
-                if (this.mPreselectedCustomer.equals(getString(R.string.all_customers))) {
-                    this.mPreselectedCustomer = null;
+            mPreselectedCustomer = intent.getStringExtra(TimesheetIntent.EXTRA_CUSTOMER);
+            Log.i(TAG, "Intent extra: Customer = " + mPreselectedCustomer);
+            if (!TextUtils.isEmpty(mPreselectedCustomer)) {
+                if (mPreselectedCustomer.equals(getString(R.string.all_customers))) {
+                    mPreselectedCustomer = null;
                 } else {
-                    values.put(TimesheetIntent.EXTRA_CUSTOMER, this.mPreselectedCustomer);
+                    values.put(TimesheetIntent.EXTRA_CUSTOMER, mPreselectedCustomer);
                 }
             }
             String note = getIntent().getStringExtra(TimesheetIntent.EXTRA_NOTE);
@@ -194,122 +194,122 @@ public class JobActivityExpense extends Activity {
             if (rate >= 0) {
                 values.put(Job.HOURLY_RATE, Integer.valueOf(rate));
             }
-            if (TextUtils.isEmpty(this.mPreselectedCustomer)) {
-                this.mPreselectedCustomer = getLastCustomer(this);
+            if (TextUtils.isEmpty(mPreselectedCustomer)) {
+                mPreselectedCustomer = getLastCustomer(this);
             }
-            this.mUri = getContentResolver().insert(intent.getData(), values);
+            mUri = getContentResolver().insert(intent.getData(), values);
             intent.setAction("android.intent.action.EDIT");
-            intent.setData(this.mUri);
+            intent.setData(mUri);
             setIntent(intent);
-            if (this.mUri == null) {
+            if (mUri == null) {
                 Log.e(TAG, "Failed to insert new job into " + getIntent().getData());
                 setResult(STATE_EDIT);
                 finish();
                 return;
             }
-            setResult(-1, new Intent().setAction(this.mUri.toString()));
+            setResult(-1, new Intent().setAction(mUri.toString()));
         } else {
             Log.e(TAG, "Unknown action, exiting");
             finish();
             return;
         }
         setContentView(R.layout.job_expense);
-        this.mText = (EditText) findViewById(R.id.note);
-        this.mText.addTextChangedListener(new C00221());
-        this.mCustomer = (AutoCompleteTextView) findViewById(R.id.customer);
-        this.mRecentNotes = (Button) findViewById(R.id.recent_notes);
-        this.mRecentNotes.setOnClickListener(new C00232());
-        this.mSetValue = (EditText) findViewById(R.id.set_hourly_rate);
-        this.mCursor = managedQuery(this.mUri, PROJECTION, null, null, null);
-        this.mCustomerList = getCustomerList(this);
-        this.mCustomer.setAdapter(new ArrayAdapter(this, 17367050, this.mCustomerList));
-        this.mCustomer.setThreshold(STATE_EDIT);
-        this.mCustomer.setOnClickListener(new C00243());
-        if (this.mCustomerList.length < STATE_INSERT) {
-            this.mCustomer.setHint(R.string.customer_hint_first_time);
+        mText = (EditText) findViewById(R.id.note);
+        mText.addTextChangedListener(new C00221());
+        mCustomer = (AutoCompleteTextView) findViewById(R.id.customer);
+        mRecentNotes = (Button) findViewById(R.id.recent_notes);
+        mRecentNotes.setOnClickListener(new C00232());
+        mSetValue = (EditText) findViewById(R.id.set_hourly_rate);
+        mCursor = managedQuery(mUri, PROJECTION, null, null, null);
+        mCustomerList = getCustomerList(this);
+        mCustomer.setAdapter(new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, mCustomerList));
+        mCustomer.setThreshold(STATE_EDIT);
+        mCustomer.setOnClickListener(new C00243());
+        if (mCustomerList.length < STATE_INSERT) {
+            mCustomer.setHint(R.string.customer_hint_first_time);
         }
-        this.mCustomer.setOnItemClickListener(new C00254());
+        mCustomer.setOnItemClickListener(new C00254());
         if (savedInstanceState != null) {
-            this.mOriginalContent = savedInstanceState.getString(ORIGINAL_CONTENT);
-            this.mState = savedInstanceState.getInt(ORIGINAL_STATE);
-            this.mShowRecentNotesButton = savedInstanceState.getBoolean(SHOW_RECENT_NOTES_BUTTON);
+            mOriginalContent = savedInstanceState.getString(ORIGINAL_CONTENT);
+            mState = savedInstanceState.getInt(ORIGINAL_STATE);
+            mShowRecentNotesButton = savedInstanceState.getBoolean(SHOW_RECENT_NOTES_BUTTON);
         }
-        this.mCursor.moveToFirst();
+        mCursor.moveToFirst();
     }
 
     private void showRecentNotesDialog() {
         Log.d(TAG, "showRecentNOtes");
-        if (this.mRecentNoteList == null) {
+        if (mRecentNoteList == null) {
             Log.d(TAG, "getTitlesList");
-            this.mRecentNoteList = getTitlesList(this);
+            mRecentNoteList = getTitlesList(this);
         }
-        if (this.mRecentNoteList.length > 0) {
-            Log.d(TAG, "show Dialog + " + this.mRecentNoteList.length);
+        if (mRecentNoteList.length > 0) {
+            Log.d(TAG, "show Dialog + " + mRecentNoteList.length);
             showDialog(STATE_INSERT);
             return;
         }
-        Toast.makeText(this, getString(R.string.no_recent_notes_available), STATE_EDIT).show();
+        Toast.makeText(this, getString(R.string.no_recent_notes_available), Toast.LENGTH_SHORT).show();
     }
 
     private void updateRecentNotesButton(boolean animate) {
-        if (this.mShowRecentNotesButton || TextUtils.isEmpty(this.mText.getText())) {
-            this.mShowRecentNotesButton = true;
+        if (mShowRecentNotesButton || TextUtils.isEmpty(mText.getText())) {
+            mShowRecentNotesButton = true;
             if (!animate) {
-                this.mRecentNotes.setVisibility(STATE_EDIT);
-                this.mRecentNotesButtonState = STATE_EDIT;
-            } else if (this.mRecentNotesButtonState == 8) {
+                mRecentNotes.setVisibility(View.VISIBLE);
+                mRecentNotesButtonState = View.VISIBLE;
+            } else if (mRecentNotesButtonState == View.GONE) {
                 Log.i(TAG, "Fade in");
-                FadeAnimation.fadeIn(this, this.mRecentNotes);
-                this.mRecentNotesButtonState = STATE_EDIT;
+                FadeAnimation.fadeIn(this, mRecentNotes);
+                mRecentNotesButtonState = View.VISIBLE;
             }
         } else if (!animate) {
-            this.mRecentNotes.setVisibility(8);
-            this.mRecentNotesButtonState = 8;
-        } else if (this.mRecentNotesButtonState == 0) {
+            mRecentNotes.setVisibility(View.GONE);
+            mRecentNotesButtonState = View.GONE;
+        } else if (mRecentNotesButtonState == View.VISIBLE) {
             Log.i(TAG, "Fade out");
-            FadeAnimation.fadeOut(this, this.mRecentNotes);
-            this.mRecentNotesButtonState = 8;
+            FadeAnimation.fadeOut(this, mRecentNotes);
+            mRecentNotesButtonState = View.GONE;
         }
     }
 
     protected void onResume() {
         super.onResume();
         DateTimeFormater.getFormatFromPreferences(this);
-        if (this.mCursor != null) {
+        if (mCursor != null) {
             updateFromCursor();
         } else {
             setTitle(getText(R.string.error_title));
-            this.mText.setText(getText(R.string.error_message));
+            mText.setText(getText(R.string.error_message));
         }
         updateRecentNotesButton(false);
-        if (!TextUtils.isEmpty(this.mPreselectedCustomer)) {
-            Log.i(TAG, ">>> Autofillin preselected customer informaton for " + this.mPreselectedCustomer);
-            this.mCustomer.setText(this.mPreselectedCustomer);
-            this.mPreselectedCustomer = null;
+        if (!TextUtils.isEmpty(mPreselectedCustomer)) {
+            Log.i(TAG, ">>> Autofillin preselected customer informaton for " + mPreselectedCustomer);
+            mCustomer.setText(mPreselectedCustomer);
+            mPreselectedCustomer = null;
         }
     }
 
     private void updateFromCursor() {
-        this.mCursor.requery();
-        this.mCursor.moveToFirst();
-        if (this.mState == 0) {
+        mCursor.requery();
+        mCursor.moveToFirst();
+        if (mState == 0) {
             setTitle(getText(R.string.title_edit));
-        } else if (this.mState == STATE_INSERT) {
+        } else if (mState == STATE_INSERT) {
             setTitle(getText(R.string.title_create));
         }
-        String note = this.mCursor.getString(STATE_INSERT);
-        this.mText.setTextKeepState(note);
-        if (this.mOriginalContent == null) {
-            this.mOriginalContent = note;
+        String note = mCursor.getString(STATE_INSERT);
+        mText.setTextKeepState(note);
+        if (mOriginalContent == null) {
+            mOriginalContent = note;
         }
-        this.mHourlyRate = this.mCursor.getLong(DELETE_ID);
-        this.mCustomer.setText(this.mCursor.getString(LIST_ID));
+        mHourlyRate = mCursor.getLong(DELETE_ID);
+        mCustomer.setText(mCursor.getString(LIST_ID));
     }
 
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(ORIGINAL_CONTENT, this.mOriginalContent);
-        outState.putInt(ORIGINAL_STATE, this.mState);
-        outState.putBoolean(SHOW_RECENT_NOTES_BUTTON, this.mShowRecentNotesButton);
+        outState.putString(ORIGINAL_CONTENT, mOriginalContent);
+        outState.putInt(ORIGINAL_STATE, mState);
+        outState.putBoolean(SHOW_RECENT_NOTES_BUTTON, mShowRecentNotesButton);
     }
 
     protected void onPause() {
@@ -322,7 +322,7 @@ public class JobActivityExpense extends Activity {
     }
 
     private ContentValues getContentValues() {
-        String text = this.mText.getText().toString();
+        String text = mText.getText().toString();
         int length = text.length();
         ContentValues values = new ContentValues();
         values.put(Job.MODIFIED_DATE, Long.valueOf(System.currentTimeMillis()));
@@ -340,12 +340,12 @@ public class JobActivityExpense extends Activity {
             values.put(Job.TITLE, title);
         }
         values.put(TimesheetIntent.EXTRA_NOTE, text);
-        values.put(TimesheetIntent.EXTRA_CUSTOMER, this.mCustomer.getText().toString());
+        values.put(TimesheetIntent.EXTRA_CUSTOMER, mCustomer.getText().toString());
         long hourlyrate = 0;
         try {
-            hourlyrate = (long) (100.0f * Float.parseFloat(this.mSetValue.getText().toString()));
+            hourlyrate = (long) (100.0f * Float.parseFloat(mSetValue.getText().toString()));
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Error parsing hourly rate: " + this.mSetValue.getText().toString());
+            Log.e(TAG, "Error parsing hourly rate: " + mSetValue.getText().toString());
         }
         values.put(Job.HOURLY_RATE, Long.valueOf(hourlyrate));
         values.put(Job.TYPE, Job.TYPE_EXPENSE);
@@ -353,45 +353,62 @@ public class JobActivityExpense extends Activity {
     }
 
     protected void updateDatabase(ContentValues values) {
-        if (this.mCursor != null) {
-            getContentResolver().update(this.mUri, values, null, null);
+        if (mCursor != null) {
+            getContentResolver().update(mUri, values, null, null);
         }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(STATE_EDIT, STATE_INSERT, STATE_EDIT, R.string.menu_revert).setShortcut('0', 'r').setIcon(17301580);
-        menu.add(STATE_INSERT, DELETE_ID, STATE_EDIT, R.string.menu_delete).setShortcut('1', 'd').setIcon(17301564);
-        menu.add(STATE_INSERT, ADD_EXTRA_ITEM_ID, STATE_EDIT, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(17301555);
+        menu.add(0, REVERT_ID, 0, R.string.menu_revert).setShortcut('0', 'r').setIcon(android.R.drawable.ic_menu_revert);
+        menu.add(1, DELETE_ID, 0, R.string.menu_delete).setShortcut('1', 'd').setIcon(android.R.drawable.ic_menu_delete);
+        menu.add(1, ADD_EXTRA_ITEM_ID, 0, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(android.R.drawable.ic_menu_add);
         Intent intent = new Intent(null, getIntent().getData());
-        intent.addCategory("android.intent.category.ALTERNATIVE");
-        new MenuIntentOptionsWithIcons(this, menu).addIntentOptions(262144, STATE_EDIT, STATE_EDIT, new ComponentName(this, JobActivityExpense.class), null, intent, STATE_EDIT, null);
+        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+
+        // Workaround to add icons:
+        MenuIntentOptionsWithIcons menu2 = new MenuIntentOptionsWithIcons(this,
+                menu);
+        menu2.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
+                new ComponentName(this, JobActivityExpense.class), null,
+                intent, 0, null);
+
         return true;
     }
 
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.setGroupVisible(STATE_EDIT, !this.mOriginalContent.equals(this.mText.getText().toString()));
+
+        // Show "revert" menu item only if content has changed.
+        boolean contentChanged = !mOriginalContent.equals(mText.getText()
+                .toString());
+        menu.setGroupVisible(0, contentChanged);
+
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle all of the possible menu actions.
         switch (item.getItemId()) {
-            case STATE_INSERT /*1*/:
-                cancelJob();
-                break;
-            case DISCARD_ID /*2*/:
-                cancelJob();
-                break;
-            case DELETE_ID /*3*/:
+            case DELETE_ID:
                 deleteJob();
                 finish();
                 break;
-            case LIST_ID /*4*/:
-                startActivity(new Intent(this, JobList.class));
+            case DISCARD_ID:
+                cancelJob();
                 break;
-            case ADD_EXTRA_ITEM_ID /*11*/:
-                Intent intent = new Intent(this, InvoiceItemActivity.class);
-                intent.putExtra("jobid", Long.parseLong(this.mUri.getLastPathSegment()));
+            case REVERT_ID:
+                cancelJob();
+                break;
+            case LIST_ID:
+                Intent intent = new Intent(this, JobList.class);
+                startActivity(intent);
+                break;
+            case ADD_EXTRA_ITEM_ID:
+                intent = new Intent(this, InvoiceItemActivity.class);
+                long jobId = Long.parseLong(mUri.getLastPathSegment());
+                intent.putExtra("jobid", jobId);
                 startActivity(intent);
                 break;
         }
@@ -400,13 +417,15 @@ public class JobActivityExpense extends Activity {
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-            case STATE_INSERT /*1*/:
-                if (this.mRecentNoteList == null) {
+            case DIALOG_ID_RECENT_NOTES /*1*/:
+                if (mRecentNoteList == null) {
                     Log.d(TAG, "getTitlesList");
-                    this.mRecentNoteList = getTitlesList(this);
+                    mRecentNoteList = getTitlesList(this);
                 }
                 Log.i(TAG, "Show recent notes create");
-                return new Builder(this).setTitle(R.string.recent_notes).setItems(this.mRecentNoteList, new C00265()).create();
+                return new Builder(this).setTitle(R.string.recent_notes)
+                        .setItems(mRecentNoteList,
+                                new C00265()).create();
             default:
                 return null;
         }
@@ -414,26 +433,28 @@ public class JobActivityExpense extends Activity {
 
     protected void onPrepareDialog(int id, Dialog dialog) {
         switch (id) {
-            case STATE_INSERT /*1*/:
+
+            case DIALOG_ID_RECENT_NOTES:
                 Log.i(TAG, "Show recent notes prepare");
+                break;
             default:
         }
     }
 
-    private final void cancelJob() {
-        if (this.mCursor != null) {
-            String tmp = this.mText.getText().toString();
-            this.mText.setText(this.mOriginalContent);
-            this.mOriginalContent = tmp;
+    private void cancelJob() {
+        if (mCursor != null) {
+            String tmp = mText.getText().toString();
+            mText.setText(mOriginalContent);
+            mOriginalContent = tmp;
         }
     }
 
-    private final void deleteJob() {
-        if (this.mCursor != null) {
-            this.mCursor.close();
-            this.mCursor = null;
-            getContentResolver().delete(this.mUri, null, null);
-            this.mText.setText("");
+    private void deleteJob() {
+        if (mCursor != null) {
+            mCursor.close();
+            mCursor = null;
+            getContentResolver().delete(mUri, null, null);
+            mText.setText("");
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Timesheet</string>
+    <string name="app_name">OI Timesheet</string>
     <string name="app_descr">Protocol your working time</string>
     <string name="title_create">Create job</string>
     <string name="title_edit">Edit job</string>
@@ -236,7 +236,7 @@ No compatible extension available to display full info (contact, credits, licens
     <string name="about_title">About %s</string>
     <string name="about_text">"Version %s 
 
- OpenIntents Timesheet helps you to keep track of your jobs. See www.openintents.biz/timesheet for update information and help.
+ OpenIntents Timesheet helps you to keep track of your jobs. See www.openintents.org/timesheet for update information and help.
 
  OpenIntents allows different Android applications to share data using intents and open interfaces.
 

@@ -3,6 +3,7 @@ package org.openintents.widget;
 import android.content.Context;
 import android.os.Handler;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spanned;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
@@ -65,180 +66,255 @@ public class NumberPicker extends LinearLayout implements OnClickListener, OnFoc
         this.mSpeed = 300;
         this.mStep = 1;
         setOrientation(VERTICAL);
-        this.mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.mInflater.inflate(R.layout.number_picker, this, true);
-        this.mHandler = new Handler();
-        this.mInputFilter = new NumberPickerInputFilter();
-        this.mNumberInputFilter = new NumberRangeKeyListener();
-        this.mIncrementButton = (NumberPickerButton) findViewById(R.id.increment);
-        this.mIncrementButton.setOnClickListener(this);
-        this.mIncrementButton.setOnLongClickListener(this);
-        this.mIncrementButton.setNumberPicker(this);
-        this.mDecrementButton = (NumberPickerButton) findViewById(R.id.decrement);
-        this.mDecrementButton.setOnClickListener(this);
-        this.mDecrementButton.setOnLongClickListener(this);
-        this.mDecrementButton.setNumberPicker(this);
-        this.mText = (TextView) findViewById(R.id.timepicker_input);
-        this.mText.setOnFocusChangeListener(this);
-        this.mText.setFilters(new InputFilter[]{this.mInputFilter});
-        this.mSlideUpOutAnimation = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 0.0f, 1, -100.0f);
-        this.mSlideUpOutAnimation.setDuration(200);
-        this.mSlideUpInAnimation = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 100.0f, 1, 0.0f);
-        this.mSlideUpInAnimation.setDuration(200);
-        this.mSlideDownOutAnimation = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 0.0f, 1, 100.0f);
-        this.mSlideDownOutAnimation.setDuration(200);
-        this.mSlideDownInAnimation = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, -100.0f, 1, 0.0f);
-        this.mSlideDownInAnimation.setDuration(200);
+        mInflater = (LayoutInflater) getContext().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        mInflater.inflate(R.layout.number_picker, this, true);
+        mHandler = new Handler();
+        mInputFilter = new NumberPickerInputFilter();
+        mNumberInputFilter = new NumberRangeKeyListener();
+        mIncrementButton = (NumberPickerButton) findViewById(R.id.increment);
+        mIncrementButton.setOnClickListener(this);
+        mIncrementButton.setOnLongClickListener(this);
+        mIncrementButton.setNumberPicker(this);
+        mDecrementButton = (NumberPickerButton) findViewById(R.id.decrement);
+        mDecrementButton.setOnClickListener(this);
+        mDecrementButton.setOnLongClickListener(this);
+        mDecrementButton.setNumberPicker(this);
+
+        mText = (TextView) findViewById(R.id.timepicker_input);
+        mText.setOnFocusChangeListener(this);
+        mText.setFilters(new InputFilter[]{mInputFilter});
+
+        mSlideUpOutAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, -100);
+        mSlideUpOutAnimation.setDuration(200);
+        mSlideUpInAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 100, Animation.RELATIVE_TO_SELF, 0);
+        mSlideUpInAnimation.setDuration(200);
+        mSlideDownOutAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 100);
+        mSlideDownOutAnimation.setDuration(200);
+        mSlideDownInAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0,
+                Animation.RELATIVE_TO_SELF, -100, Animation.RELATIVE_TO_SELF, 0);
+        mSlideDownInAnimation.setDuration(200);
+
         if (!isEnabled()) {
             setEnabled(false);
         }
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        this.mIncrementButton.setEnabled(enabled);
-        this.mDecrementButton.setEnabled(enabled);
-        this.mText.setEnabled(enabled);
+        mIncrementButton.setEnabled(enabled);
+        mDecrementButton.setEnabled(enabled);
+        mText.setEnabled(enabled);
     }
 
     public void setOnChangeListener(OnChangedListener listener) {
-        this.mListener = listener;
+        mListener = listener;
     }
 
     public void setFormatter(Formatter formatter) {
-        this.mFormatter = formatter;
+        mFormatter = formatter;
     }
 
+    /**
+     * Set the range of numbers allowed for the number picker. The current value
+     * will be automatically set to the start.
+     *
+     * @param start the start of the range (inclusive)
+     * @param end   the end of the range (inclusive)
+     */
     public void setRange(int start, int end) {
-        this.mStart = start;
-        this.mEnd = end;
-        this.mCurrent = start;
+        mStart = start;
+        mEnd = end;
+        mCurrent = start;
         updateView();
     }
 
+    /**
+     * Set the range of numbers allowed for the number picker. The current value
+     * will be automatically set to the start. Also provide a mapping for values
+     * used to display to the user.
+     *
+     * @param start           the start of the range (inclusive)
+     * @param end             the end of the range (inclusive)
+     * @param displayedValues the values displayed to the user.
+     */
     public void setRange(int start, int end, String[] displayedValues) {
-        this.mDisplayedValues = displayedValues;
-        this.mStart = start;
-        this.mEnd = end;
-        this.mCurrent = start;
+        mDisplayedValues = displayedValues;
+        mStart = start;
+        mEnd = end;
+        mCurrent = start;
         updateView();
     }
 
     public void setCurrent(int current) {
-        this.mCurrent = current;
+        mCurrent = current;
         updateView();
     }
 
+    /**
+     * The speed (in milliseconds) at which the numbers will scroll when the the
+     * +/- buttons are longpressed. Default is 300ms.
+     */
     public void setSpeed(long speed) {
-        this.mSpeed = speed;
+        mSpeed = speed;
     }
 
     public void onClick(View v) {
-        this.mText.clearFocus();
+
+		/*
+         * The text view may still have focus so clear it's focus which will
+		 * trigger the on focus changed and any typed values to be pulled.
+		 */
+        mText.clearFocus();
+
+        // now perform the increment/decrement
         if (R.id.increment == v.getId()) {
-            changeCurrent(this.mCurrent + (this.mStep - (this.mCurrent % this.mStep)), this.mSlideUpInAnimation, this.mSlideUpOutAnimation);
+            int step = mStep - (mCurrent % mStep);
+            changeCurrent(mCurrent + step, mSlideUpInAnimation,
+                    mSlideUpOutAnimation);
         } else if (R.id.decrement == v.getId()) {
-            int step = this.mCurrent % this.mStep;
+            int step = mCurrent % mStep;
             if (step == 0) {
-                step = this.mStep;
+                step = mStep;
             }
-            changeCurrent(this.mCurrent - step, this.mSlideDownInAnimation, this.mSlideDownOutAnimation);
+            changeCurrent(mCurrent - step, mSlideDownInAnimation,
+                    mSlideDownOutAnimation);
         }
     }
 
     private String formatNumber(int value) {
-        if (this.mFormatter != null) {
-            return this.mFormatter.toString(value);
-        }
-        return String.valueOf(value);
+        return (mFormatter != null) ? mFormatter.toString(value) : String
+                .valueOf(value);
     }
 
     private void changeCurrent(int current, Animation in, Animation out) {
-        if (current > this.mEnd) {
-            current = ((current - this.mStart) % ((this.mEnd + 1) - this.mStart)) + this.mStart;
-        } else if (current < this.mStart) {
-            current = (((current - this.mStart) % ((this.mEnd + 1) - this.mStart)) + this.mEnd) + 1;
+
+        // Wrap around the values if we go past the start or end
+        if (current > mEnd) {
+            current = ((current - mStart) % (mEnd + 1 - mStart)) + mStart;
+        } else if (current < mStart) {
+            current = ((current - mStart) % (mEnd + 1 - mStart)) + mEnd + 1;
         }
-        this.mPrevious = this.mCurrent;
-        this.mCurrent = current;
+        mPrevious = mCurrent;
+        mCurrent = current;
         notifyChange();
         updateView();
     }
 
     private void notifyChange() {
-        if (this.mListener != null) {
-            this.mListener.onChanged(this, this.mPrevious, this.mCurrent);
+        if (mListener != null) {
+            mListener.onChanged(this, mPrevious, mCurrent);
         }
     }
 
     private void updateView() {
-        if (this.mDisplayedValues == null) {
-            this.mText.setText(formatNumber(this.mCurrent));
+
+		/*
+         * If we don't have displayed values then use the current number else
+		 * find the correct value in the displayed values for the current
+		 * number.
+		 */
+        if (mDisplayedValues == null) {
+            mText.setText(formatNumber(mCurrent));
         } else {
-            this.mText.setText(this.mDisplayedValues[this.mCurrent - this.mStart]);
+            mText.setText(mDisplayedValues[mCurrent - mStart]);
         }
     }
 
     private void validateCurrentView(CharSequence str) {
         int val = getSelectedPos(str.toString());
-        if (val >= this.mStart && val <= this.mEnd) {
-            this.mPrevious = this.mCurrent;
-            this.mCurrent = val;
+        if ((val >= mStart) && (val <= mEnd)) {
+            mPrevious = mCurrent;
+            mCurrent = val;
             notifyChange();
         }
         updateView();
     }
 
     public void onFocusChange(View v, boolean hasFocus) {
+
+		/*
+         * When focus is lost check that the text field has valid values.
+		 */
         if (!hasFocus) {
             String str = String.valueOf(((TextView) v).getText());
             if ("".equals(str)) {
+
+                // Restore to the old value as we don't allow empty values
                 updateView();
             } else {
+
+                // Check the new value and ensure it's in range
                 validateCurrentView(str);
             }
         }
     }
 
+    /**
+     * We start the long click here but rely on the {@link NumberPickerButton}
+     * to inform us when the long click has ended.
+     */
     public boolean onLongClick(View v) {
-        this.mText.clearFocus();
+
+		/*
+		 * The text view may still have focus so clear it's focus which will
+		 * trigger the on focus changed and any typed values to be pulled.
+		 */
+        mText.clearFocus();
+
         if (R.id.increment == v.getId()) {
-            this.mIncrement = true;
-            this.mHandler.post(this.mRunnable);
+            mIncrement = true;
+            mHandler.post(mRunnable);
         } else if (R.id.decrement == v.getId()) {
-            this.mDecrement = true;
-            this.mHandler.post(this.mRunnable);
+            mDecrement = true;
+            mHandler.post(mRunnable);
         }
         return true;
     }
 
     public void cancelIncrement() {
-        this.mIncrement = false;
+        mIncrement = false;
     }
 
     public void cancelDecrement() {
-        this.mDecrement = false;
+        mDecrement = false;
     }
 
     private int getSelectedPos(String str) {
-        if (this.mDisplayedValues == null) {
+        if (mDisplayedValues == null) {
             return Integer.parseInt(str);
         }
-        for (int i = 0; i < this.mDisplayedValues.length; i++) {
+        for (int i = 0; i < mDisplayedValues.length; i++) {
+
+				/* Don't force the user to type in jan when ja will do */
             str = str.toLowerCase();
-            if (this.mDisplayedValues[i].toLowerCase().startsWith(str)) {
-                return this.mStart + i;
+            if (mDisplayedValues[i].toLowerCase().startsWith(str)) {
+                return mStart + i;
             }
         }
+
+			/*
+			 * The user might have typed in a number into the month field i.e.
+			 * 10 instead of OCT so support that too.
+			 */
         try {
             return Integer.parseInt(str);
         } catch (NumberFormatException e) {
-            return this.mStart;
+            /* Ignore as if it's not a number we don't care */
+            return mStart;
         }
     }
 
     public void setStep(int step) {
-        this.mStep = step;
+        mStep = step;
     }
 
     public interface Formatter {
@@ -317,15 +393,17 @@ public class NumberPicker extends LinearLayout implements OnClickListener, OnFoc
             if (filtered == null) {
                 filtered = source.subSequence(start, end);
             }
-            String result = new StringBuilder(String.valueOf(String.valueOf(dest.subSequence(0, dstart)))).append(filtered).append(dest.subSequence(dend, dest.length())).toString();
+            String result = String.valueOf(String.valueOf(dest.subSequence(0, dstart))) + filtered + dest.subSequence(dend, dest.length());
             if ("".equals(result)) {
                 return result;
             }
             return NumberPicker.this.getSelectedPos(result) > NumberPicker.this.mEnd ? "" : filtered;
         }
 
+        @Override
         public int getInputType() {
-            return 2;
+            return InputType.TYPE_CLASS_NUMBER;
         }
     }
+
 }

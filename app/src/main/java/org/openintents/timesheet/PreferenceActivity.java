@@ -24,10 +24,10 @@ public class PreferenceActivity extends android.preference.PreferenceActivity im
     public static final String PREFS_EXPORT_SINGLE_FILE = "export_single_file";
     public static final String PREFS_EXPORT_TIME_FORMAT = "export_time_format";
     public static final String PREFS_EXPORT_TOTALS = "export_totals";
-    public static final String PREFS_EXTENSIONS_MARKET = "preference_extensions_market";
-    public static final String PREFS_LICENSE_DEVELOPER = "org.openintents.lickey";
-    public static final String PREFS_LICENSE_MARKET = "preference_license_market";
-    public static final String PREFS_LICENSE_PDASSI = "preference_license_pdassi";
+    //public static final String PREFS_EXTENSIONS_MARKET = "preference_extensions_market";
+    //public static final String PREFS_LICENSE_DEVELOPER = "org.openintents.lickey";
+    //public static final String PREFS_LICENSE_MARKET = "preference_license_market";
+    //public static final String PREFS_LICENSE_PDASSI = "preference_license_pdassi";
     public static final String PREFS_MILAGE_DESCRIPTION = "mileage_description";
     public static final String PREFS_MILEAGE_RATE = "mileage_rate";
     public static final String PREFS_OMIT_TEMPLATES = "omit_templates";
@@ -35,31 +35,12 @@ public class PreferenceActivity extends android.preference.PreferenceActivity im
     public static final String PREFS_SHOW_MILEAGE_RATE = "show_mileage_rate";
     public static final String PREFS_SHOW_NOTIFICATION = "show_notification";
     public static final String PREFS_START_JOBS_IMMEDIATELY = "start_jobs_immediately";
-    private static final String PREFS_LICENSE_CATEGORY = "preference_screen_license";
+    //private static final String PREFS_LICENSE_CATEGORY = "preference_screen_license";
 
     protected void onCreate(Bundle savedInstanceState) {
         boolean z = true;
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        ((PreferenceScreen) findPreference(PREFS_EXTENSIONS_MARKET)).setEnabled(isMarketAvailable());
-        PreferenceScreen sp = (PreferenceScreen) findPreference(PREFS_LICENSE_MARKET);
-        boolean z2 = isMarketAvailable() && Application.mApplicationVariant != 2;
-        sp.setEnabled(z2);
-        sp = (PreferenceScreen) findPreference(PREFS_LICENSE_PDASSI);
-        if (Application.mApplicationVariant == 1) {
-            z = false;
-        }
-        sp.setEnabled(z);
-        sp = (PreferenceScreen) findPreference(PREFS_LICENSE_CATEGORY);
-        if (((LicensedApplication) getApplication()).isLicenseValid()) {
-            sp.setSummary(R.string.license_valid);
-        }
-    }
-
-    private boolean isMarketAvailable() {
-        Intent i = new Intent("android.intent.action.VIEW");
-        i.setData(Uri.parse(getString(R.string.preference_extensions_market_link)));
-        return IntentUtils.isIntentAvailable(this, i);
     }
 
     protected void onResume() {

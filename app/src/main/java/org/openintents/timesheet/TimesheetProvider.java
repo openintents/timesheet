@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2008-2017 OpenIntents.biz
+ *
+ */
+
 package org.openintents.timesheet;
 
 import android.content.ContentProvider;
@@ -20,46 +25,54 @@ import org.openintents.intents.ProviderIntents;
 import org.openintents.intents.ProviderUtils;
 import org.openintents.timesheet.Timesheet.InvoiceItem;
 import org.openintents.timesheet.Timesheet.Job;
-import org.openintents.timesheet.Timesheet.Reminders;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides access to a database of notes. Each note has a title, the note
+ * itself, a creation date and a modified data.
+ */
 public class TimesheetProvider extends ContentProvider {
+
     public static final String QUERY_EXTRAS_TOTAL = "extras_total";
+    private static final String TAG = "TimesheetProvider";
     private static final String DATABASE_NAME = "timesheet.db";
     private static final int DATABASE_VERSION = 3;
+    private static final String JOB_TABLE_NAME = "jobs";
+    private static final String INVOICE_ITEMS_TABLE_NAME = "invoice_items";
+    private static final int JOBS = 1;
+    private static final int JOB_ID = 2;
     private static final int DELEGATED_JOBS = 3;
     private static final int DELEGATED_JOB_ID = 4;
     private static final int INVOICEITEMS = 5;
     private static final int INVOICEITEM_ID = 6;
-    private static final String INVOICE_ITEMS_TABLE_NAME = "invoice_items";
-    private static final int JOBS = 1;
-    private static final int JOB_ID = 2;
-    private static final String JOB_TABLE_NAME = "jobs";
-    private static final String TAG = "TimesheetProvider";
+
     private static final UriMatcher sUriMatcher;
     static Map<String, String> sInvoiceItemsProjectionMap;
     private static HashMap<String, String> sJobsProjectionMap;
 
     static {
-        sUriMatcher = new UriMatcher(-1);
-        sUriMatcher.addURI(Timesheet.AUTHORITY, JOB_TABLE_NAME, JOBS);
+        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        sUriMatcher.addURI(Timesheet.AUTHORITY, "jobs", JOBS);
         sUriMatcher.addURI(Timesheet.AUTHORITY, "jobs/#", JOB_ID);
         sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems", INVOICEITEMS);
         sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems/#", INVOICEITEM_ID);
-        sInvoiceItemsProjectionMap = new HashMap();
-        sInvoiceItemsProjectionMap.put(Reminders._ID, Reminders._ID);
-        sInvoiceItemsProjectionMap.put(InvoiceItem.DESCRIPTION, InvoiceItem.DESCRIPTION);
+
+        sInvoiceItemsProjectionMap = new HashMap<String, String>();
+        sInvoiceItemsProjectionMap.put(InvoiceItem._ID, InvoiceItem._ID);
+        sInvoiceItemsProjectionMap.put(InvoiceItem.DESCRIPTION,
+                InvoiceItem.DESCRIPTION);
         sInvoiceItemsProjectionMap.put(InvoiceItem.EXTRAS, InvoiceItem.EXTRAS);
         sInvoiceItemsProjectionMap.put(InvoiceItem.JOB_ID, InvoiceItem.JOB_ID);
-        sInvoiceItemsProjectionMap.put(Job.TYPE, Job.TYPE);
+        sInvoiceItemsProjectionMap.put(InvoiceItem.TYPE, InvoiceItem.TYPE);
         sInvoiceItemsProjectionMap.put(InvoiceItem.VALUE, InvoiceItem.VALUE);
-        sJobsProjectionMap = new HashMap();
-        sJobsProjectionMap.put(Reminders._ID, "jobs._id");
+
+        sJobsProjectionMap = new HashMap<String, String>();
+        sJobsProjectionMap.put(Job._ID, JOB_TABLE_NAME + "." + Job._ID);
         sJobsProjectionMap.put(Job.TITLE, Job.TITLE);
-        sJobsProjectionMap.put(TimesheetIntent.EXTRA_NOTE, TimesheetIntent.EXTRA_NOTE);
-        sJobsProjectionMap.put(TimesheetIntent.EXTRA_CUSTOMER, TimesheetIntent.EXTRA_CUSTOMER);
+        sJobsProjectionMap.put(Job.NOTE, Job.NOTE);
+        sJobsProjectionMap.put(Job.CUSTOMER, Job.CUSTOMER);
         sJobsProjectionMap.put(Job.START_DATE, Job.START_DATE);
         sJobsProjectionMap.put(Job.END_DATE, Job.END_DATE);
         sJobsProjectionMap.put(Job.BREAK_DURATION, Job.BREAK_DURATION);
@@ -78,7 +91,7 @@ public class TimesheetProvider extends ContentProvider {
         sJobsProjectionMap.put(Job.CUSTOMER_REF, Job.CUSTOMER_REF);
         sJobsProjectionMap.put(Job.NOTES_REF, Job.NOTES_REF);
         sJobsProjectionMap.put(Job.CALENDAR_REF, Job.CALENDAR_REF);
-        sJobsProjectionMap.put(QUERY_EXTRAS_TOTAL, QUERY_EXTRAS_TOTAL);
+        sJobsProjectionMap.put(Job.EXTRAS_TOTAL, Job.EXTRAS_TOTAL);
         sJobsProjectionMap.put(Job.DELEGATEE_REF, Job.DELEGATEE_REF);
         sJobsProjectionMap.put(Job.STATUS, Job.STATUS);
         sJobsProjectionMap.put(Job.START_LONG, Job.START_LONG);
@@ -95,276 +108,487 @@ public class TimesheetProvider extends ContentProvider {
 
     private DatabaseHelper mOpenHelper;
 
+    @Override
     public boolean onCreate() {
-        this.mOpenHelper = new DatabaseHelper(getContext());
+        mOpenHelper = new DatabaseHelper(getContext());
         return true;
     }
 
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection,
+                        String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String orderBy = null;
+
         switch (sUriMatcher.match(uri)) {
-            case JOBS /*1*/:
+            case JOBS:
                 qb.setTables(JOB_TABLE_NAME);
                 qb.setProjectionMap(sJobsProjectionMap);
-                qb.appendWhere("delegatee_ref is null");
-                if (!TextUtils.isEmpty(sortOrder)) {
+                qb.appendWhere(Job.DELEGATEE_REF + " is null");
+
+                // If no sort order is specified use the default
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = Job.DEFAULT_SORT_ORDER;
+                } else {
                     orderBy = sortOrder;
-                    break;
                 }
-                orderBy = Job.DEFAULT_SORT_ORDER;
+
                 break;
-            case JOB_ID /*2*/:
+
+            case JOB_ID:
                 qb.setTables(JOB_TABLE_NAME);
                 qb.setProjectionMap(sJobsProjectionMap);
-                qb.appendWhere("_id=" + uri.getLastPathSegment() + " AND " + Job.DELEGATEE_REF + " is null");
-                if (!TextUtils.isEmpty(sortOrder)) {
+                qb.appendWhere(Job._ID + "=" + uri.getLastPathSegment() + " AND "
+                        + Job.DELEGATEE_REF + " is null");
+                // If no sort order is specified use the default
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = Job.DEFAULT_SORT_ORDER;
+                } else {
                     orderBy = sortOrder;
-                    break;
                 }
-                orderBy = Job.DEFAULT_SORT_ORDER;
+
                 break;
-            case DELEGATED_JOBS /*3*/:
+
+            case DELEGATED_JOBS:
                 qb.setTables(JOB_TABLE_NAME);
                 qb.setProjectionMap(sJobsProjectionMap);
-                qb.appendWhere("delegatee_ref is not null");
-                if (!TextUtils.isEmpty(sortOrder)) {
+                qb.appendWhere(Job.DELEGATEE_REF + " is not null");
+                // If no sort order is specified use the default
+
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = Job.DEFAULT_SORT_ORDER;
+                } else {
                     orderBy = sortOrder;
-                    break;
                 }
-                orderBy = Job.DEFAULT_SORT_ORDER;
                 break;
-            case DELEGATED_JOB_ID /*4*/:
+
+            case DELEGATED_JOB_ID:
                 qb.setTables(JOB_TABLE_NAME);
                 qb.setProjectionMap(sJobsProjectionMap);
-                qb.appendWhere("_id=" + uri.getLastPathSegment() + " AND " + Job.DELEGATEE_REF + " is not null");
+                qb.appendWhere(Job._ID + "=" + uri.getLastPathSegment() + " AND "
+                        + Job.DELEGATEE_REF + " is not null");
                 break;
-            case INVOICEITEMS /*5*/:
+            case INVOICEITEMS:
                 qb.setTables(INVOICE_ITEMS_TABLE_NAME);
                 qb.setProjectionMap(sInvoiceItemsProjectionMap);
-                if (!TextUtils.isEmpty(sortOrder)) {
+                // If no sort order is specified use the default
+
+                if (TextUtils.isEmpty(sortOrder)) {
+                    orderBy = InvoiceItem.DEFAULT_SORT_ORDER;
+                } else {
                     orderBy = sortOrder;
-                    break;
                 }
-                orderBy = InvoiceItem.DESCRIPTION;
                 break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
-        Cursor c = qb.query(this.mOpenHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, orderBy);
+
+
+        // Get the database and run the query
+        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor c = qb.query(db, projection, selection, selectionArgs, null,
+                null, orderBy);
+
+        // Tell the cursor what uri to watch, so it knows when its source data
+        // changes
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
 
+    @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
-            case JOBS /*1*/:
+            case JOBS:
                 return Job.CONTENT_TYPE;
-            case JOB_ID /*2*/:
+
+            case JOB_ID:
                 return Job.CONTENT_ITEM_TYPE;
+
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
 
+    @Override
     public Uri insert(Uri uri, ContentValues initialValues) {
-        ContentValues values;
-        Long now;
-        long rowId;
-        Uri noteUri;
-        Intent intent;
+        // Validate the requested uri
         switch (sUriMatcher.match(uri)) {
-            case JOBS /*1*/:
+            case JOBS:
+
+                ContentValues values;
                 if (initialValues != null) {
                     values = new ContentValues(initialValues);
                 } else {
                     values = new ContentValues();
                 }
-                now = Long.valueOf(System.currentTimeMillis());
-                if (!values.containsKey(Job.CREATED_DATE)) {
+
+                Long now = Long.valueOf(System.currentTimeMillis());
+
+                // Make sure that the fields are all set
+                if (values.containsKey(Job.CREATED_DATE) == false) {
                     values.put(Job.CREATED_DATE, now);
                 }
-                if (!values.containsKey(Job.MODIFIED_DATE)) {
+
+                if (values.containsKey(Job.MODIFIED_DATE) == false) {
                     values.put(Job.MODIFIED_DATE, now);
                 }
-                if (!values.containsKey(Job.TITLE)) {
-                    values.put(Job.TITLE, Resources.getSystem().getString(17039375));
+
+                if (values.containsKey(Job.TITLE) == false) {
+                    Resources r = Resources.getSystem();
+                    values.put(Job.TITLE, r.getString(android.R.string.untitled));
                 }
-                if (!values.containsKey(TimesheetIntent.EXTRA_NOTE)) {
-                    values.put(TimesheetIntent.EXTRA_NOTE, "");
+
+                if (values.containsKey(Job.NOTE) == false) {
+                    values.put(Job.NOTE, "");
                 }
-                if (!values.containsKey(TimesheetIntent.EXTRA_CUSTOMER)) {
-                    Resources system = Resources.getSystem();
-                    values.put(TimesheetIntent.EXTRA_CUSTOMER, "");
+
+                if (values.containsKey(Job.CUSTOMER) == false) {
+                    Resources r = Resources.getSystem();
+                    values.put(Job.CUSTOMER, "");
                 }
-                rowId = this.mOpenHelper.getWritableDatabase().insert(JOB_TABLE_NAME, TimesheetIntent.EXTRA_NOTE, values);
+
+                SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+                long rowId = db.insert(JOB_TABLE_NAME, Job.NOTE, values);
                 if (rowId > 0) {
-                    noteUri = ContentUris.withAppendedId(Job.CONTENT_URI, rowId);
+                    Uri noteUri = ContentUris
+                            .withAppendedId(Job.CONTENT_URI, rowId);
                     getContext().getContentResolver().notifyChange(noteUri, null);
-                    intent = new Intent(ProviderIntents.ACTION_INSERTED);
+
+                    Intent intent = new Intent(ProviderIntents.ACTION_INSERTED);
                     intent.setData(noteUri);
                     getContext().sendBroadcast(intent);
+
                     return noteUri;
                 }
+
                 throw new SQLException("Failed to insert row into " + uri);
-            case INVOICEITEMS /*5*/:
+
+            case INVOICEITEMS:
+
                 if (initialValues != null) {
                     values = new ContentValues(initialValues);
                 } else {
                     values = new ContentValues();
                 }
+
                 now = Long.valueOf(System.currentTimeMillis());
-                if (!values.containsKey(Job.CREATED_DATE)) {
-                    values.put(Job.CREATED_DATE, now);
+
+                // Make sure that the fields are all set
+                if (values.containsKey(Job.CREATED_DATE) == false) {
+                    values.put(InvoiceItem.CREATED_DATE, now);
                 }
-                if (!values.containsKey(Job.MODIFIED_DATE)) {
-                    values.put(Job.MODIFIED_DATE, now);
+
+                if (values.containsKey(Job.MODIFIED_DATE) == false) {
+                    values.put(InvoiceItem.MODIFIED_DATE, now);
                 }
-                SQLiteDatabase db = this.mOpenHelper.getWritableDatabase();
-                rowId = db.insert(INVOICE_ITEMS_TABLE_NAME, InvoiceItem.DESCRIPTION, values);
+
+                db = mOpenHelper.getWritableDatabase();
+                rowId = db.insert(INVOICE_ITEMS_TABLE_NAME,
+                        InvoiceItem.DESCRIPTION, values);
                 if (rowId > 0) {
-                    noteUri = ContentUris.withAppendedId(InvoiceItem.CONTENT_URI, rowId);
+                    Uri noteUri = ContentUris.withAppendedId(
+                            InvoiceItem.CONTENT_URI, rowId);
                     getContext().getContentResolver().notifyChange(noteUri, null);
-                    intent = new Intent(ProviderIntents.ACTION_INSERTED);
+
+                    Intent intent = new Intent(ProviderIntents.ACTION_INSERTED);
                     intent.setData(noteUri);
                     getContext().sendBroadcast(intent);
+
                     updateTotal(db, (Long) values.get(InvoiceItem.JOB_ID));
                     return noteUri;
                 }
+
                 throw new SQLException("Failed to insert row into " + uri);
+
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+
     }
 
     private void updateTotal(SQLiteDatabase writableDb, Long jobId) {
-        String str = INVOICE_ITEMS_TABLE_NAME;
-        String[] strArr = new String[JOBS];
-        strArr[0] = "SUM(value)";
-        String[] strArr2 = new String[JOBS];
-        strArr2[0] = String.valueOf(jobId);
-        Cursor c = writableDb.query(str, strArr, "job_id = ?", strArr2, InvoiceItem.JOB_ID, null, null);
+
+        Cursor c = writableDb.query(INVOICE_ITEMS_TABLE_NAME, new String[]{"SUM(value)"}, InvoiceItem.JOB_ID + " = ?", new String[]{String.valueOf(jobId)}, InvoiceItem.JOB_ID, null, null);
         c.moveToFirst();
-        Long total = Long.valueOf(c.getLong(0));
+        Long total = c.getLong(0);
         c.close();
+
         ContentValues values = new ContentValues();
-        values.put(QUERY_EXTRAS_TOTAL, total);
-        strArr = new String[JOBS];
-        strArr[0] = String.valueOf(jobId);
-        writableDb.update(JOB_TABLE_NAME, values, "_id = ?", strArr);
+        values.put(Job.EXTRAS_TOTAL, total);
+        writableDb.update(JOB_TABLE_NAME, values, Job._ID + " = ?", new String[]{String.valueOf(jobId)});
+
     }
 
+    @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
-        SQLiteDatabase db = this.mOpenHelper.getWritableDatabase();
         long[] affectedRows = null;
-        String whereString;
         switch (sUriMatcher.match(uri)) {
-            case JOBS /*1*/:
-                affectedRows = ProviderUtils.getAffectedRows(db, JOB_TABLE_NAME, where, whereArgs);
+            case JOBS:
+                affectedRows = ProviderUtils.getAffectedRows(db, JOB_TABLE_NAME,
+                        where, whereArgs);
                 count = db.delete(JOB_TABLE_NAME, where, whereArgs);
                 break;
-            case JOB_ID /*2*/:
-                whereString = "_id=" + ((String) uri.getPathSegments().get(JOBS)) + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
-                affectedRows = ProviderUtils.getAffectedRows(db, JOB_TABLE_NAME, whereString, whereArgs);
+
+            case JOB_ID:
+                String noteId = uri.getPathSegments().get(1);
+                String whereString = Job._ID + "=" + noteId
+                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
+
+                affectedRows = ProviderUtils.getAffectedRows(db, JOB_TABLE_NAME,
+                        whereString, whereArgs);
                 count = db.delete(JOB_TABLE_NAME, whereString, whereArgs);
                 break;
-            case INVOICEITEM_ID /*6*/:
-                String noteId = (String) uri.getPathSegments().get(JOBS);
-                String str = INVOICE_ITEMS_TABLE_NAME;
-                String[] strArr = new String[JOBS];
-                strArr[0] = InvoiceItem.JOB_ID;
-                String[] strArr2 = new String[JOBS];
-                strArr2[0] = noteId;
-                Cursor c = db.query(str, strArr, "_id = ?", strArr2, null, null, null);
+
+            case INVOICEITEM_ID:
+                noteId = uri.getPathSegments().get(1);
+
+                Cursor c = db.query(INVOICE_ITEMS_TABLE_NAME, new String[]{InvoiceItem.JOB_ID}, InvoiceItem._ID + " = ?", new String[]{noteId}, null, null, null);
                 c.moveToFirst();
-                Long jobId = Long.valueOf(c.getLong(0));
+                Long jobId = c.getLong(0);
                 c.close();
-                whereString = "_id=" + noteId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
-                affectedRows = ProviderUtils.getAffectedRows(db, INVOICE_ITEMS_TABLE_NAME, whereString, whereArgs);
+
+                whereString = InvoiceItem._ID + "=" + noteId
+                        + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
+
+                affectedRows = ProviderUtils.getAffectedRows(db,
+                        INVOICE_ITEMS_TABLE_NAME, whereString, whereArgs);
                 count = db.delete(INVOICE_ITEMS_TABLE_NAME, whereString, whereArgs);
                 updateTotal(db, jobId);
                 break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+
         getContext().getContentResolver().notifyChange(uri, null);
+
         Intent intent = new Intent(ProviderIntents.ACTION_DELETED);
         intent.setData(uri);
         intent.putExtra(ProviderIntents.EXTRA_AFFECTED_ROWS, affectedRows);
         getContext().sendBroadcast(intent);
+
         Timesheet.updateNotification(getContext(), false);
+
         return count;
     }
 
-    public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+    @Override
+    public int update(Uri uri, ContentValues values, String where,
+                      String[] whereArgs) {
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
-        SQLiteDatabase db = this.mOpenHelper.getWritableDatabase();
         switch (sUriMatcher.match(uri)) {
-            case JOBS /*1*/:
+            case JOBS:
                 count = db.update(JOB_TABLE_NAME, values, where, whereArgs);
                 break;
-            case JOB_ID /*2*/:
-                count = db.update(JOB_TABLE_NAME, values, "_id=" + uri.getLastPathSegment() + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+
+            case JOB_ID:
+                String id = uri.getLastPathSegment();
+                count = db.update(JOB_TABLE_NAME, values,
+                        Job._ID
+                                + "="
+                                + id
+                                + (!TextUtils.isEmpty(where) ? " AND (" + where
+                                + ')' : ""), whereArgs);
                 break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+
         getContext().getContentResolver().notifyChange(uri, null);
+
         Intent intent = new Intent(ProviderIntents.ACTION_MODIFIED);
         intent.setData(uri);
         getContext().sendBroadcast(intent);
+
         Timesheet.updateNotification(getContext(), false);
+
         return count;
     }
 
+    /**
+     * This class helps open, create, and upgrade the database file.
+     */
     private static class DatabaseHelper extends SQLiteOpenHelper {
+
         DatabaseHelper(Context context) {
-            super(context, TimesheetProvider.DATABASE_NAME, null, TimesheetProvider.DELEGATED_JOBS);
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
+        @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE jobs (_id INTEGER PRIMARY KEY,title TEXT,note TEXT,customer TEXT,start_date INTEGER,end_date INTEGER,last_start_break INTEGER,break_duration INTEGER,last_start_break2 INTEGER,break2_duration INTEGER,break2_count INTEGER,hourly_rate INTEGER,hourly_rate2 INTEGER,hourly_rate2_Start INTEGER,hourly_rate3 INTEGER,hourly_rate3_Start INTEGER,planned_date INTEGER,planned_duration INTEGER,customer_ref TEXT,notes_ref TEXT,calendar_ref TEXT,tax_rate DECIMAL,extras_total INTEGER,delegatee_ref TEXT,status INTEGER,start_long INTEGER,end_long INTEGER,total_long INTEGER,rate_long INTEGER,parent_id INTEGER,external_system TEXT,external_ref TEXT,type INTEGER,created INTEGER,modified INTEGER);");
+            db.execSQL("CREATE TABLE " + JOB_TABLE_NAME + " (" + Job._ID
+                    + " INTEGER PRIMARY KEY," // Version 1
+                    + Job.TITLE + " TEXT," // Version 1
+                    + Job.NOTE + " TEXT," // Version 1
+                    + Job.CUSTOMER + " TEXT," // Version 1
+                    + Job.START_DATE + " INTEGER," // Version 1
+                    + Job.END_DATE + " INTEGER," // Version 1
+                    + Job.LAST_START_BREAK + " INTEGER," // Version 1
+                    + Job.BREAK_DURATION + " INTEGER," // Version 1
+                    + Job.LAST_START_BREAK2 + " INTEGER," // Version 2
+                    + Job.BREAK2_DURATION + " INTEGER," // Version 2
+                    + Job.BREAK2_COUNT + " INTEGER," // Version 2
+                    + Job.HOURLY_RATE + " INTEGER," // Version 1
+                    + Job.HOURLY_RATE2 + " INTEGER," // Version 3
+                    + Job.HOURLY_RATE2_START + " INTEGER," // Version 3
+                    + Job.HOURLY_RATE3 + " INTEGER," // Version 3
+                    + Job.HOURLY_RATE3_START + " INTEGER," // Version 3
+                    + Job.PLANNED_DATE + " INTEGER," // Version 2
+                    + Job.PLANNED_DURATION + " INTEGER," // Version 2
+                    + Job.CUSTOMER_REF + " TEXT," // Version 2
+                    + Job.NOTES_REF + " TEXT," // Version 2
+                    + Job.CALENDAR_REF + " TEXT," // Version 2
+                    + Job.TAX_RATE + " DECIMAL," // Version 2
+                    + Job.EXTRAS_TOTAL + " INTEGER," // Version 2
+                    + Job.DELEGATEE_REF + " TEXT," // Version 2
+                    + Job.STATUS + " INTEGER," // Version 2
+                    + Job.START_LONG + " INTEGER," // Version 2
+                    + Job.END_LONG + " INTEGER," // Version 2
+                    + Job.TOTAL_LONG + " INTEGER," // Version 2
+                    + Job.RATE_LONG + " INTEGER," // Version 2
+                    + Job.PARENT_ID + " INTEGER," // Version 2
+                    + Job.EXTERNAL_SYSTEM + " TEXT," // Version 4
+                    + Job.EXTERNAL_REF + " TEXT," // Version 4
+                    + Job.TYPE + " INTEGER," // Version 2
+                    + Job.CREATED_DATE + " INTEGER," // Version 1
+                    + Job.MODIFIED_DATE + " INTEGER" // Version 1
+                    + ");");
+
             createInvoiceItemsTable(db);
         }
 
         private void createInvoiceItemsTable(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE invoice_items (_id INTEGER PRIMARY KEY,job_id INTEGER,description TEXT,extras TEXT,type INTEGER,value INTEGER,created INTEGER,modified INTEGER);");
+            db.execSQL("CREATE TABLE " + INVOICE_ITEMS_TABLE_NAME + " ("
+                    + InvoiceItem._ID + " INTEGER PRIMARY KEY," // Version 2
+                    + InvoiceItem.JOB_ID + " INTEGER," // Version 2
+                    + InvoiceItem.DESCRIPTION + " TEXT," // Version 2
+                    + InvoiceItem.EXTRAS + " TEXT," // Version 2
+                    + InvoiceItem.TYPE + " INTEGER," // Version 2
+                    + InvoiceItem.VALUE + " INTEGER," // Version 2
+                    + InvoiceItem.CREATED_DATE + " INTEGER," // Version 2
+                    + InvoiceItem.MODIFIED_DATE + " INTEGER" // Version 2
+                    + ");");
         }
 
+        @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(TimesheetProvider.TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+            Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
+                    + newVersion + ", which will destroy all old data");
+
             if (newVersion > oldVersion) {
+                // Upgrade
                 switch (oldVersion) {
-                    case TimesheetProvider.JOBS /*1*/:
+                    case 1:
+                        // Upgrade from version 1 to 2.
+                        // It seems SQLite3 only allows to add one column at a time,
+                        // so we need three SQL statements:
                         try {
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN last_start_break2 INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN break2_duration INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN break2_count INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN planned_date INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN planned_duration INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN customer_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN notes_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN calendar_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN tax_rate DECIMAL;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN extras_total INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN delegatee_ref TEXT;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN status INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN start_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN end_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN rate_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN total_long INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN parent_id INTEGER;");
-                            db.execSQL("ALTER TABLE jobs ADD COLUMN type INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.LAST_START_BREAK2
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.BREAK2_DURATION
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.BREAK2_COUNT
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.PLANNED_DATE
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.PLANNED_DURATION
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.CUSTOMER_REF + " TEXT;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.NOTES_REF + " TEXT;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.CALENDAR_REF + " TEXT;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.TAX_RATE + " DECIMAL;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.EXTRAS_TOTAL
+                                    + " INTEGER;");
+                            db
+                                    .execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                            + " ADD COLUMN " + Job.DELEGATEE_REF
+                                            + " TEXT;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.STATUS + " INTEGER;");
+
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.START_LONG + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.END_LONG + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.RATE_LONG + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.TOTAL_LONG + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.PARENT_ID + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.TYPE + " INTEGER;");
+
                             createInvoiceItemsTable(db);
-                            break;
                         } catch (SQLException e) {
-                            Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e);
-                            break;
+                            Log.e(TAG, "Error executing SQL: ", e);
+                            // If the error is "duplicate column name" then
+                            // everything is fine,
+                            // as this happens after upgrading 1->2, then
+                            // downgrading 2->1,
+                            // and then upgrading again 1->2.
                         }
-                    case TimesheetProvider.JOB_ID /*2*/:
-                        break;
-                    case TimesheetProvider.DELEGATED_JOBS /*3*/:
+                        // fall through for further upgrades.
+
+                    case 2: // add more columns
+                        try {
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.HOURLY_RATE2
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.HOURLY_RATE2_START
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.HOURLY_RATE3
+                                    + " INTEGER;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.HOURLY_RATE3_START
+                                    + " INTEGER;");
+                        } catch (SQLException e) {
+                            Log.e(TAG, "Error executing SQL: ", e);
+                            // If the error is "duplicate column name" then
+                            // everything is fine,
+                            // as this happens after upgrading 2->3, then
+                            // downgrading 3->2,
+                            // and then upgrading again 2->3.
+                        }
+                        // fall through for further upgrades.
+
+                    case 3: // add more columns
+                        try {
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.EXTERNAL_SYSTEM
+                                    + " TEXT;");
+                            db.execSQL("ALTER TABLE " + JOB_TABLE_NAME
+                                    + " ADD COLUMN " + Job.EXTERNAL_REF
+                                    + " TEXT;");
+                        } catch (SQLException e) {
+                            Log.e(TAG, "Error executing SQL: ", e);
+                            // If the error is "duplicate column name" then
+                            // everything is fine,
+                            // as this happens after upgrading 3->4, then
+                            // downgrading 4->3,
+                            // and then upgrading again 3->4.
+                        }
+                        // fall through for further upgrades.
+                    /*
+					 * case 4: // add more columns
+					 */
                         break;
                     default:
                         Log.w(TimesheetProvider.TAG, "Unknown version " + oldVersion + ". Creating new database.");
@@ -372,24 +596,15 @@ public class TimesheetProvider extends ContentProvider {
                         onCreate(db);
                         return;
                 }
-                try {
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate2 INTEGER;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate2_Start INTEGER;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate3 INTEGER;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN hourly_rate3_Start INTEGER;");
-                } catch (SQLException e2) {
-                    Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e2);
-                }
-                try {
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN external_system TEXT;");
-                    db.execSQL("ALTER TABLE jobs ADD COLUMN external_ref TEXT;");
-                    return;
-                } catch (SQLException e22) {
-                    Log.e(TimesheetProvider.TAG, "Error executing SQL: ", e22);
-                    return;
-                }
+            } else { // newVersion <= oldVersion
+                // Downgrade
+                Log
+                        .w(
+                                TAG,
+                                "Don't know how to downgrade. Will not touch database and hope they are compatible.");
+                // Do nothing.
             }
-            Log.w(TimesheetProvider.TAG, "Don't know how to downgrade. Will not touch database and hope they are compatible.");
+
         }
     }
 }
