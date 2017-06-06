@@ -310,9 +310,14 @@ public class TimesheetProvider extends ContentProvider {
     private void updateTotal(SQLiteDatabase writableDb, Long jobId) {
 
         Cursor c = writableDb.query(INVOICE_ITEMS_TABLE_NAME, new String[]{"SUM(value)"}, InvoiceItem.JOB_ID + " = ?", new String[]{String.valueOf(jobId)}, InvoiceItem.JOB_ID, null, null);
-        c.moveToFirst();
-        Long total = c.getLong(0);
+        long total;
+        if (c.moveToFirst()) {
+            total = c.getLong(0);
+        } else {
+            total = 0;
+        }
         c.close();
+
 
         ContentValues values = new ContentValues();
         values.put(Job.EXTRAS_TOTAL, total);
