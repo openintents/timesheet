@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -827,11 +828,14 @@ public class JobActivity extends Activity {
     }
 
     protected void jobTimeClicked() {
+
         if (mStarted) {
             stopJob();
+
         } else {
             startJob();
         }
+
     }
 
     private void stopJob() {
@@ -948,60 +952,52 @@ public class JobActivity extends Activity {
     }
 
     private void updateFromCursorWithoutRequery() {
-        boolean z;
-        if (mState == 0) {
+        if (mState == STATE_EDIT) {
             setTitle(getText(R.string.title_edit));
         } else if (mState == STATE_INSERT) {
             setTitle(getText(R.string.title_create));
         }
-        String note = mCursor.getString(STATE_INSERT);
+
+        // This is a little tricky: we may be resumed after previously being
+        // paused/stopped. We want to put the new text in the text view,
+        // but leave the user where they were (retain the cursor position
+        // etc). This version of setText does that for us.
+        String note = mCursor.getString(COLUMN_INDEX_NOTE);
         mText.setTextKeepState(note);
+
+        // If we hadn't previously retrieved the original text, do so
+        // now. This allows the user to revert their changes.
         if (mOriginalContent == null) {
             mOriginalContent = note;
         }
-        mStartDate = mCursor.getLong(DISCARD_ID);
-        mEndDate = mCursor.getLong(DIALOG_ID_END_DATE);
-        mLastStartBreak = mCursor.getLong(LIST_ID);
-        mLastStartBreak2 = mCursor.getLong(DIALOG_ID_RATES);
-        mBreakPreviousDuration = mCursor.getLong(RESTART_ID);
+
+        mStartDate = mCursor.getLong(COLUMN_INDEX_START);
+        mEndDate = mCursor.getLong(COLUMN_INDEX_END);
+        mLastStartBreak = mCursor.getLong(COLUMN_INDEX_LAST_START_BREAK);
+        mLastStartBreak2 = mCursor.getLong(COLUMN_INDEX_LAST_START_BREAK2);
+        mBreakPreviousDuration = mCursor.getLong(COLUMN_INDEX_BREAK_DURATION);
         mBreak2PreviousDuration = mCursor.getLong(COLUMN_INDEX_BREAK2_DURATION);
-        mHourlyRate = mCursor.getLong(PAUSE_ID);
-        String customer = mCursor.getString(DIALOG_ID_STOP_JOB);
-        mPlannedDate = mCursor.getLong(END_ID);
-        mPlannedDuration = mCursor.getLong(EVENT_ID);
-        mExtraTotal = mCursor.getLong(DIALOG_ID_PLANNED_DURATION);
+        mHourlyRate = mCursor.getLong(COLUMN_INDEX_HOURLY_RATE);
+        String customer = mCursor.getString(COLUMN_INDEX_CUSTOMER);
+        mPlannedDate = mCursor.getLong(COLUMN_INDEX_PLANNED_DATE);
+        mPlannedDuration = mCursor.getLong(COLUMN_INDEX_PLANNED_DURATION);
+        mExtraTotal = mCursor.getLong(COLUMN_INDEX_EXTRA_TOTAL);
         setCustomerText(customer);
-        mCalendarUri = mCursor.getString(SEND_ID);
+        mCalendarUri = mCursor.getString(COLUMN_INDEX_CALENDAR_REF);
         mCustomerRef = mCursor.getString(COLUMN_INDEX_CUSTOMER_REF);
-        if (mStartDate > 0) {
-            z = true;
-        } else {
-            z = false;
-        }
-        mStarted = z;
-        if (!mStarted || mEndDate <= 0) {
-            z = false;
-        } else {
-            z = true;
-        }
-        mFinished = z;
-        if (mLastStartBreak > 0) {
-            z = true;
-        } else {
-            z = false;
-        }
-        mBreak = z;
-        if (mLastStartBreak2 > 0) {
-            z = true;
-        } else {
-            z = false;
-        }
-        mBreak2 = z;
+
+        mStarted = mStartDate > 0;
+        mFinished = mStarted && mEndDate > 0;
+        mBreak = mLastStartBreak > 0;
+        mBreak2 = mLastStartBreak2 > 0;
         if (mStarted) {
             if (mFinished) {
+                // final state
+                mJobButton.setVisibility(View.GONE);
                 mBreakButton.setVisibility(View.GONE);
                 mBreak2Button.setVisibility(View.GONE);
             } else {
+                // state: started
                 mJobButton.setVisibility(View.VISIBLE);
                 if (mBreak2) {
                     mBreakButton.setVisibility(View.GONE);
@@ -1011,14 +1007,17 @@ public class JobActivity extends Activity {
                     mBreak2Button.setVisibility(View.VISIBLE);
                 }
             }
+            // Show in any case the start date
             mCalendar.setTimeInMillis(mStartDate);
-            String datetime = new StringBuilder(String.valueOf(DateTimeFormater.mDateFormater.format(mCalendar.getTime()))).append(" ").append(DateTimeFormater.mTimeFormater.format(mCalendar.getTime())).toString();
-            TextView textView = mTimestamp;
-            Object[] objArr = new Object[STATE_INSERT];
-            objArr[STATE_EDIT] = datetime;
-            textView.setText(getString(R.string.started_at, objArr));
+            String datetime = DateTimeFormater.mDateFormater.format(mCalendar
+                    .getTime())
+                    + " "
+                    + DateTimeFormater.mTimeFormater
+                    .format(mCalendar.getTime());
+            mTimestamp.setText(getString(R.string.started_at, datetime));
             mJobButton.setText(R.string.job_done);
         } else {
+            // state: not yet started
             mJobButton.setVisibility(View.VISIBLE);
             mBreakButton.setVisibility(View.GONE);
             mBreak2Button.setVisibility(View.GONE);
@@ -1027,6 +1026,7 @@ public class JobActivity extends Activity {
         }
         if (mBreak) {
             mBreakButton.setText(R.string.end_of_break);
+            // break2 implies break button not visible
         } else {
             mBreakButton.setText(R.string.having_a_break);
         }
@@ -1035,55 +1035,64 @@ public class JobActivity extends Activity {
         } else {
             mBreak2Button.setText(R.string.continue_tomorrow);
         }
-        mSetPlannedDuration.setText(DurationFormater.formatDuration(this, mPlannedDuration, DISCARD_ID));
-        updateInfo(DISCARD_ID);
+
+        String plannedDurationString = DurationFormater.formatDuration(this,
+                mPlannedDuration, DurationFormater.TYPE_FORMAT_NICE);
+        mSetPlannedDuration.setText(plannedDurationString);
+        updateInfo(DurationFormater.TYPE_FORMAT_NICE);
         updateDateTimeButtons();
         updateDisplay(0);
     }
 
+    /**
+     * Type can be TYPE_FORMAT_SECONDS or TYPE_FORMAT_NICE and is used in
+     * formatDuration();
+     *
+     * @param type
+     */
     private void updateInfo(int type) {
-        TextView textView;
-        Object[] objArr;
-        if (type == DISCARD_ID || type == DIALOG_ID_END_DATE) {
-            String rateString = mDecimalFormat.format(((double) mHourlyRate) * Timesheet.RATE_FACTOR);
-            textView = mHourlyRateInfo;
-            objArr = new Object[STATE_INSERT];
-            objArr[STATE_EDIT] = rateString;
-            textView.setText(getString(R.string.hourly_rate_info, objArr));
-            if (type != DIALOG_ID_END_DATE) {
+        if (type == DurationFormater.TYPE_FORMAT_NICE
+                || type == DurationFormater.TYPE_FORMAT_DONT_UPDATE_INPUT_BOX) {
+            // update fields that don't change over time:
+
+            String rateString = mDecimalFormat.format(mHourlyRate
+                    * Timesheet.RATE_FACTOR);
+            mHourlyRateInfo.setText(getString(R.string.hourly_rate_info,
+                    rateString));
+
+            if (type != DurationFormater.TYPE_FORMAT_DONT_UPDATE_INPUT_BOX) {
+                // Don't update this, if this routine was called
+                // because the user edited the hourly rate in the input box.
                 mSetHourlyRate.setText(rateString);
             }
         }
-        int breaktype = DISCARD_ID;
+
+        int breaktype = DurationFormater.TYPE_FORMAT_NICE;
         if (mStarted && mBreak && !mBreak2) {
-            breaktype = STATE_INSERT;
+            breaktype = DurationFormater.TYPE_FORMAT_SECONDS;
         }
         long breakDuration = getBreakDuration();
-        String breakString = DurationFormater.formatDuration(this, breakDuration, breaktype);
-        textView = mBreakInfo;
-        objArr = new Object[STATE_INSERT];
-        objArr[STATE_EDIT] = breakString;
-        textView.setText(getString(R.string.break_info, objArr));
+        String breakString = DurationFormater.formatDuration(this,
+                breakDuration, breaktype);
+        mBreakInfo.setText(getString(R.string.break_info, breakString));
         mSetBreak.setText(breakString);
-        int worktype = DISCARD_ID;
-        if (!(!mStarted || mFinished || mBreak2)) {
-            worktype = STATE_INSERT;
+
+        int worktype = DurationFormater.TYPE_FORMAT_NICE;
+        if (mStarted && !mFinished && !mBreak2) {
+            worktype = DurationFormater.TYPE_FORMAT_SECONDS;
         }
         long workDuration = getWorkDuration();
-        textView = mDurationInfo;
-        objArr = new Object[STATE_INSERT];
-        objArr[STATE_EDIT] = DurationFormater.formatDuration(this, workDuration, worktype);
-        textView.setText(getString(R.string.duration_info, objArr));
+
+        mDurationInfo.setText(getString(R.string.duration_info,
+                DurationFormater.formatDuration(this, workDuration, worktype)));
+
         double extrasTotal = ((double) mExtraTotal) * Timesheet.RATE_FACTOR;
         double total = ((((double) (workDuration - breakDuration)) * Timesheet.HOUR_FACTOR) * (((double) mHourlyRate) * Timesheet.RATE_FACTOR)) + extrasTotal;
-        textView = mTotalInfo;
-        objArr = new Object[STATE_INSERT];
-        objArr[STATE_EDIT] = mDecimalFormat.format(total);
-        textView.setText(getString(R.string.total_info, objArr));
-        textView = mExtrasInfo;
-        objArr = new Object[STATE_INSERT];
-        objArr[STATE_EDIT] = mDecimalFormat.format(extrasTotal);
-        textView.setText(getString(R.string.extras_info, objArr));
+        mTotalInfo.setText(getString(R.string.total_info,
+                "" + mDecimalFormat.format(total)));
+
+        mExtrasInfo.setText(getString(R.string.extras_info,
+                mDecimalFormat.format(extrasTotal)));
         if (mExtraTotal == 0) {
             mExtrasInfo.setVisibility(View.GONE);
         } else {
@@ -1092,11 +1101,14 @@ public class JobActivity extends Activity {
         if (mPlannedDuration <= 0 || workDuration - breakDuration <= mPlannedDuration) {
             mDurationInfo.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
         } else {
-            mDurationInfo.setTextColor(0xffffff); // TODO verify that this is the same as -65536
+            mDurationInfo.setTextColor(Color.RED);
         }
     }
 
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
+        // Save away the original text, so we still have it if the activity
+        // needs to be killed while paused.
         outState.putString(ORIGINAL_CONTENT, mOriginalContent);
         outState.putInt(ORIGINAL_STATE, mState);
         outState.putString(ORIGINAL_URI, mUri.toString());
@@ -1104,15 +1116,30 @@ public class JobActivity extends Activity {
         outState.putBoolean(SHOW_RECENT_NOTES_BUTTON, mShowRecentNotesButton);
     }
 
+    @Override
     protected void onPause() {
         super.onPause();
+
+        // The user is going somewhere else, so make sure their current
+        // changes are safely saved away in the provider. We don't need
+        // to do this if only editing.
         updateDatabase();
+
         if (mUpdateCalendarEvent && !TextUtils.isEmpty(mCalendarUri)) {
-            setOrUpdateCalendarEvent(mCalendarUri, mPlannedDate, mPlannedDuration, mCalendarAuthority);
+            // note, mPlannedDate and mPlannedDuration might be null, while
+            // mCalendarUri != null
+            // due to export of the final times. This results in deletion of the
+            // calendar entry with the final times.
+            // Maybe two calendar references are needed.
+            setOrUpdateCalendarEvent(mCalendarUri, mPlannedDate,
+                    mPlannedDuration, mCalendarAuthority);
         }
         cancelUpdateDisplay();
     }
 
+    /**
+     * Write all editable fields back to database.
+     */
     private void updateDatabase() {
         updateDatabase(getContentValues());
     }
@@ -1121,23 +1148,26 @@ public class JobActivity extends Activity {
         String text = mText.getText().toString();
         int length = text.length();
         ContentValues values = new ContentValues();
-        values.put(Job.MODIFIED_DATE, valueOf(System.currentTimeMillis()));
-        String title = text.substring(STATE_EDIT, Math.min(30, length));
-        int firstNewline = title.indexOf(SEND_ID);
+        // Bump the modification time to now.
+        values.put(Job.MODIFIED_DATE, System.currentTimeMillis());
+        String title = text.substring(0, Math.min(30, length));
+        int firstNewline = title.indexOf('\n');
         if (firstNewline > 0) {
-            title = title.substring(STATE_EDIT, firstNewline);
+            title = title.substring(0, firstNewline);
         } else if (length > 30) {
-            int lastSpace = title.lastIndexOf(32);
+            int lastSpace = title.lastIndexOf(' ');
             if (lastSpace > 0) {
-                title = title.substring(STATE_EDIT, lastSpace);
+                title = title.substring(0, lastSpace);
             }
         }
         if (title.length() > 0) {
             values.put(Job.TITLE, title);
         }
-        values.put(TimesheetIntent.EXTRA_NOTE, text);
-        values.put(TimesheetIntent.EXTRA_CUSTOMER, mCustomer.getText().toString());
-        values.put(Job.HOURLY_RATE, valueOf(getHourlyRateFromText()));
+        // Write our text back into the provider.
+        values.put(Job.NOTE, text);
+        values.put(Job.CUSTOMER, mCustomer.getText().toString());
+
+        values.put(Job.HOURLY_RATE, getHourlyRateFromText());
         return values;
     }
 
@@ -1149,76 +1179,56 @@ public class JobActivity extends Activity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(STATE_INSERT, RESTART_ID, STATE_EDIT, R.string.menu_restart).setShortcut('1', 's').setIcon(R.drawable.ic_menu_play);
-        menu.add(STATE_INSERT, PAUSE_ID, STATE_EDIT, R.string.menu_pause).setShortcut('2', 'p').setIcon(R.drawable.ic_menu_pause);
-        menu.add(STATE_INSERT, DIALOG_ID_STOP_JOB, STATE_EDIT, R.string.menu_continue).setShortcut('3', 'c').setIcon(R.drawable.ic_menu_continue);
-        menu.add(STATE_INSERT, END_ID, STATE_EDIT, R.string.menu_end).setShortcut('4', 'e').setIcon(R.drawable.ic_menu_stop);
-        menu.add(STATE_EDIT, STATE_INSERT, STATE_EDIT, R.string.menu_revert).setShortcut('0', 'r').setIcon(android.R.drawable.ic_menu_revert);
-        menu.add(STATE_INSERT, DIALOG_ID_END_DATE, STATE_EDIT, R.string.menu_delete).setShortcut('1', 'd').setIcon(android.R.drawable.ic_menu_delete);
-        menu.add(STATE_INSERT, EVENT_ID, STATE_EDIT, R.string.menu_calendar).setShortcut('5', 'c').setIcon(android.R.drawable.ic_menu_my_calendar);
-        menu.add(STATE_INSERT, DIALOG_ID_PLANNED_DURATION, STATE_EDIT, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(android.R.drawable.ic_menu_add);
+        menu.add(1, RESTART_ID, 0, R.string.menu_restart).setShortcut('1', 's').setIcon(R.drawable.ic_menu_play);
+        menu.add(1, PAUSE_ID, 0, R.string.menu_pause).setShortcut('2', 'p').setIcon(R.drawable.ic_menu_pause);
+        menu.add(1, CONTINUE_ID, 0, R.string.menu_continue).setShortcut('3', 'c').setIcon(R.drawable.ic_menu_continue);
+        menu.add(1, END_ID, 0, R.string.menu_end).setShortcut('4', 'e').setIcon(R.drawable.ic_menu_stop);
+        menu.add(0, REVERT_ID, 0, R.string.menu_revert).setShortcut('0', 'r').setIcon(android.R.drawable.ic_menu_revert);
+        menu.add(1, DELETE_ID, 0, R.string.menu_delete).setShortcut('1', 'd').setIcon(android.R.drawable.ic_menu_delete);
+        menu.add(1, EVENT_ID, 0, R.string.menu_calendar).setShortcut('5', 'c').setIcon(android.R.drawable.ic_menu_my_calendar);
+        menu.add(1, ADD_EXTRA_ITEM_ID, 0, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(android.R.drawable.ic_menu_add);
         Intent intent = new Intent(null, getIntent().getData());
-        intent.addCategory("android.intent.category.ALTERNATIVE");
-        new MenuIntentOptionsWithIcons(this, menu).addIntentOptions(262144, STATE_EDIT, STATE_EDIT, new ComponentName(this, JobActivity.class), null, intent, STATE_EDIT, null);
+        intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
+        new MenuIntentOptionsWithIcons(this, menu)
+                .addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, new ComponentName(this, JobActivity.class), null, intent, 0, null);
         return true;
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean contentChanged;
-        boolean z;
-        boolean z2 = false;
-        if (mOriginalContent.equals(mText.getText().toString())) {
-            contentChanged = false;
-        } else {
-            contentChanged = true;
-        }
-        menu.setGroupVisible(STATE_EDIT, contentChanged);
+        boolean contentChanged = !mOriginalContent.equals(mText.getText()
+                .toString());
+        menu.setGroupVisible(0, contentChanged);
+
         if (mStarted) {
             menu.findItem(RESTART_ID).setTitle(R.string.menu_restart);
         } else {
             menu.findItem(RESTART_ID).setTitle(R.string.menu_start);
         }
-        MenuItem findItem = menu.findItem(PAUSE_ID);
-        if (!mStarted || mBreak || mFinished) {
-            z = false;
-        } else {
-            z = true;
-        }
-        findItem.setVisible(z);
-        findItem = menu.findItem(DIALOG_ID_STOP_JOB);
-        if (mFinished || mBreak) {
-            z = true;
-        } else {
-            z = false;
-        }
-        findItem.setVisible(z);
+
+        menu.findItem(PAUSE_ID).setVisible(mStarted && !mBreak && !mFinished);
+
+        menu.findItem(CONTINUE_ID).setVisible(mFinished || mBreak);
+
         menu.findItem(END_ID).setVisible(mStarted);
-        findItem = menu.findItem(EVENT_ID);
-        if (mCursor.getString(SEND_ID) != null) {
-            z = true;
-        } else {
-            z = false;
-        }
-        findItem.setVisible(z);
+        menu.findItem(EVENT_ID).setVisible(
+                mCursor.getString(COLUMN_INDEX_CALENDAR_REF) != null);
+
         MenuItem sendMenu = menu.findItem(SEND_ID);
         if (sendMenu != null) {
-            if (!mStarted) {
-                z2 = true;
-            }
-            sendMenu.setVisible(z2);
+            sendMenu.setVisible(!mStarted);
         }
         return super.onPrepareOptionsMenu(menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case STATE_INSERT /*1*/:
+            case REVERT_ID /*1*/:
                 cancelJob();
                 break;
             case DISCARD_ID /*2*/:
                 cancelJob();
                 break;
-            case DIALOG_ID_END_DATE /*3*/:
+            case DELETE_ID /*3*/:
                 deleteJob();
                 finish();
                 break;
@@ -1231,7 +1241,7 @@ public class JobActivity extends Activity {
             case PAUSE_ID /*6*/:
                 startBreak();
                 break;
-            case DIALOG_ID_STOP_JOB /*7*/:
+            case CONTINUE_ID /*7*/:
                 continueJob();
                 break;
             case END_ID /*8*/:
@@ -1251,7 +1261,7 @@ public class JobActivity extends Activity {
             case SEND_ID /*10*/:
                 startActivity(createSendIntent());
                 break;
-            case DIALOG_ID_PLANNED_DURATION /*11*/:
+            case ADD_EXTRA_ITEM_ID /*11*/:
                 Intent intent = new Intent(this, InvoiceItemActivity.class);
                 intent.putExtra("jobid", parseLong(mUri.getLastPathSegment()));
                 startActivity(intent);
@@ -1270,22 +1280,22 @@ public class JobActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
         Intent intent;
         if (item.getItemId() == R.id.pick_contact) {
-            intent = new Intent("android.intent.action.PICK");
+            intent = new Intent(Intent.ACTION_PICK);
             intent.setData(People.CONTENT_URI);
-            startActivityForResult(intent, STATE_INSERT);
+            startActivityForResult(intent, REQUEST_PICK_CONTACT);
             return true;
         } else if (item.getItemId() != R.id.call_contact) {
             return super.onContextItemSelected(item);
         } else {
             Log.v(TAG, "customer ref:" + mCustomerRef);
             if (mCustomerRef == null || !mCustomerRef.startsWith("content://contacts")) {
-                intent = new Intent("android.intent.action.PICK");
+                intent = new Intent(Intent.ACTION_PICK);
                 intent.setData(People.CONTENT_URI);
                 intent.putExtra("call", true);
                 startActivityForResult(intent, STATE_INSERT);
                 return true;
             }
-            intent = new Intent("android.intent.action.VIEW");
+            intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(mCustomerRef));
             startActivity(intent);
             return true;
@@ -1293,12 +1303,12 @@ public class JobActivity extends Activity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == STATE_INSERT && resultCode == -1) {
-            ContentValues values = new ContentValues(STATE_INSERT);
+        if (requestCode == REQUEST_PICK_CONTACT && resultCode == RESULT_OK) {
+            ContentValues values = new ContentValues(1);
             Cursor c = managedQuery(data.getData(), null, null, null, null);
             if (c.moveToFirst()) {
-                String name = c.getString(c.getColumnIndexOrThrow("name"));
-                values.put(TimesheetIntent.EXTRA_CUSTOMER, name);
+                String name = c.getString(c.getColumnIndexOrThrow(People.NAME));
+                values.put(Job.CUSTOMER, name);
                 setCustomerText(name);
                 values.put(Job.CUSTOMER_REF, data.getDataString());
                 updateDatabase(values);
@@ -1314,17 +1324,17 @@ public class JobActivity extends Activity {
         int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
         int minute = mCalendar.get(Calendar.MINUTE);
         switch (id) {
-            case STATE_INSERT /*1*/:
+            case DIALOG_ID_START_DATE /*1*/:
                 return new DatePickerDialog(this, mStartDateSetListener, year, month, day);
-            case DISCARD_ID /*2*/:
+            case DIALOG_ID_START_TIME /*2*/:
                 return new TimePickerDialog(this, mStartTimeSetListener, hour, minute, DateTimeFormater.mUse24hour);
             case DIALOG_ID_END_DATE /*3*/:
                 return new DatePickerDialog(this, mEndDateSetListener, year, month, day);
-            case LIST_ID /*4*/:
+            case DIALOG_ID_END_TIME /*4*/:
                 return new TimePickerDialog(this, mEndTimeSetListener, hour, minute, DateTimeFormater.mUse24hour);
-            case RESTART_ID /*5*/:
+            case DIALOG_ID_BREAK /*5*/:
                 return new DurationPickerDialog(this, mBreakSetListener, STATE_EDIT, STATE_EDIT);
-            case PAUSE_ID /*6*/:
+            case DIALOG_ID_RESTART_JOB /*6*/:
                 return new Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setMessage(R.string.dialog_restart_job).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         startJob();
@@ -1346,7 +1356,7 @@ public class JobActivity extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }
                 }).create();
-            case END_ID /*8*/:
+            case DIALOG_ID_RECENT_NOTES /*8*/:
                 if (mRecentNoteList == null) {
                     Log.d(TAG, "getTitlesList");
                     mRecentNoteList = getTitlesList(this);
@@ -1357,9 +1367,9 @@ public class JobActivity extends Activity {
                         mText.setText(JobActivity.getNote(JobActivity.this, mRecentNoteList[which]));
                     }
                 }).create();
-            case EVENT_ID /*9*/:
+            case DIALOG_ID_PLANNED_DATE /*9*/:
                 return new DatePickerDialog(this, mPlannedDateSetListener, year, month, day);
-            case SEND_ID /*10*/:
+            case DIALOG_ID_PLANNED_TIME /*10*/:
                 return new TimePickerDialog(this, mPlannedTimeSetListener, hour, minute, DateTimeFormater.mUse24hour);
             case DIALOG_ID_PLANNED_DURATION /*11*/:
                 return new DurationPickerDialog(this, mPlannedMinutesSetListener, STATE_EDIT, STATE_EDIT);
@@ -1372,9 +1382,10 @@ public class JobActivity extends Activity {
     }
 
     protected void onPrepareDialog(int id, Dialog dialog) {
-        long startDate = mCursor.getLong(DISCARD_ID);
-        long endDate = mCursor.getLong(DIALOG_ID_END_DATE);
-        long plannedDate = mCursor.getLong(END_ID);
+        long startDate = mCursor.getLong(COLUMN_INDEX_START);
+        long endDate = mCursor.getLong(COLUMN_INDEX_END);
+        long plannedDate = mCursor.getLong(COLUMN_INDEX_PLANNED_DATE);
+
         int minutes;
         switch (id) {
             case DIALOG_ID_START_DATE /*1*/:
@@ -1419,12 +1430,12 @@ public class JobActivity extends Activity {
                 ((NumberPicker) dialog.findViewById(R.id.minute)).setStep((int) mBillingUnitMinutes);
                 break;
             case DIALOG_ID_PLANNED_DURATION /*11*/:
-                minutes = (int) (mCursor.getLong(EVENT_ID) / 60000);
+                minutes = (int) (mCursor.getLong(COLUMN_INDEX_PLANNED_DURATION) / 60000);
                 ((DurationPickerDialog) dialog).updateTime(minutes / 60, minutes % 60);
                 ((NumberPicker) dialog.findViewById(R.id.minute)).setStep((int) mBillingUnitMinutes);
                 break;
             case DIALOG_ID_RATES /*12*/:
-                float currentRate = mCursor.getFloat(PAUSE_ID) / 100.0f;
+                float currentRate = mCursor.getFloat(COLUMN_INDEX_HOURLY_RATE) / 100.0f;
                 Log.d(TAG, "hrate>" + currentRate);
                 String[] parts = Float.toString(currentRate).split("\\.");
                 Log.d(TAG, "pre>" + parts[0] + "< post>" + parts[1]);
@@ -1494,7 +1505,11 @@ public class JobActivity extends Activity {
         return intent;
     }
 
-    private final void cancelJob() {
+    /**
+     * Take care of canceling work on a note. Deletes the note if we had created
+     * it, otherwise reverts to the original text.
+     */
+    private void cancelJob() {
         if (mCursor != null) {
             String tmp = mText.getText().toString();
             mText.setText(mOriginalContent);
@@ -1502,7 +1517,10 @@ public class JobActivity extends Activity {
         }
     }
 
-    private final void deleteJob() {
+    /**
+     * Take care of deleting a note. Simply deletes the entry.
+     */
+    private void deleteJob() {
         if (mCursor != null) {
             mCursor.close();
             mCursor = null;
