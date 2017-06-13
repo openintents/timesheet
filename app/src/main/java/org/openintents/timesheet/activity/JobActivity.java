@@ -1,13 +1,11 @@
 package org.openintents.timesheet.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +19,9 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.Contacts.People;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -51,9 +52,7 @@ import org.openintents.timesheet.Timesheet;
 import org.openintents.timesheet.Timesheet.CalendarApp;
 import org.openintents.timesheet.Timesheet.Calendars;
 import org.openintents.timesheet.Timesheet.Job;
-import org.openintents.timesheet.Timesheet.Reminders;
 import org.openintents.timesheet.TimesheetIntent;
-import org.openintents.timesheet.TimesheetProvider;
 import org.openintents.timesheet.activity.TimePickerDialog.OnTimeSetListener;
 import org.openintents.timesheet.animation.FadeAnimation;
 import org.openintents.util.DateTimeFormater;
@@ -73,7 +72,7 @@ import java.util.Vector;
 
 import static java.lang.Long.*;
 
-public class JobActivity extends Activity {
+public class JobActivity extends AppCompatActivity {
     static final int DIALOG_ID_START_DATE = 1;
     static final int DIALOG_ID_START_TIME = 2;
     static final int DIALOG_ID_END_DATE = 3;
@@ -146,6 +145,7 @@ public class JobActivity extends Activity {
                 Job.EXTRAS_TOTAL, Job.LAST_START_BREAK2, Job.BREAK2_DURATION,
                 Job.BREAK2_COUNT, Job.HOURLY_RATE2, Job.HOURLY_RATE2_START,
                 Job.HOURLY_RATE3, Job.HOURLY_RATE3_START, Job.CUSTOMER_REF};
+    private static final boolean SHOWING_MORE_DEFAULT = true;
 
     NumberFormat mDecimalFormat;
     String[] mRecentNoteList;
@@ -228,7 +228,6 @@ public class JobActivity extends Activity {
         mDisplayUpdater = new DisplayUpdater();
         mCalendar = Calendar.getInstance();
         mDecimalFormat = new DecimalFormat("0.00");
-        mShowingMore = false;
         mShowRecentNotesButton = false;
         mRecentNoteList = null;
         mExtraTotal = 0;
@@ -388,7 +387,7 @@ public class JobActivity extends Activity {
             if (savedInstanceState.getString(ORIGINAL_URI) != null) {
                 mUri = Uri.parse(savedInstanceState.getString(ORIGINAL_URI));
             } else {
-                startActivity(new Intent(this, JobList.class));
+                startActivity(new Intent(this, JobListActivity.class));
                 finish();
             }
         } else if (Intent.ACTION_EDIT.equals(action) || Intent.ACTION_VIEW.equals(action)) {
@@ -606,7 +605,7 @@ public class JobActivity extends Activity {
             mShowingMore = savedInstanceState.getBoolean(SHOW_MORE);
             mShowRecentNotesButton = savedInstanceState.getBoolean(SHOW_RECENT_NOTES_BUTTON);
         } else {
-            mShowingMore = false;
+            mShowingMore = SHOWING_MORE_DEFAULT;
         }
         mCursor.moveToFirst();
         if (createEvent) {
@@ -620,6 +619,8 @@ public class JobActivity extends Activity {
         if (mStartBillingImmediately) {
             startJob();
         }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void showRecentNotesDialog() {
@@ -916,7 +917,7 @@ public class JobActivity extends Activity {
 
         updateRecentNotesButton(false);
 
-        // If customer had filtered a specific list in JobList.java,
+        // If customer had filtered a specific list in JobListActivity.java,
         // auto-fill in that customer information.
         if (!TextUtils.isEmpty(mPreselectedCustomer)) {
             Log.i(TAG, ">>> Autofillin preselected customer informaton for "
@@ -1233,7 +1234,7 @@ public class JobActivity extends Activity {
                 finish();
                 break;
             case LIST_ID /*4*/:
-                startActivity(new Intent(this, JobList.class));
+                startActivity(new Intent(this, JobListActivity.class));
                 break;
             case RESTART_ID /*5*/:
                 startJob();
@@ -1248,7 +1249,7 @@ public class JobActivity extends Activity {
                 stopJob();
                 break;
             case EVENT_ID /*9*/:
-                Intent intent2 = new Intent("android.intent.action.VIEW", Uri.parse(mCursor.getString(SEND_ID)));
+                Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(mCursor.getString(COLUMN_INDEX_CALENDAR_REF)));
                 intent2.putExtra(CalendarApp.EVENT_BEGIN_TIME, mPlannedDate);
                 intent2.putExtra(CalendarApp.EVENT_END_TIME, mPlannedDate + mPlannedDuration);
                 try {
@@ -1263,9 +1264,20 @@ public class JobActivity extends Activity {
                 break;
             case ADD_EXTRA_ITEM_ID /*11*/:
                 Intent intent = new Intent(this, InvoiceItemActivity.class);
+                intent.setData(mUri);
                 intent.putExtra("jobid", parseLong(mUri.getLastPathSegment()));
                 startActivity(intent);
                 break;
+            case android.R.id.home:
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    TaskStackBuilder.create(this)
+                            .addNextIntentWithParentStack(upIntent)
+                            .startActivities();
+                } else {
+                    NavUtils.navigateUpTo(this, upIntent);
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

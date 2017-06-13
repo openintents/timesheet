@@ -38,18 +38,18 @@ public class JobListCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         JobListItemView cliv = (JobListItemView) view;
 
-        String title = cursor.getString(JobList.COLUMN_INDEX_TITLE);
-        String customer = cursor.getString(JobList.COLUMN_INDEX_CUSTOMER);
-        long startDate = cursor.getLong(JobList.COLUMN_INDEX_START);
-        long endDate = cursor.getLong(JobList.COLUMN_INDEX_END);
+        String title = cursor.getString(JobListActivity.COLUMN_INDEX_TITLE);
+        String customer = cursor.getString(JobListActivity.COLUMN_INDEX_CUSTOMER);
+        long startDate = cursor.getLong(JobListActivity.COLUMN_INDEX_START);
+        long endDate = cursor.getLong(JobListActivity.COLUMN_INDEX_END);
         long lastStartBreak = cursor
-                .getLong(JobList.COLUMN_INDEX_LAST_START_BREAK);
+                .getLong(JobListActivity.COLUMN_INDEX_LAST_START_BREAK);
         long breakDuration = cursor
-                .getLong(JobList.COLUMN_INDEX_BREAK_DURATION);
+                .getLong(JobListActivity.COLUMN_INDEX_BREAK_DURATION);
         long lastStartBreak2 = cursor
-                .getLong(JobList.COLUMN_INDEX_LAST_START_BREAK2);
+                .getLong(JobListActivity.COLUMN_INDEX_LAST_START_BREAK2);
         String externalRef = cursor
-                .getString(JobList.COLUMN_INDEX_EXTERNAL_REF);
+                .getString(JobListActivity.COLUMN_INDEX_EXTERNAL_REF);
         cliv.setIsSyncItem(externalRef != null && !externalRef.equals(""));
 
         cliv.setTitle(title);

@@ -26,7 +26,6 @@ package org.openintents.timesheet.activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -41,6 +40,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -52,21 +52,18 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.openintents.distribution.AboutActivity;
 import org.openintents.distribution.EulaActivity;
 import org.openintents.distribution.LicenseActivity;
-import org.openintents.distribution.UpdateMenu;
 import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet;
 import org.openintents.timesheet.Timesheet.Job;
 import org.openintents.timesheet.Timesheet.Reminders;
 import org.openintents.timesheet.TimesheetIntent;
-import org.openintents.timesheet.TimesheetProvider;
 import org.openintents.timesheet.convert.ConvertCsvActivity;
 import org.openintents.util.DateTimeFormater;
 import org.openintents.util.DurationFormater;
@@ -75,7 +72,7 @@ import org.openintents.util.MenuIntentOptionsWithIcons;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-public class JobList extends ListActivity {
+public class JobListActivity extends AppCompatListActivity {
     static final int DIALOG_ID_DELETE_ALL = 1;
     //static final int DIALOG_ID_TRIAL_LICENSE = 2;
     static final int DIALOG_ID_DELETE_LAST = 3;
@@ -113,7 +110,7 @@ public class JobList extends ListActivity {
 
     private static final int RESULT_CODE_NEW_JOB = 1;
     private static final int RESULT_CODE_SETTINGS = 2;
-    private static final String TAG = "JobList";
+    private static final String TAG = "JobListActivity";
     private static final String[] PROJECTION = new String[]{
             Job._ID, // 0
             Job.TITLE, // 1
@@ -138,8 +135,10 @@ public class JobList extends ListActivity {
     private TextView mTotalInfo;
     private String[] mWhereArguments;
     private String mWhereClause;
+    private FloatingActionButton mFabAdd;
 
-    public JobList() {
+
+    public JobListActivity() {
         this.mDecimalFormat = new DecimalFormat("0.00");
         this.mHandler = new Handler();
         this.mDisplayUpdater = new DisplayUpdater();
@@ -152,22 +151,29 @@ public class JobList extends ListActivity {
             return;
         }
 
-            setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
-            Intent intent = getIntent();
-            if (intent.getData() == null) {
-                intent.setData(Job.CONTENT_URI);
+        setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
+        Intent intent = getIntent();
+        if (intent.getData() == null) {
+            intent.setData(Job.CONTENT_URI);
+        }
+        setContentView(R.layout.jobslist);
+        getListView().setOnCreateContextMenuListener(this);
+        getListView().setEmptyView(findViewById(R.id.empty));
+        this.mSpinner = (Spinner) findViewById(R.id.spinner);
+        refreshSpinner();
+        this.mSpinner.setOnItemSelectedListener(new C00321());
+        this.mDurationInfo = (TextView) findViewById(R.id.duration_info);
+        this.mTotalInfo = (TextView) findViewById(R.id.total_info);
+        this.mBreakInfo = (TextView) findViewById(R.id.break_info);
+        this.mJobCountInfo = (TextView) findViewById(R.id.job_count_info);
+        this.mFabAdd = (FloatingActionButton) findViewById(R.id.fab_add);
+        this.mFabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertNewJob();
             }
-            setContentView(R.layout.jobslist);
-            getListView().setOnCreateContextMenuListener(this);
-            getListView().setEmptyView(findViewById(R.id.empty));
-            this.mSpinner = (Spinner) findViewById(R.id.spinner);
-            refreshSpinner();
-            this.mSpinner.setOnItemSelectedListener(new C00321());
-            this.mDurationInfo = (TextView) findViewById(R.id.duration_info);
-            this.mTotalInfo = (TextView) findViewById(R.id.total_info);
-            this.mBreakInfo = (TextView) findViewById(R.id.break_info);
-            this.mJobCountInfo = (TextView) findViewById(R.id.job_count_info);
-            refreshList();
+        });
+        refreshList();
     }
 
     protected void onResume() {
@@ -338,7 +344,7 @@ public class JobList extends ListActivity {
         Intent i = new Intent(null, Job.CONTENT_URI);
         i.addCategory(Intent.CATEGORY_ALTERNATIVE);
         MenuIntentOptionsWithIcons menu2 = new MenuIntentOptionsWithIcons(this, menu);
-        menu2.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, new ComponentName(this, JobList.class), null, i, 0, null);
+        menu2.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0, new ComponentName(this, JobListActivity.class), null, i, 0, null);
         if (getListAdapter().getCount() > 0) {
             Uri uri = ContentUris.withAppendedId(getIntent().getData(), getSelectedItemId());
             Intent[] specifics = new Intent[1];
@@ -380,23 +386,18 @@ public class JobList extends ListActivity {
     }
 
     private void insertNewJob() {
-        boolean insertAllowed = true;
-        if (insertAllowed) {
-            insertNewJobInternal(JobActivity.class);
-        } else {
-            showDialog(RESULT_CODE_SETTINGS);
-        }
+        insertNewJobInternal(JobActivity.class);
     }
 
     private void insertNewJobInternal(Class clazz) {
-        Intent intent = new Intent("android.intent.action.INSERT", getIntent().getData());
+        Intent intent = new Intent(Intent.ACTION_INSERT, getIntent().getData());
         intent.setClass(this, clazz);
         intent.putExtra(TimesheetIntent.EXTRA_CUSTOMER, this.mSelectedCustomer);
         startActivityForResult(intent, RESULT_CODE_NEW_JOB);
     }
 
     private void startExport() {
-        Intent intent = new Intent("android.intent.action.INSERT", getIntent().getData());
+        Intent intent = new Intent(Intent.ACTION_INSERT, getIntent().getData());
         intent.setClass(this, ConvertCsvActivity.class);
         intent.putExtra(TimesheetIntent.EXTRA_CUSTOMER, this.mSelectedCustomer);
         startActivity(intent);
@@ -477,16 +478,17 @@ public class JobList extends ListActivity {
         }
     }
 
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    @Override
+    protected void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
         Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
         String action = getIntent().getAction();
-        if ("android.intent.action.PICK".equals(action) || "android.intent.action.GET_CONTENT".equals(action)) {
+        if (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT.equals(action)) {
             setResult(-1, new Intent().setData(uri));
             return;
         }
         Cursor c = (Cursor) getListAdapter().getItem(position);
         Class activityClass = typeToActivityClass(c.getInt(MENU_TIMEXCHANGE));
-        Intent intent = new Intent("android.intent.action.EDIT", cloneIfNecessary(c, uri));
+        Intent intent = new Intent(Intent.ACTION_EDIT, cloneIfNecessary(c, uri));
         intent.setClass(this, activityClass);
         startActivity(intent);
     }
@@ -520,7 +522,7 @@ public class JobList extends ListActivity {
                     }
                 }).setSingleChoiceItems(R.array.job_types, 0, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        JobList.this.mJobActivityClass = JobList.this.typeToActivityClass(whichButton);
+                        JobListActivity.this.mJobActivityClass = JobListActivity.this.typeToActivityClass(whichButton);
                     }
                 }).create();
             default:
@@ -585,42 +587,42 @@ public class JobList extends ListActivity {
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.1 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.1 */
     class C00321 implements OnItemSelectedListener {
         C00321() {
         }
 
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-            JobList.this.updateChoice(position);
-            JobList.this.refreshList();
+            JobListActivity.this.updateChoice(position);
+            JobListActivity.this.refreshList();
         }
 
         public void onNothingSelected(AdapterView<?> adapterView) {
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.2 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.2 */
     class C00332 implements OnClickListener {
         C00332() {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.deleteAll();
-            JobList.this.refreshSpinner();
+            JobListActivity.this.deleteAll();
+            JobListActivity.this.refreshSpinner();
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.3 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.3 */
     class C00343 implements OnClickListener {
         C00343() {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.leaveTemplate();
+            JobListActivity.this.leaveTemplate();
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.4 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.4 */
     class C00354 implements OnClickListener {
         C00354() {
         }
@@ -629,39 +631,39 @@ public class JobList extends ListActivity {
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.5 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.5 */
     class C00365 implements OnClickListener {
         C00365() {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.startActivity(new Intent(JobList.this, LicenseActivity.class));
+            JobListActivity.this.startActivity(new Intent(JobListActivity.this, LicenseActivity.class));
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.6 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.6 */
     class C00376 implements OnClickListener {
         C00376() {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.deleteAll();
-            JobList.this.refreshSpinner();
-            JobList.this.updateTotal();
+            JobListActivity.this.deleteAll();
+            JobListActivity.this.refreshSpinner();
+            JobListActivity.this.updateTotal();
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.7 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.7 */
     class C00387 implements OnClickListener {
         C00387() {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.leaveTemplate();
+            JobListActivity.this.leaveTemplate();
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.8 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.8 */
     class C00398 implements OnClickListener {
         C00398() {
         }
@@ -670,20 +672,20 @@ public class JobList extends ListActivity {
         }
     }
 
-    /* renamed from: org.openintents.timesheet.activity.JobList.9 */
+    /* renamed from: org.openintents.timesheet.activity.JobListActivity.9 */
     class C00409 implements OnClickListener {
         C00409() {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            JobList.this.insertNewJobInternal(JobList.this.mJobActivityClass);
+            JobListActivity.this.insertNewJobInternal(JobListActivity.this.mJobActivityClass);
         }
     }
 
     public class DisplayUpdater implements Runnable {
         public void run() {
-            JobList.this.updateTotal();
-            JobList.this.updateDisplay(1000);
+            JobListActivity.this.updateTotal();
+            JobListActivity.this.updateDisplay(1000);
         }
     }
 }

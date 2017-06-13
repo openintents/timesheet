@@ -1,12 +1,13 @@
 package org.openintents.timesheet.activity;
 
-import android.app.ListActivity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -29,7 +30,7 @@ import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.InvoiceItem;
 
-public class InvoiceItemActivity extends ListActivity {
+public class InvoiceItemActivity extends AppCompatListActivity {
     public static final int COLUMN_INDEX_TYPE = 1;
     public static final int COLUMN_INDEX_DESCRIPTION = 2;
     public static final int COLUMN_INDEX_VALUE = 3;
@@ -67,11 +68,11 @@ public class InvoiceItemActivity extends ListActivity {
         mTypeSpinner.setVisibility(View.GONE);
         findViewById(R.id.add_button).setOnClickListener(new C00122());
         getListView().setEmptyView(findViewById(R.id.empty));
-
         updateListAdapter();
 
         registerForContextMenu(getListView());
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void updateListAdapter() {
@@ -100,6 +101,21 @@ public class InvoiceItemActivity extends ListActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                upIntent.setAction(Intent.ACTION_EDIT);
+                upIntent.setData(getIntent().getData());
+                NavUtils.navigateUpTo(this, upIntent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     protected void addInvoiceItem() {
         int type = mTypeSpinner.getSelectedItemPosition();
         ContentValues values = new ContentValues();
@@ -114,7 +130,7 @@ public class InvoiceItemActivity extends ListActivity {
                     break;
                 } catch (NumberFormatException e) {
                     Log.e(TAG, "Error parsing expense value: " + valueString);
-                    Toast.makeText(this, R.string.enter_numbers_only, Toast.LENGTH_SHORT);
+                    Toast.makeText(this, R.string.enter_numbers_only, Toast.LENGTH_SHORT).show();
                     return;
                 }
             case 1:
@@ -127,11 +143,11 @@ public class InvoiceItemActivity extends ListActivity {
                     int startValue = Integer.parseInt(startValueString);
                     int endValue = Integer.parseInt(endValueString);
                     values.put(InvoiceItem.VALUE, (endValue - startValue) * Integer.parseInt(rateString));
-                    values.put(InvoiceItem.EXTRAS, new StringBuilder(String.valueOf(startValue)).append("|").append(endValue).append("|").append("10").toString());
+                    values.put(InvoiceItem.EXTRAS, String.valueOf(startValue) + "|" + endValue + "|" + "10");
                     break;
                 } catch (NumberFormatException e2) {
-                    Log.e(TAG, "Error parsing mileage: " + startValueString + " | " + endValueString + " | " + rateString);
-                    Toast.makeText(this, R.string.enter_digits_only, Toast.LENGTH_SHORT);
+                    Log.e(TAG, "Error parsing numbers: " + startValueString + " | " + endValueString + " | " + rateString);
+                    Toast.makeText(this, R.string.enter_digits_only, Toast.LENGTH_SHORT).show();
                     return;
                 }
         }

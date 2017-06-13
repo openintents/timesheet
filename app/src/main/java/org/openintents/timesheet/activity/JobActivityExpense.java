@@ -1,6 +1,5 @@
 package org.openintents.timesheet.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -14,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -44,7 +44,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-public class JobActivityExpense extends Activity {
+public class JobActivityExpense extends AppCompatActivity {
     static final int DIALOG_ID_RECENT_NOTES = 1;
     static final String TAG = "JobActivityExpense";
     private static final int ADD_EXTRA_ITEM_ID = 11;
@@ -402,7 +402,7 @@ public class JobActivityExpense extends Activity {
                 cancelJob();
                 break;
             case LIST_ID:
-                Intent intent = new Intent(this, JobList.class);
+                Intent intent = new Intent(this, JobListActivity.class);
                 startActivity(intent);
                 break;
             case ADD_EXTRA_ITEM_ID:

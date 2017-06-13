@@ -1,7 +1,7 @@
 package org.openintents.timesheet.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +16,7 @@ import org.openintents.util.DateTimeFormater;
 
 import java.util.Date;
 
-public class InsertJobActivity extends Activity {
+public class InsertJobActivity extends AppCompatActivity {
     private String mCustomer;
     private int mHourlyRate;
     private String mNote;
@@ -58,6 +58,8 @@ public class InsertJobActivity extends Activity {
         }
         ((Button) findViewById(R.id.accept)).setOnClickListener(new C00091());
         ((Button) findViewById(R.id.deny)).setOnClickListener(new C00102());
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     protected void insertJob() {

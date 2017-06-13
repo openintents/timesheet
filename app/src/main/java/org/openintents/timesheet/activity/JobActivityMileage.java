@@ -1,6 +1,5 @@
 package org.openintents.timesheet.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -12,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -42,7 +42,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
-public class JobActivityMileage extends Activity {
+public class JobActivityMileage extends AppCompatActivity {
 
     static final String TAG = "JobActivityMileage";
     static final int DIALOG_ID_RECENT_NOTES = 1;
@@ -392,9 +392,9 @@ public class JobActivityMileage extends Activity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(STATE_EDIT, STATE_INSERT, STATE_EDIT, R.string.menu_revert).setShortcut('0', 'r').setIcon(android.R.drawable.ic_menu_revert);
-        menu.add(STATE_INSERT, DELETE_ID, STATE_EDIT, R.string.menu_delete).setShortcut('1', 'd').setIcon(android.R.drawable.ic_menu_delete);
-        menu.add(STATE_INSERT, ADD_EXTRA_ITEM_ID, STATE_EDIT, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(android.R.drawable.ic_menu_add);
+        menu.add(0, STATE_INSERT, 0, R.string.menu_revert).setShortcut('0', 'r').setIcon(android.R.drawable.ic_menu_revert);
+        menu.add(1, DELETE_ID, 0, R.string.menu_delete).setShortcut('1', 'd').setIcon(android.R.drawable.ic_menu_delete);
+        menu.add(1, ADD_EXTRA_ITEM_ID, 0, R.string.menu_extra_items).setShortcut('7', 'x').setIcon(android.R.drawable.ic_menu_add);
         Intent intent = new Intent(null, getIntent().getData());
         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
         new MenuIntentOptionsWithIcons(this, menu).addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
@@ -420,10 +420,9 @@ public class JobActivityMileage extends Activity {
                 cancelJob();
                 break;
             case LIST_ID:
-                Intent intent = new Intent(this, JobList.class);
+                Intent intent = new Intent(this, JobListActivity.class);
                 startActivity(intent);
                 break;
-
             case ADD_EXTRA_ITEM_ID:
                 intent = new Intent(this, InvoiceItemActivity.class);
                 long jobId = Long.parseLong(mUri.getLastPathSegment());

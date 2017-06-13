@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="org.openintents.timesheet"
           android:versionCode="20"
           android:versionName="1.1.6">
@@ -29,7 +30,8 @@
         android:name=".Application"
         android:description="@string/app_descr"
         android:icon="@drawable/icon_timesheet"
-        android:label="@string/app_name">
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat">
         <meta-data
             android:name="org.openintents.metadata.COMMENTS"
             android:value="@string/about_comments"/>
@@ -70,10 +72,13 @@
         <activity
             android:name=".activity.JobActivity"
             android:icon="@drawable/ic_menu_edit"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-            </intent-filter>
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.JobListActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.JobListActivity"/>
+
             <intent-filter android:label="@string/title_edit">
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.INSERT"/>
@@ -98,7 +103,7 @@
             android:icon="@drawable/ic_menu_edit"
             android:label="@string/app_name"/>
         <activity
-            android:name=".activity.JobList"
+            android:name=".activity.JobListActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -129,7 +134,14 @@
             android:name=".PreferenceActivity"
             android:label="@string/menu_preferences"/>
         <activity android:name=".activity.InsertJobActivity"/>
-        <activity android:name=".activity.InvoiceItemActivity"/>
+        <activity
+            android:name=".activity.InvoiceItemActivity"
+            android:parentActivityName=".activity.JobActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.JobActivity"/>
+        </activity>
 
         <provider
             android:name=".TimesheetProvider"

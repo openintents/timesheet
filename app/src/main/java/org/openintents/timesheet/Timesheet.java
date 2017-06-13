@@ -17,7 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import org.openintents.timesheet.activity.JobList;
+import org.openintents.timesheet.activity.JobListActivity;
 
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class Timesheet {
                 }
 
 
-                Intent intent = new Intent(context, JobList.class);
+                Intent intent = new Intent(context, JobListActivity.class);
                 intent.addCategory("android.intent.category.LAUNCHER");
                 intent.setAction("android.intent.action.MAIN");
                 PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
