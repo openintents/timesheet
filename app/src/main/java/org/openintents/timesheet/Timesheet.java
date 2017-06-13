@@ -11,8 +11,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.provider.CalendarContract;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -90,19 +92,35 @@ public class Timesheet {
         public static ContentValues createContentValues(String title, long startMillis, long endMillis, boolean isAllDay, String location, String description, long calendarId, int transparency, int visibility, boolean hasAlarm) {
             ContentValues values = new ContentValues();
             values.put(Events.EVENT_TIMEZONE, "UTC");
-            values.put(Events.CALENDAR_ID, Long.valueOf(calendarId));
-            values.put(Job.TITLE, title);
-            values.put(Events.ALL_DAY, Integer.valueOf(isAllDay ? 1 : 0));
-            values.put(Events.DTSTART, Long.valueOf(startMillis));
-            values.put(Events.DTEND, Long.valueOf(endMillis));
-            values.put(InvoiceItem.DESCRIPTION, description);
+            values.put(Events.CALENDAR_ID, calendarId);
+            values.put(Events.TITLE, title);
+            values.put(Events.ALL_DAY, isAllDay ? 1 : 0);
+            values.put(Events.DTSTART, startMillis);
+            values.put(Events.DTEND, endMillis);
+            values.put(Events.DESCRIPTION, description);
             values.put(Events.EVENT_LOCATION, location);
-            values.put(Events.TRANSPARENCY, Integer.valueOf(transparency));
-            values.put(Events.HAS_ALARM, Boolean.valueOf(hasAlarm));
+            values.put(Events.TRANSPARENCY, transparency);
+            values.put(Events.HAS_ALARM, hasAlarm);
             if (visibility > 0) {
                 visibility++;
             }
-            values.put(Events.VISIBILITY, Integer.valueOf(visibility));
+            values.put(Events.VISIBILITY, visibility);
+            return values;
+        }
+
+        public static ContentValues createContentValues2(String title, long startMillis, long endMillis, boolean isAllDay, String location, String description, long calendarId, boolean hasAlarm) {
+            ContentValues values = new ContentValues();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC");
+                values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+                values.put(CalendarContract.Events.TITLE, title);
+                values.put(CalendarContract.Events.ALL_DAY, isAllDay ? 1 : 0);
+                values.put(CalendarContract.Events.DTSTART, startMillis);
+                values.put(CalendarContract.Events.DTEND, endMillis);
+                values.put(CalendarContract.Events.DESCRIPTION, description);
+                values.put(CalendarContract.Events.EVENT_LOCATION, location);
+                values.put(CalendarContract.Events.HAS_ALARM, hasAlarm);
+            }
             return values;
         }
 
@@ -162,15 +180,16 @@ public class Timesheet {
             }
             long calendarId = Long.parseLong(calString);
             int minutes = Integer.parseInt(prefs.getString(PreferenceActivity.PREFS_REMINDER, "0"));
-            ContentValues values = createContentValues(customer, startDate, startDate + duration, false, null, text, calendarId, 0, 0, minutes > 0);
             Uri eventUri = null;
             if (calendarAuthority == 1) {
                 try {
+                    ContentValues values = createContentValues(customer, startDate, startDate + duration, false, null, text, calendarId, 0, 0, minutes > 0);
                     eventUri = context.getContentResolver().insert(Events.CONTENT_URI_1, values);
                 } catch (Exception e) {
                     Toast.makeText(context, R.string.calendar_missing, Toast.LENGTH_SHORT).show();
                 }
             } else if (calendarAuthority == 2) {
+                ContentValues values = createContentValues2(customer, startDate, startDate + duration, false, null, text, calendarId, minutes > 0);
                 eventUri = context.getContentResolver().insert(Events.CONTENT_URI_2, values);
             } else {
                 throw new RuntimeException();
@@ -208,6 +227,7 @@ public class Timesheet {
         public static final String TIMEZONE = "timezone";
         public static final String _ID = "_id";
         public static final String[] NAME_PROJECTION = new String[]{_ID, DISPLAY_NAME};
+        public static final String[] NAME_PROJECTION2 = new String[]{_ID, "calendar_displayName"};
     }
 
     public static class Customer implements BaseColumns {
@@ -225,7 +245,6 @@ public class Timesheet {
         public static final String ALL_DAY = "allDay";
         public static final String CALENDAR_ID = "calendar_id";
         public static final Uri CONTENT_URI_1 = Uri.parse("content://calendar/events");
-        ;
         public static final Uri CONTENT_URI_2 = Uri.parse("content://com.android.calendar/events");
         public static final String DESCRIPTION = "description";
         public static final String DTEND = "dtend";
@@ -301,7 +320,7 @@ public class Timesheet {
 
         static {
             CONTENT_URI_1 = Uri.parse("content://calendar/reminders");
-            CONTENT_URI_2 = Uri.parse("content://calendar/reminders");
+            CONTENT_URI_2 = Uri.parse("content://com.android.calendar/reminders");
         }
     }
 }

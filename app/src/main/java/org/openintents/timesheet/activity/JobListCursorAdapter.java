@@ -48,6 +48,8 @@ public class JobListCursorAdapter extends CursorAdapter {
                 .getLong(JobListActivity.COLUMN_INDEX_BREAK_DURATION);
         long lastStartBreak2 = cursor
                 .getLong(JobListActivity.COLUMN_INDEX_LAST_START_BREAK2);
+        long break2Duration = cursor
+                .getLong(JobListActivity.COLUMN_INDEX_BREAK2_DURATION);
         String externalRef = cursor
                 .getString(JobListActivity.COLUMN_INDEX_EXTERNAL_REF);
         cliv.setIsSyncItem(externalRef != null && !externalRef.equals(""));
@@ -71,7 +73,7 @@ public class JobListCursorAdapter extends CursorAdapter {
             if (endDate > 0) {
                 mInfo.append(", ");
                 mInfo.append(DurationFormater.formatDuration(context, endDate
-                                - startDate - breakDuration,
+                                - startDate - breakDuration - break2Duration,
                         DurationFormater.TYPE_FORMAT_NICE));
             }
 
