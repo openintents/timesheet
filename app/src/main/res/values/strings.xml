@@ -141,7 +141,7 @@
     <string name="preference_export_replace_br">Replace line breaks</string>
     <string name="preference_export_replace_br_summary">Replace line breaks with \\n</string>
     <string name="preference_export_totals">Include totals</string>
-    <string name="preference_export_totals_summary">Add row add the end with total hours, and total amount</string>
+    <string name="preference_export_totals_summary">Add row at the end with total hours, and total amount</string>
     <string name="preference_export_csv">Export CSV</string>
     <string name="preference_export_csv_summary">Settings for CSV file output</string>
     <string name="preference_export_single_file">One file for all customers</string>
