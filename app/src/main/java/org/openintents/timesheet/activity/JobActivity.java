@@ -1,5 +1,6 @@
 package org.openintents.timesheet.activity;
 
+import android.Manifest;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -19,9 +21,11 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.Contacts.People;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -248,6 +252,10 @@ public class JobActivity extends AppCompatActivity {
             result.close();
             return 1;
         } else {
+            if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.READ_CALENDAR)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return -1;
+            }
             result = ctx.getContentResolver().query(Calendars.CONTENT_URI_2,
                     new String[]{BaseColumns._ID}, null, null, null);
             if (result != null && result.getCount() > 0) {
@@ -1108,6 +1116,7 @@ public class JobActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         // Save away the original text, so we still have it if the activity
         // needs to be killed while paused.
         outState.putString(ORIGINAL_CONTENT, mOriginalContent);

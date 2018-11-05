@@ -14,7 +14,7 @@
         android:padding="5dp">
 
         <LinearLayout
-            android:id="@id/customer_box"
+            android:id="@+id/customer_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -31,7 +31,7 @@
                     android:text="@string/customer"/>
 
                 <AutoCompleteTextView
-                    android:id="@id/customer"
+                    android:id="@+id/customer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
@@ -53,7 +53,7 @@
                 android:text="@string/start_value"/>
 
             <EditText
-                android:id="@id/set_mileage_start"
+                android:id="@+id/set_mileage_start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.0"
@@ -72,7 +72,7 @@
                 android:text="@string/end_value"/>
 
             <EditText
-                android:id="@id/set_mileage_end"
+                android:id="@+id/set_mileage_end"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.0"
@@ -91,7 +91,7 @@
                 android:text="@string/total"/>
 
             <EditText
-                android:id="@id/set_mileage_total"
+                android:id="@+id/set_mileage_total"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.0"
@@ -100,7 +100,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@id/edit_hourlyrate"
+            android:id="@+id/edit_hourlyrate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -111,7 +111,7 @@
                 android:text="@string/hourly_rate"/>
 
             <EditText
-                android:id="@id/set_mileage_rate"
+                android:id="@+id/set_mileage_rate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.0"
@@ -125,7 +125,7 @@
             android:text="@string/description"/>
 
         <view
-            android:id="@id/note"
+            android:id="@+id/note"
             class="org.openintents.timesheet.LinedEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@id/recent_notes"
+                android:id="@+id/recent_notes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

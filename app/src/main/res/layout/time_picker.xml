@@ -6,14 +6,14 @@
               android:orientation="horizontal">
 
     <org.openintents.widget.NumberPicker
-        android:id="@id/hour"
+        android:id="@+id/hour"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:focusable="true"
         android:focusableInTouchMode="true"/>
 
     <org.openintents.widget.NumberPicker
-        android:id="@id/minute"
+        android:id="@+id/minute"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -21,7 +21,7 @@
         android:focusableInTouchMode="true"/>
 
     <Button
-        android:id="@id/amPm"
+        android:id="@+id/amPm"
         style="?android:attr/textAppearanceLargeInverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

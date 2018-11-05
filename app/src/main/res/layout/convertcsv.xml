@@ -9,32 +9,32 @@
               android:orientation="vertical">
 
     <TextView
-        android:id="@id/file_path_label"
+        android:id="@+id/file_path_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/file_path"/>
 
     <EditText
-        android:id="@id/file_path"
+        android:id="@+id/file_path"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/default_path"/>
 
     <TextView
-        android:id="@id/export_for"
+        android:id="@+id/export_for"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"/>
 
     <TextView
-        android:id="@id/info"
+        android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"/>
 
     <TextView
-        android:id="@id/calendar_info"
+        android:id="@+id/calendar_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -47,14 +47,14 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@id/file_export"
+            android:id="@+id/file_export"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:text="@string/file_export"/>
 
         <Button
-            android:id="@id/file_import"
+            android:id="@+id/file_import"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"

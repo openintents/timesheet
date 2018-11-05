@@ -4,11 +4,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.widget.ImageButton;
 
 import org.openintents.timesheet.R;
 
-public class NumberPickerButton extends android.support.v7.widget.AppCompatImageButton {
+public class NumberPickerButton extends androidx.appcompat.widget.AppCompatImageButton {
     private NumberPicker mNumberPicker;
 
     public NumberPickerButton(Context context, AttributeSet attrs, int defStyle) {

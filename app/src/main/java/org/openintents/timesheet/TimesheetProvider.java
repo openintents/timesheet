@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -115,7 +116,7 @@ public class TimesheetProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String orderBy = null;
@@ -197,7 +198,7 @@ public class TimesheetProvider extends ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch (sUriMatcher.match(uri)) {
             case JOBS:
                 return Job.CONTENT_TYPE;
@@ -211,7 +212,7 @@ public class TimesheetProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues initialValues) {
+    public Uri insert(@NonNull Uri uri, ContentValues initialValues) {
         // Validate the requested uri
         switch (sUriMatcher.match(uri)) {
             case JOBS:
@@ -223,28 +224,27 @@ public class TimesheetProvider extends ContentProvider {
                     values = new ContentValues();
                 }
 
-                Long now = Long.valueOf(System.currentTimeMillis());
+                Long now = System.currentTimeMillis();
 
                 // Make sure that the fields are all set
-                if (values.containsKey(Job.CREATED_DATE) == false) {
+                if (!values.containsKey(Job.CREATED_DATE)) {
                     values.put(Job.CREATED_DATE, now);
                 }
 
-                if (values.containsKey(Job.MODIFIED_DATE) == false) {
+                if (!values.containsKey(Job.MODIFIED_DATE)) {
                     values.put(Job.MODIFIED_DATE, now);
                 }
 
-                if (values.containsKey(Job.TITLE) == false) {
+                if (!values.containsKey(Job.TITLE)) {
                     Resources r = Resources.getSystem();
                     values.put(Job.TITLE, r.getString(android.R.string.untitled));
                 }
 
-                if (values.containsKey(Job.NOTE) == false) {
+                if (!values.containsKey(Job.NOTE)) {
                     values.put(Job.NOTE, "");
                 }
 
-                if (values.containsKey(Job.CUSTOMER) == false) {
-                    Resources r = Resources.getSystem();
+                if (!values.containsKey(Job.CUSTOMER)) {
                     values.put(Job.CUSTOMER, "");
                 }
 
@@ -272,14 +272,14 @@ public class TimesheetProvider extends ContentProvider {
                     values = new ContentValues();
                 }
 
-                now = Long.valueOf(System.currentTimeMillis());
+                now = System.currentTimeMillis();
 
                 // Make sure that the fields are all set
-                if (values.containsKey(Job.CREATED_DATE) == false) {
+                if (!values.containsKey(Job.CREATED_DATE)) {
                     values.put(InvoiceItem.CREATED_DATE, now);
                 }
 
-                if (values.containsKey(Job.MODIFIED_DATE) == false) {
+                if (!values.containsKey(Job.MODIFIED_DATE)) {
                     values.put(InvoiceItem.MODIFIED_DATE, now);
                 }
 
@@ -326,10 +326,10 @@ public class TimesheetProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String where, String[] whereArgs) {
+    public int delete(@NonNull Uri uri, String where, String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
-        long[] affectedRows = null;
+        long[] affectedRows;
         switch (sUriMatcher.match(uri)) {
             case JOBS:
                 affectedRows = ProviderUtils.getAffectedRows(db, JOB_TABLE_NAME,
@@ -381,7 +381,7 @@ public class TimesheetProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String where,
+    public int update(@NonNull Uri uri, ContentValues values, String where,
                       String[] whereArgs) {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int count;
@@ -591,22 +591,18 @@ public class TimesheetProvider extends ContentProvider {
                             // and then upgrading again 3->4.
                         }
                         // fall through for further upgrades.
-                    /*
-					 * case 4: // add more columns
-					 */
+                        /*
+                         * case 4: // add more columns
+                         */
                         break;
                     default:
                         Log.w(TimesheetProvider.TAG, "Unknown version " + oldVersion + ". Creating new database.");
                         db.execSQL("DROP TABLE IF EXISTS notes");
                         onCreate(db);
-                        return;
                 }
             } else { // newVersion <= oldVersion
                 // Downgrade
-                Log
-                        .w(
-                                TAG,
-                                "Don't know how to downgrade. Will not touch database and hope they are compatible.");
+                Log.w(TAG, "Don't know how to downgrade. Will not touch database and hope they are compatible.");
                 // Do nothing.
             }
 

@@ -17,7 +17,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <CheckBox
-        android:id="@id/dont_ask_again"
+        android:id="@+id/dont_ask_again"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dont_ask_again"/>

@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="org.openintents.timesheet"
-          android:versionCode="20"
-          android:versionName="1.1.6">
-
-    <uses-sdk android:minSdkVersion="3"/>
+          package="org.openintents.timesheet">
 
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-permission android:name="android.permission.READ_CALENDAR"/>
@@ -80,7 +76,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.JobListActivity"/>
 
-            <intent-filter android:label="@string/title_edit">
+            <intent-filter android:label="@string/title_edit"
+                           tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.INSERT"/>
                 <action android:name="android.intent.action.EDIT"/>
@@ -110,7 +107,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW"/>
                 <action android:name="android.intent.action.INSERT"/>
                 <action android:name="android.intent.action.EDIT"/>
