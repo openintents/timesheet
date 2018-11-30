@@ -1,0 +1,220 @@
+/* Import fonts */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab:700,400');
+@font-face {
+  font-family: "IBMPlexSans";
+  src: url('https://d2mwtg98mlzgjy.cloudfront.net/5bfe65eaa793d9000aa977df/fonts/IBMPlexSans-Regular.ttf') format("truetype");
+}
+@font-face {
+  font-family: "IBMPlexSans-Medium";
+  src: url('https://d2mwtg98mlzgjy.cloudfront.net/5bfe65eaa793d9000aa977df/fonts/IBMPlexSans-Medium.ttf') format("truetype");
+}
+@font-face {
+  font-family: "SFProDisplay-Semibold";
+  src: url('https://d2mwtg98mlzgjy.cloudfront.net/5bfe65eaa793d9000aa977df/fonts/SF-Pro-Display-Semibold.otf') format("opentype");
+}
+@font-face {
+  font-family: "IBMPlexSans-Bold";
+  src: url('https://d2mwtg98mlzgjy.cloudfront.net/5bfe65eaa793d9000aa977df/fonts/IBMPlexSans-Bold.ttf') format("truetype");
+}
+@font-face {
+  font-family: "IBMPlexSans-BoldItalic";
+  src: url('https://d2mwtg98mlzgjy.cloudfront.net/5bffa1ffb57801000af91e82/fonts/IBMPlexSans-BoldItalic.ttf') format("truetype");
+}
+@font-face {
+  font-family: "IBMPlexSans-Light";
+  src: url('https://d2mwtg98mlzgjy.cloudfront.net/5bfe65eaa793d9000aa977df/fonts/IBMPlexSans-Light.ttf') format("truetype");
+}
+
+/* End loadign fonts*/
+
+
+
+/* Reset*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section , div {
+	display: block;
+	box-sizing: border-box;
+	vertical-align: top;
+}
+
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+body {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	font-smoothing: antialiased;
+	font-size: 16px;
+	font-family: 'IBMPlexSans' , sans-serif;
+}
+
+h1 , h2 , h3 , h4 , h5 , h6 {
+	font-family: 'Roboto Slab', serif;
+	font-weight: 700;
+}
+
+h1 {
+	font-size: 70px;
+	line-height: 92px;
+}
+
+h2 {
+	font-size: 60px;
+	line-height: 79px;
+}
+
+h3{
+	font-size: 48px;
+	line-height: 60px;
+}
+
+h4{
+	font-size: 40px;
+	line-height: 48px;
+}
+
+h5 {
+	font-size: 28px;
+	line-height: 37px;
+}
+
+h6 {
+	font-size: 20px;
+	line-height: 30px;
+}
+
+/* reset ends*/
+
+
+
+#header {
+	height: 900px;
+	width: 100%;
+	padding-top: 36px;
+	background-color: red;
+	background: linear-gradient(205.11deg, #78C5FF 0%, #77C4FF 8.62%, #75C1FD 16.56%, #71BDFB 23.93%, #6CB7F9 30.85%, #66B0F6 37.42%, #5FA8F3 43.77%, #569FF0 50%, #4D95EC 56.23%, #448CE9 62.58%, #3983E6 69.15%, #2F7AE3 76.07%, #2473E1 83.44%, #1B6EDF 91.38%, #176CDF 100%);
+}
+
+#header .container {
+	max-width: 1190px;
+	margin: 0 auto;
+}
+
+#header .logo {
+	width: 250px;
+	display: inline-block;
+}
+
+#header .navbar-nav {
+	float: right;
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: 8px;
+}
+
+
+#header .navbar-nav li{
+	display: inline-block;
+	margin-left: 30px;
+}
+#header .navbar-nav li a {
+	color: #fff;
+	font-size: 18px;
+	text-decoration: none;
+}
+
+#header .hero-text {
+	max-width: 420px;
+	margin: 20px auto;
+	color: #fff;
+	text-align: center;
+}
+
+#header .lead {
+	font-size: 20px;
+	line-height: 24px;
+	margin-bottom: 20px;
+}
+
+
+
+#header .hero-text  input {
+	width: 405px !important;
+	box-sizing: border-box;
+	border: none;
+	font-size: 20px !important;
+	padding: 11px 16px !important;
+	font-family: "IBMPlexSans-Light" !important;
+	border-radius: 7px !important;
+}
+
+#header .hero-text  input::placeholder{
+	color: #616161 !important;
+}
+
+#header .hero-text .clear input{
+	width: 405px !important;
+	background-color: #FF8115 !important;
+	height: auto;
+	font-size: 24px !important;
+	font-family: "IBMPlexSans-Medium" !important;
+}
+
+
+#header .hero-image {
+	max-width: 710px;
+	margin: 0 auto
+}
+
+#header .hero-image img {
+	max-width: 100%;
+}
+
+
+
+
+
+
