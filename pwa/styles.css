@@ -193,7 +193,21 @@ h6 {
 	margin-bottom: 20px;
 }
 
-
+#header .cta-btn {
+	width: 300px ;
+	height: 50px;
+	padding: 9px 16px;
+	color: #fff;
+	border-radius: 8px;
+	text-decoration: none;
+	display: inline-block;
+	background-color: #FF8115;
+	height: auto;
+	font-size: 22px;
+	margin-top: 20px;
+	font-family: "IBMPlexSans-Medium";
+	display:none;
+}
 
 #header .hero-text  input {
 	width: 405px !important;
@@ -555,6 +569,10 @@ h6 {
 	.feature-right-2 .content {
 		margin-top: 90px;
 	}
+
+	#bg-faces {
+		transform: scale(1.5);
+	}
 }
 
 @media (max-width: 1279px){
@@ -584,6 +602,10 @@ h6 {
 	.feature-right-2 .content {
 		margin-top: 0px;
 	}
+
+	#bg-faces {
+		transform: scale(1.6);
+	}
 }
 
 @media (max-width: 967px){
@@ -607,17 +629,22 @@ h6 {
 	#benefits .card:last-child {
 		border-bottom: 1px solid #eee;
 		padding-bottom: 80px;
+		margin-bottom: 0;
 	}
 
 	#benefits {
 		padding-bottom: 0;
+	}
+
+	#bg-faces {
+		transform: scale(1.8);
 	}
 }
 
 @media (max-width: 947px) {
 	#footer .social {
 		width: 730px;
-		max-width: 800px !important;
+		max-width: 800px;
 		margin-left: 0;
 		margin-top: 60px;
 	}
@@ -662,4 +689,147 @@ h6 {
 	margin-top: 13px;
 }
 
+#bg-faces {
+		transform: scale(2);
+	}
+
 } 
+
+@media (max-width: 744px){
+
+	#benefits {
+		padding: 35px 20px 0;
+	}
+	#footer .social {
+		width: 400px ;
+		max-width: 400px;
+		margin-left: 0;
+		margin-top: 60px;
+	}
+
+	#footer .contact {
+		margin-top: 33px;
+		display: block;
+		width: 400px;
+		margin: 33px auto 0;
+		text-align: left;
+	}
+	#cta .content h6 {
+		margin-bottom: 10;
+	}
+
+	#cta .content h2 {
+		font-size: 40px;
+		line-height: 53px;
+	}
+
+	#cta .lead {
+		font-size: 20px;
+		line-height: 27px;
+		margin-top: 10px;
+	}
+
+	#cta .app-badges {
+		margin: 35px auto 30px;
+	}
+
+	#bg-faces {
+		transform: scale(2);
+	}
+}
+
+@media (max-width: 725px){
+
+	#header  {
+		overflow: hidden;
+	}
+	#header .hero-image {
+		max-width: 340px;
+	}
+}
+
+@media (max-width: 480px) {
+	h1 {
+		font-size: 40px;
+		line-height: 53px;
+	}
+
+	#header .lead {
+		font-size: 16px;
+		line-height: 20px;
+		max-width: 320px;
+		margin: 5px auto;
+	}
+
+	#benefits h3 {
+		font-size: 40px;
+		max-width: 365px;
+		line-height: 43px;
+		margin: 0 auto;
+	}
+
+	#benefits .lead {
+		font-size: 16px;
+		line-height: 19px;
+		letter-spacing: -0.16px;
+		max-width: 320px;
+		margin: 26px auto;
+	}
+
+	#benefits .card h5 {
+		font-size: 28px;
+	}
+
+	#benefits .card .image {
+		margin-bottom: 18px;
+	}
+
+	.feature {
+		padding: 55px 15px;
+	}
+
+	#cta h6 {
+		max-width: 256px;
+		line-height: 18px;
+		margin: 0 auto 10px !important;
+	}
+
+	#cta h2 {
+		max-width: 305px;
+		line-height: 53px;
+		font-size: 40px;
+		margin: 0 auto
+	}
+
+	#cta .lead {
+		max-width: 345px;
+	}
+
+	#cta  .app-badges{
+		margin: 35 auto 30px !important;
+	}
+
+	#cta {
+		padding: 50px 00px;
+	}
+
+	#bg-faces {
+		transform: scale(2);
+		bottom: 40px;
+	}
+
+	#mc_embed_signup {
+		display: none;
+	}
+	#header .cta-btn {
+		display: inline-block;
+	}
+
+	#header {
+		max-height: 865px;
+	}
+
+	 #cta {
+		height: 725px;
+	}
+}
