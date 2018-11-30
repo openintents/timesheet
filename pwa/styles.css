@@ -52,6 +52,10 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+
+strong {
+	font-weight: bold;
+}
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section , div {
@@ -138,12 +142,12 @@ h6 {
 }
 
 
-#header {
+#header , #cta {
 	height: 900px;
 	width: 100%;
 	padding-top: 36px;
-	/*background: linear-gradient(205.11deg, #78C5FF 0%, #77C4FF 8.62%, #75C1FD 16.56%, #71BDFB 23.93%, #6CB7F9 30.85%, #66B0F6 37.42%, #5FA8F3 43.77%, #569FF0 50%, #4D95EC 56.23%, #448CE9 62.58%, #3983E6 69.15%, #2F7AE3 76.07%, #2473E1 83.44%, #1B6EDF 91.38%, #176CDF 100%);*/
-	background-image: url(./images/bg.svg);
+	background: linear-gradient(205.11deg, #78C5FF 0%, #77C4FF 8.62%, #75C1FD 16.56%, #71BDFB 23.93%, #6CB7F9 30.85%, #66B0F6 37.42%, #5FA8F3 43.77%, #569FF0 50%, #4D95EC 56.23%, #448CE9 62.58%, #3983E6 69.15%, #2F7AE3 76.07%, #2473E1 83.44%, #1B6EDF 91.38%, #176CDF 100%);*/
+	/*background-image: url(./images/bg.svg);*/
 	background-repeat: no-repeat;
 	background-position: 50% 100%;
 }
@@ -338,3 +342,179 @@ h6 {
 	text-align: right;
 }
 
+
+
+#cta {
+	height: 705px;
+	padding: 60px 0 40px;
+	position: relative;
+	overflow: hidden;
+}
+
+#cta:before , #cta:after {
+	content: url(./images/dots.png);
+	position: absolute;
+	opacity: 0.5;
+}
+
+#cta:before  {
+	transform: rotate(90deg);
+	bottom: -200px;
+	left: -210px;
+}
+
+#cta:after  {
+	top: -300px;
+	right: 30px;
+}
+
+
+
+#cta .content {
+	max-width: 730px;
+	height: 50px;
+	margin: 0 auto;
+	text-align: center;
+	color: #fff;
+	position: relative;
+}
+
+
+#cta .content:before , #cta .content:after{
+	content: url(./images/waves.png);
+	position: absolute;
+}
+
+#cta .content:before {
+	left: -220px;
+	top: 140px;
+}
+
+
+#cta .content:after {
+	right: -220px;
+	top: 140px;
+}
+
+
+#cta .content h6 {
+	color: #fff;
+	letter-spacing: 0.4px;
+	font-size: 14px;
+	line-height: 18px;
+	margin-bottom: 20px;
+	text-transform: uppercase;
+}
+
+#cta .lead {
+	max-width: 635px;
+	margin: 0 auto;
+	font-size: 20px;
+	line-height: 30px;
+	letter-spacing: -0.2px;
+	margin-top: 22px;
+}
+
+.app-badges {
+	max-width: 420px;
+	text-align: center;
+	margin: 30px auto 50px;
+}
+
+.badge {
+	width: 120px;
+	height: 40px;
+	display: inline-block;
+	margin: 7px;
+}
+
+.badge img{
+	max-width: 100%;
+	height: 40px;
+}
+
+#bg-faces {
+	width: 100%;
+	text-align: center;
+	height: auto;
+	position: absolute;
+	bottom: 60px;
+	margin: 0 auto;
+}
+
+#bg-faces img {
+	transform: scale(1.6);
+}
+
+#footer {
+	padding: 75px 0 50px;
+	color: #616161;
+	text-align: center;
+}
+
+#footer .about {
+	width: 410px;
+	display: inline-block;
+	margin: 0 135px 0 0;
+	text-align: left;
+}
+
+#footer .about h4 {
+	font-size: 36px;
+	line-height: 48px;
+}
+
+#footer .about p {
+	margin-top: 22px;
+	color: #616161;
+	line-height: 24px;
+	letter-spacing: -0.1px;
+}
+
+#footer a{
+	color: #616161;
+	text-decoration: none;
+}
+
+#footer h6 {
+	font-size: 14px;
+	line-height: 18px;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	color: #141414;
+	margin-bottom: 22px;
+}
+
+#footer .contact ,#footer .social{
+	width: 255px;
+	display: inline-block;
+	margin: 0 30px;
+	text-align: left;
+}
+
+#footer .contact .meta , #footer .contact .info {
+	display: inline-block;
+	vertical-align: top;
+}
+
+#footer .contact .meta {
+	width: 60px;
+	margin-right: 30px;
+}
+
+#footer .contact .info {
+	width: 160px;
+}
+#footer .contact li {
+	line-height: 30px;
+}
+
+#footer .social-links li{
+	display: inline-block;
+	margin-right: 15px;
+}
+
+
+#footer .privacy{
+	margin-top: 20px; display: inline-block;
+}
