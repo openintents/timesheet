@@ -114,6 +114,7 @@ h3{
 h4{
 	font-size: 40px;
 	line-height: 48px;
+	color: #041434;
 }
 
 h5 {
@@ -122,20 +123,29 @@ h5 {
 }
 
 h6 {
-	font-size: 20px;
+	font-family: "IBMPlexSans-Medium", sans-serif;
+	font-size: 18px;
 	line-height: 30px;
+	letter-spacing: -0.2px;
+	color: #FF8C2D;
 }
 
 /* reset ends*/
 
+.container {
+	max-width: 1280px;
+	margin: 0 auto;
+}
 
 
 #header {
 	height: 900px;
 	width: 100%;
 	padding-top: 36px;
-	background-color: red;
-	background: linear-gradient(205.11deg, #78C5FF 0%, #77C4FF 8.62%, #75C1FD 16.56%, #71BDFB 23.93%, #6CB7F9 30.85%, #66B0F6 37.42%, #5FA8F3 43.77%, #569FF0 50%, #4D95EC 56.23%, #448CE9 62.58%, #3983E6 69.15%, #2F7AE3 76.07%, #2473E1 83.44%, #1B6EDF 91.38%, #176CDF 100%);
+	/*background: linear-gradient(205.11deg, #78C5FF 0%, #77C4FF 8.62%, #75C1FD 16.56%, #71BDFB 23.93%, #6CB7F9 30.85%, #66B0F6 37.42%, #5FA8F3 43.77%, #569FF0 50%, #4D95EC 56.23%, #448CE9 62.58%, #3983E6 69.15%, #2F7AE3 76.07%, #2473E1 83.44%, #1B6EDF 91.38%, #176CDF 100%);*/
+	background-image: url(./images/bg.svg);
+	background-repeat: no-repeat;
+	background-position: 50% 100%;
 }
 
 #header .container {
@@ -186,7 +196,7 @@ h6 {
 	box-sizing: border-box;
 	border: none;
 	font-size: 20px !important;
-	padding: 11px 16px !important;
+	padding: 9px 16px !important;
 	font-family: "IBMPlexSans-Light" !important;
 	border-radius: 7px !important;
 }
@@ -205,8 +215,9 @@ h6 {
 
 
 #header .hero-image {
-	max-width: 710px;
-	margin: 0 auto
+	max-width: 715px;
+	margin: 0 auto;
+	margin-top: 28px;
 }
 
 #header .hero-image img {
@@ -215,6 +226,115 @@ h6 {
 
 
 
+#benefits {
+	max-width: 1280px;
+	margin: 0 auto;
+	text-align: center;
+	padding: 95px 0 106px;
+}
+
+#benefits h3{
+	color: #141414;
+	letter-spacing: -1.2px;
+}
+
+#benefits .lead {
+	max-width: 730px;
+	margin: 30px auto;
+	font-size: 20px;
+	color: #616161;
+	letter-spacing: -0.2px
+}
 
 
+#benefits .grid {
+	margin-top: 125px;
+}
+
+
+#benefits .card {
+	width: 275px;
+	display: inline-block;
+	height: auto;
+	margin: 0 74px;
+}
+
+#benefits .card .image {
+	margin-bottom: 15px;
+	height: 85px;
+}
+
+#benefits .card h5 {
+	color: #171C34;
+}
+
+
+#benefits .card p{
+	font-size: 14px;
+	line-height: 18px;
+	color: #919AA3;
+	margin-top: 17px;
+}
+
+.feature {
+	padding: 85px 0;
+}
+
+.feature .image{
+	width: 645px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 25px;
+	vertical-align: middle;
+}
+
+.feature .image img {
+	max-width: 639px;
+}
+
+.feature .content {
+	max-width: 445px;
+	text-align: left;
+	margin-left: 71px;
+	margin-right: 45px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.feature p {
+	color: #616161;
+	font-size: 20px;
+	margin-top: 20px;
+	line-height: 30px;
+	letter-spacing: -0.2px
+}
+.feature-header {
+	margin-bottom: 15px;
+}
+
+.feature-header .icon {
+	width: 40px;
+	height: 40px;
+	border-radius: 50px;
+	display: inline-block;
+	background-color: #FFF0E4;
+	vertical-align: middle;
+	margin-right: 15px;
+}
+
+.feature-header h6 {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+
+.feature-right .content{
+	margin-left: 84px;
+	margin-top: 150px;
+	float: left;
+}
+
+.feature-right .image {
+	text-align: right;
+}
 
