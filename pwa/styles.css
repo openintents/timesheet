@@ -285,7 +285,7 @@ h6 {
 }
 
 .feature .image{
-	width: 645px;
+	max-width: 645px;
 	display: inline-block;
 	vertical-align: middle;
 	margin-left: 25px;
@@ -518,3 +518,149 @@ h6 {
 #footer .privacy{
 	margin-top: 20px; display: inline-block;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 1291px){
+	#benefits .card {
+	margin: 0 20px;
+	}
+
+	.feature {
+		text-align: center;
+	}
+
+	.feature .image{
+	max-width: 500px;
+	}
+	.feature .content{
+		max-width: 400px;
+	}
+	.feature .image img {
+		max-width: 100% !important;
+	}
+
+	.feature-right-2 .content {
+		margin-top: 90px;
+	}
+}
+
+@media (max-width: 1279px){
+	#header .container {
+	max-width: 910px;
+}
+
+@media (max-width: 1200px) {
+	#footer .social{ max-width: 170px; margin-right: 0; }
+	#footer .about {
+		margin: 0;
+	}
+}
+
+@media (max-width: 1060px){
+	.feature .image{
+	max-width: 400px;
+	}
+	.feature .content{
+		max-width: 350px;
+	}
+
+	.feature-right .content {
+		margin-top: 20px;
+	}	
+
+	.feature-right-2 .content {
+		margin-top: 0px;
+	}
+}
+
+@media (max-width: 967px){
+
+	#header {
+		text-align: center;
+	}
+
+	#header .navbar-nav {
+		display: none;
+	}
+
+	#benefits .grid {
+		margin-top: 40px;
+	}
+	#benefits .card {
+		display: block;
+		margin: 60px auto;
+	}
+
+	#benefits .card:last-child {
+		border-bottom: 1px solid #eee;
+		padding-bottom: 80px;
+	}
+
+	#benefits {
+		padding-bottom: 0;
+	}
+}
+
+@media (max-width: 947px) {
+	#footer .social {
+		width: 730px;
+		max-width: 800px !important;
+		margin-left: 0;
+		margin-top: 60px;
+	}
+
+	#footer .social h6 {
+		display: none;
+	}
+
+	#footer .social ul {
+		display: inline-block;
+	}
+
+	#footer .privacy{
+	margin-top: 0px; 
+	display: inline-block;
+	float: right;
+}
+}
+
+
+@media (max-width: 920px){
+.feature .image , .feature .content {
+	display: block;
+	margin: 0 auto
+}
+.feature-right .content {
+	float: none;
+}	
+
+.feature .content {
+	margin-top: 45px;
+}
+
+.feature .content h4 {
+	font-size: 28px;
+	line-height: 35px;
+}
+
+.feature .content p{
+	font-size: 16px;
+	line-height: 23px;
+	margin-top: 13px;
+}
+
+} 
+
