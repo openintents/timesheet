@@ -457,10 +457,10 @@ h6 {
 
 @keyframes floatBubble {
     0% {
-        left:1000px;
+        left:-1000px;
     }
     100% {
-        left: -1000px;
+        left: 1000px;
     }
 }
 
