@@ -833,3 +833,33 @@ h6 {
 		height: 725px;
 	}
 }
+
+
+@media (max-width: 400px){
+
+	#footer  .about h4, 
+	#footer  .about p, 
+
+	#footer .social {
+		margin: 0 !important;
+		max-width: 320px;
+		width: 320px;
+		margin:  0 auto;
+	}
+
+	#footer  .about {
+		margin: 0 auto;
+		width: 320px;
+	}
+
+	#footer  {
+		padding: 0 10px;
+	}
+
+#footer  .contact {
+	max-width: 320px;
+	width: 320px;
+	margin: 20px auto;
+
+}
+}
