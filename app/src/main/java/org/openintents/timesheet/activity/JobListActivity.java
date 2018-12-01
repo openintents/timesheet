@@ -64,6 +64,8 @@ import org.openintents.timesheet.Timesheet;
 import org.openintents.timesheet.Timesheet.Job;
 import org.openintents.timesheet.Timesheet.Reminders;
 import org.openintents.timesheet.TimesheetIntent;
+import org.openintents.timesheet.blockstack.AccountActivity;
+import org.openintents.timesheet.blockstack.SyncActivity;
 import org.openintents.timesheet.convert.ConvertCsvActivity;
 import org.openintents.util.DateTimeFormater;
 import org.openintents.util.DurationFormater;
@@ -107,6 +109,7 @@ public class JobListActivity extends AppCompatListActivity {
     private static final int MENU_SETTINGS = Menu.FIRST + 7;
     private static final int MENU_TIMEXCHANGE = Menu.FIRST + 8;
     private static final int MENU_PRIVACY = Menu.FIRST + 9;
+    private static final int MENU_SYNC_BLOCKSTACK = Menu.FIRST + 10;
 
     private static final int RESULT_CODE_NEW_JOB = 1;
     private static final int RESULT_CODE_SETTINGS = 2;
@@ -159,14 +162,14 @@ public class JobListActivity extends AppCompatListActivity {
         setContentView(R.layout.jobslist);
         getListView().setOnCreateContextMenuListener(this);
         getListView().setEmptyView(findViewById(R.id.empty));
-        this.mSpinner = (Spinner) findViewById(R.id.spinner);
+        this.mSpinner = findViewById(R.id.spinner);
         refreshSpinner();
         this.mSpinner.setOnItemSelectedListener(new C00321());
-        this.mDurationInfo = (TextView) findViewById(R.id.duration_info);
-        this.mTotalInfo = (TextView) findViewById(R.id.total_info);
-        this.mBreakInfo = (TextView) findViewById(R.id.break_info);
-        this.mJobCountInfo = (TextView) findViewById(R.id.job_count_info);
-        this.mFabAdd = (FloatingActionButton) findViewById(R.id.fab_add);
+        this.mDurationInfo = findViewById(R.id.duration_info);
+        this.mTotalInfo = findViewById(R.id.total_info);
+        this.mBreakInfo = findViewById(R.id.break_info);
+        this.mJobCountInfo = findViewById(R.id.job_count_info);
+        this.mFabAdd = findViewById(R.id.fab_add);
         this.mFabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -320,9 +323,7 @@ public class JobListActivity extends AppCompatListActivity {
         // prepend All customers:
         String[] tmp = new String[customerList.length + 1];
         tmp[0] = getString(R.string.all_customers);
-        for (int i = 0; i < customerList.length; i++) {
-            tmp[i + 1] = customerList[i];
-        }
+        System.arraycopy(customerList, 0, tmp, 1, customerList.length);
         customerList = tmp;
         return customerList;
     }
@@ -332,6 +333,7 @@ public class JobListActivity extends AppCompatListActivity {
         super.onCreateOptionsMenu(menu);
         menu.add(0, MENU_ITEM_INSERT, 0, R.string.menu_insert).setShortcut('1', 'i').setIcon(android.R.drawable.ic_menu_add);
         menu.add(0, MENU_EXPORT, 0, R.string.menu_export).setShortcut('2', 'e').setIcon(android.R.drawable.ic_menu_save);
+        menu.add(0, MENU_SYNC_BLOCKSTACK, 0, R.string.menu_sync_blockstack).setShortcut('2', 'e').setIcon(android.R.drawable.ic_menu_save);
         menu.add(0, MENU_SETTINGS, 0, R.string.menu_preferences).setShortcut('4', 's').setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(0, MENU_DELETE_ALL, 0, R.string.menu_delete_all).setShortcut('3', 'd').setIcon(android.R.drawable.ic_menu_delete);
         menu.add(0, MENU_PRIVACY, 0, R.string.privacy).setIcon(android.R.drawable.ic_menu_info_details);
@@ -362,24 +364,27 @@ public class JobListActivity extends AppCompatListActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_ITEM_INSERT /*2*/:
+            case MENU_ITEM_INSERT:
                 insertNewJob();
                 return true;
-            case MENU_EXPORT /*4*/:
+            case MENU_EXPORT:
                 startExport();
                 return true;
-            case MENU_DELETE_ALL /*5*/:
+            case MENU_DELETE_ALL:
                 showDialog(RESULT_CODE_NEW_JOB);
                 return true;
-            case MENU_ABOUT /*6*/:
+            case MENU_ABOUT:
                 showAboutBox();
                 return true;
-            case MENU_SETTINGS /*8*/:
+            case MENU_SETTINGS:
                 startActivityForResult(new Intent(this, PreferenceActivity.class), RESULT_CODE_SETTINGS);
                 return true;
             case MENU_PRIVACY:
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_URL)));
                 return false;
+            case MENU_SYNC_BLOCKSTACK:
+                startActivity(new Intent(this, SyncActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

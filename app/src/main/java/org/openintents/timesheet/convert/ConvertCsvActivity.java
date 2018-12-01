@@ -85,13 +85,13 @@ public class ConvertCsvActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(mCustomer)) {
             mCustomer = getString(R.string.all_customers);
         }
-        mEditText = (EditText) findViewById(R.id.file_path);
+        mEditText = (EditText) findViewById(R.id.user);
 
         mExportFor = (TextView) findViewById(R.id.export_for);
         mExportFor.setText(getString(R.string.export_for, mCustomer));
 
         mInfo = (TextView) findViewById(R.id.info);
-        mFilePathLabel = (TextView) findViewById(R.id.file_path_label);
+        mFilePathLabel = (TextView) findViewById(R.id.user_label);
         mCalendar = (TextView) findViewById(R.id.calendar_info);
         findViewById(R.id.file_export).setOnClickListener(new C00431());
         findViewById(R.id.file_import).setOnClickListener(new C00442());

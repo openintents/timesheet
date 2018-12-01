@@ -110,17 +110,15 @@ public class Timesheet {
 
         public static ContentValues createContentValues2(String title, long startMillis, long endMillis, boolean isAllDay, String location, String description, long calendarId, boolean hasAlarm) {
             ContentValues values = new ContentValues();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC");
-                values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
-                values.put(CalendarContract.Events.TITLE, title);
-                values.put(CalendarContract.Events.ALL_DAY, isAllDay ? 1 : 0);
-                values.put(CalendarContract.Events.DTSTART, startMillis);
-                values.put(CalendarContract.Events.DTEND, endMillis);
-                values.put(CalendarContract.Events.DESCRIPTION, description);
-                values.put(CalendarContract.Events.EVENT_LOCATION, location);
-                values.put(CalendarContract.Events.HAS_ALARM, hasAlarm);
-            }
+            values.put(CalendarContract.Events.EVENT_TIMEZONE, "UTC");
+            values.put(CalendarContract.Events.CALENDAR_ID, calendarId);
+            values.put(CalendarContract.Events.TITLE, title);
+            values.put(CalendarContract.Events.ALL_DAY, isAllDay ? 1 : 0);
+            values.put(CalendarContract.Events.DTSTART, startMillis);
+            values.put(CalendarContract.Events.DTEND, endMillis);
+            values.put(CalendarContract.Events.DESCRIPTION, description);
+            values.put(CalendarContract.Events.EVENT_LOCATION, location);
+            values.put(CalendarContract.Events.HAS_ALARM, hasAlarm);
             return values;
         }
 
@@ -138,7 +136,7 @@ public class Timesheet {
                 }
                 ContentValues values = new ContentValues();
                 int len = reminderMinutes.size();
-                values.put(Events.HAS_ALARM, Integer.valueOf(len > 0 ? 1 : 0));
+                values.put(Events.HAS_ALARM, len > 0 ? 1 : 0);
                 if (calendarAuthority == 1) {
                     uri = ContentUris.withAppendedId(Events.CONTENT_URI_1, eventId);
                 } else {
@@ -146,11 +144,11 @@ public class Timesheet {
                 }
                 cr.update(uri, values, null, null);
                 for (int i = 0; i < len; i++) {
-                    int minutes = ((Integer) reminderMinutes.get(i)).intValue();
+                    int minutes = reminderMinutes.get(i);
                     values.clear();
-                    values.put(Reminders.MINUTES, Integer.valueOf(minutes));
-                    values.put(Reminders.METHOD, Integer.valueOf(1));
-                    values.put(Reminders.EVENT_ID, Long.valueOf(eventId));
+                    values.put(Reminders.MINUTES, minutes);
+                    values.put(Reminders.METHOD, 1);
+                    values.put(Reminders.EVENT_ID, eventId);
                     if (calendarAuthority == 1) {
                         cr.insert(Reminders.CONTENT_URI_1, values);
                     } else {
@@ -162,9 +160,9 @@ public class Timesheet {
 
         public static void createReminder(ContentResolver cr, long eventId, int minutes, int calendarAuthority) {
             ContentValues values = new ContentValues();
-            values.put(Reminders.MINUTES, Integer.valueOf(minutes));
-            values.put(Reminders.METHOD, Integer.valueOf(1));
-            values.put(Reminders.EVENT_ID, Long.valueOf(eventId));
+            values.put(Reminders.MINUTES, minutes);
+            values.put(Reminders.METHOD, 1);
+            values.put(Reminders.EVENT_ID, eventId);
             if (calendarAuthority == 1) {
                 cr.insert(Reminders.CONTENT_URI_1, values);
             } else if (calendarAuthority == 2) {

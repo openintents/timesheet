@@ -251,4 +251,8 @@ No compatible extension available to display full info (contact, credits, licens
     <string name="permission_write_descr">Allows an application to create new entries or modifiy existing ones.</string>
     <string name="privacy">Privacy</string>
     <string name="support">Support</string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_in_with_blockstack">Sign in with Blockstack</string>
+    <string name="menu_sync_blockstack">Sync (Blockstack)</string>
+    <string name="blockstack_user">Blockstack User</string>
 </resources>

@@ -29,6 +29,7 @@ import org.openintents.timesheet.Timesheet.Job;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Provides access to a database of notes. Each note has a title, the note
@@ -60,7 +61,7 @@ public class TimesheetProvider extends ContentProvider {
         sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems", INVOICEITEMS);
         sUriMatcher.addURI(Timesheet.AUTHORITY, "invoiceitems/#", INVOICEITEM_ID);
 
-        sInvoiceItemsProjectionMap = new HashMap<String, String>();
+        sInvoiceItemsProjectionMap = new HashMap<>();
         sInvoiceItemsProjectionMap.put(InvoiceItem._ID, InvoiceItem._ID);
         sInvoiceItemsProjectionMap.put(InvoiceItem.DESCRIPTION,
                 InvoiceItem.DESCRIPTION);
@@ -69,7 +70,7 @@ public class TimesheetProvider extends ContentProvider {
         sInvoiceItemsProjectionMap.put(InvoiceItem.TYPE, InvoiceItem.TYPE);
         sInvoiceItemsProjectionMap.put(InvoiceItem.VALUE, InvoiceItem.VALUE);
 
-        sJobsProjectionMap = new HashMap<String, String>();
+        sJobsProjectionMap = new HashMap<>();
         sJobsProjectionMap.put(Job._ID, JOB_TABLE_NAME + "." + Job._ID);
         sJobsProjectionMap.put(Job.TITLE, Job.TITLE);
         sJobsProjectionMap.put(Job.NOTE, Job.NOTE);
@@ -238,6 +239,10 @@ public class TimesheetProvider extends ContentProvider {
                 if (!values.containsKey(Job.TITLE)) {
                     Resources r = Resources.getSystem();
                     values.put(Job.TITLE, r.getString(android.R.string.untitled));
+                }
+
+                if (!values.containsKey(Job.EXTERNAL_REF)) {
+                    values.put(Job.EXTERNAL_REF, UUID.randomUUID().toString());
                 }
 
                 if (!values.containsKey(Job.NOTE)) {

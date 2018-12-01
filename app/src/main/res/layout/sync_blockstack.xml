@@ -8,18 +8,20 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
+    <org.blockstack.android.sdk.ui.BlockstackSignInButton
+        android:layout_width=""
+        android:layout_height=""/>
     <TextView
         android:id="@+id/user_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/file_path"/>
+        android:text="@string/blockstack_user"/>
 
-    <EditText
+    <TextView
         android:id="@+id/user"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/default_path"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/export_for"

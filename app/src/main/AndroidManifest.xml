@@ -122,6 +122,17 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+        <activity android:name=".blockstack.SyncActivity"/>
+        <activity android:name=".blockstack.AccountActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value=".blockstack.SyncActivity"/>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="https" android:host="@string/app_domain"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name="org.openintents.distribution.EulaActivity"/>
         <activity
