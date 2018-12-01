@@ -27,9 +27,6 @@
 }
 
 /* End loadign fonts*/
-
-
-
 /* Reset*/
 
 html, body, div, span, applet, object, iframe,
@@ -533,20 +530,6 @@ h6 {
 	margin-top: 20px; display: inline-block;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @media (max-width: 1291px){
 	#benefits .card {
 	margin: 0 20px;
@@ -833,7 +816,6 @@ h6 {
 		height: 725px;
 	}
 }
-
 
 @media (max-width: 400px){
 
