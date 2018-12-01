@@ -28,8 +28,6 @@
 
 /* End loadign fonts*/
 
-
-
 /* Reset*/
 
 html, body, div, span, applet, object, iframe,
@@ -454,7 +452,18 @@ h6 {
 	position: absolute;
 	bottom: 60px;
 	margin: 0 auto;
+    animation: floatBubble 50s infinite  normal linear;
 }
+
+@keyframes floatBubble {
+    0% {
+        left:-1000px;
+    }
+    100% {
+        left: 1000px;
+    }
+}
+
 
 #bg-faces img {
 	transform: scale(1.6);
@@ -833,7 +842,6 @@ h6 {
 		height: 725px;
 	}
 }
-
 
 @media (max-width: 400px){
 
