@@ -22,7 +22,7 @@
 1. Show open source licences
 
 
-##The Current Agenda
+# The Current Agenda
 
 1.Prioritise speed over to design complexity to test Ideas quicker.
 1.Aim for Low Fidelity Designs with slight UI work for quick UX changes.
@@ -32,24 +32,24 @@
 1.If the testing fails by 3 iterations, the idea comes to an end.
 1.Main UX is focus accordingly to the features below.
 
-##Time Counter (Start/Stop/Resume)
+## Time Counter (Start/Stop/Resume)
 Counts Time when users decide to start tracking their time, take a pause or resume the next day.
 (Minutes / Hours / Days)
 
-##Timesheet Overview with Editor
+## Timesheet Overview with Editor
 Allow users to create, export, import, share, edit, read or delete the overview of their tracked time on projects/works.
 
-##Grouping / Time Management
+## Grouping / Time Management
 Users can group various tasks into a single timesheets. And, different timesheets into the single project.
 
-##Hourly Rate Set-Up
+## Hourly Rate Set-Up
 Users can set hourly rates into their timesheets.
 
-##Invoicing
+## Invoicing
 An easy customizable invoice generator for billing convenience. (E.g: Wave Invoicing)
 
-##Offline Mode
+## Offline Mode
 Allow users to work offline. Users will be notified when there is no internet.
 
-##Blockstack Account
+## Blockstack Account
 Users can take their timesheets anywhere with a simple Blockstack ID login.
