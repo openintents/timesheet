@@ -18,3 +18,5 @@
 1. Generate invoice
 1. Notify user when working offline
 1. Notify user about current running task
+1. Show privacy policy
+1. Show open source licences
