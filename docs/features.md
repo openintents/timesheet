@@ -10,10 +10,11 @@
 1. Export all timesheets
 1. Import timesheets
 1. Delete all timesheets
-1. Login/Logout - timesheets and projects CAN belong to a user
+1. Login/Logout with blockstack (Timesheets and projects can belong to a user, doesn't need to. When logged out the user is the local user.)
 1. Switch between projects and timesheets
 1. Filter tasks by projects, time period,..
 1. Set an hourly rate
 1. Add additional invoice items like travel
 1. Generate invoice
 1. Notify user when working offline
+1. Notify user about current running task
