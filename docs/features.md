@@ -16,3 +16,4 @@
 1. Set an hourly rate
 1. Add additional invoice items like travel
 1. Generate invoice
+1. Notify user when working offline
