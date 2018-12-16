@@ -25,8 +25,8 @@
 # The Current Agenda
 
 1. Prioritise speed over to design complexity to test Ideas quicker.
-1. Aim for Low Fidelity Designs with slight UI work for quick UX changes.
-1. Have the first UI/UX readied less by 17 days.
+1. Aim for Low Fidelity Designs (Wireframes) with slight UI work for quick UX changes.
+1. A version for the Timestack will be ready no more than 3 weeks time. Take note, given with the short number of days, the UI will not be completed till perfection for testing reasons. (I have a channel of product people who I always reach out for UX testing.)
 1. Only work on top selected features.
 1. After testing the ideas of Timestack and it works, proceed to test a monetization strategy.
 1. If the testing fails by 3 iterations, the idea comes to an end.
