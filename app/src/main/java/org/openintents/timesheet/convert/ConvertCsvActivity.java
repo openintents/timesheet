@@ -394,6 +394,11 @@ public class ConvertCsvActivity extends AppCompatActivity {
     }
 
     public void startImportAndFinish() {
+        try {
+            doImport();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void doImport() throws IOException {

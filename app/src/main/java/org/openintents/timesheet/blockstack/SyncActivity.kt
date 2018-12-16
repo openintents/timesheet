@@ -20,7 +20,6 @@ import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import org.json.JSONArray
 import org.json.JSONObject
-import org.openintents.convertcsv.opencsv.CSVReader
 import org.openintents.timesheet.PreferenceActivity
 import org.openintents.timesheet.R
 import org.openintents.timesheet.Timesheet
@@ -29,7 +28,8 @@ import org.openintents.timesheet.Timesheet.Job
 import org.openintents.timesheet.TimesheetIntent
 import org.openintents.timesheet.activity.JobActivity
 import org.openintents.util.DateTimeFormater
-import java.io.*
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
@@ -54,6 +54,7 @@ class SyncActivity : AppCompatActivity() {
 
         export_for.text = getString(R.string.export_for, mCustomer)
 
+        sign_in.setOnClickListener { redirectToSignIn() }
         file_export.setOnClickListener { startExportAndFinish() }
         file_import.setOnClickListener { startImportAndFinish() }
 
@@ -63,6 +64,22 @@ class SyncActivity : AppCompatActivity() {
             startActivityForResult(Intent(this, AccountActivity::class.java), REQUEST_SIGN_IN)
         } else {
             showSyncUI(true)
+        }
+    }
+
+    private fun redirectToSignIn() {
+        mSession.redirectUserToSignIn {
+
+        }
+    }
+
+    private fun handleAuthResponse() {
+        val authResponse = intent.data?.getQueryParameter("authResponse")
+        if (authResponse != null) {
+            mSession.handlePendingSignIn(authResponse) {
+                file_export.isEnabled = true
+                file_import.isEnabled = true
+            }
         }
     }
 
@@ -329,7 +346,7 @@ class SyncActivity : AppCompatActivity() {
                     }
                 } else {
                     var jobs: JSONObject
-                    var fileName:String
+                    var fileName: String
                     var count = 0
                     for (c in customerSet) {
                         jobs = JSONObject()
@@ -349,7 +366,6 @@ class SyncActivity : AppCompatActivity() {
             c!!.close()
 
 
-
         } catch (e: FileNotFoundException) {
             Toast.makeText(this, R.string.error_writing_file,
                     Toast.LENGTH_SHORT).show()
@@ -365,18 +381,37 @@ class SyncActivity : AppCompatActivity() {
     }
 
     fun startImportAndFinish() {
-
-    }
-
-    @Throws(IOException::class)
-    fun doImport() {
-        mSession.getFile(user.text.toString(), GetFileOptions()) {result ->
+        file_import.isEnabled = false
+        val timesheets = ArrayList<JSONObject>()
+        var projects: JSONObject? = null
+        mSession.getFile("projects.json", GetFileOptions()) { result ->
             if (result.hasValue) {
-                val projects = JSONObject(result.value as String)
-                val jobs = projects.getJSONArray("jobs")
+                projects = JSONObject(result.value as String)
+                mSession.listFiles(callback = { result ->
+                    if (result.hasValue) {
+                        mSession.getFile(result.value!!, GetFileOptions()) { times ->
+                            Log.d("import", times.value?.toString())
+                            timesheets.add(JSONObject(times.value as String))
+                        }
+                    }
+                    true
+
+                }, countCallback = { result ->
+                    doImport(timesheets, projects)
+                })
 
             }
         }
+    }
+
+    @Throws(IOException::class)
+    fun doImport(timesheets: ArrayList<JSONObject>, projects: JSONObject?) {
+
+        onImportDone()
+    }
+
+    fun onImportDone() {
+        file_import.isEnabled = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
