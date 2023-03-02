@@ -5,7 +5,7 @@
              android:padding="5dp">
 
     <org.openintents.widget.TimePicker
-        android:id="@id/timePicker"
+        android:id="@+id/timePicker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </FrameLayout>

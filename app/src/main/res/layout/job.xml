@@ -14,7 +14,7 @@
         android:padding="5dp">
 
         <LinearLayout
-            android:id="@id/customer_box"
+            android:id="@+id/customer_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -31,7 +31,7 @@
                     android:text="@string/customer"/>
 
                 <AutoCompleteTextView
-                    android:id="@id/customer"
+                    android:id="@+id/customer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:capitalize="words"
@@ -41,7 +41,7 @@
             </LinearLayout>
 
             <ImageButton
-                android:id="@id/rate_button"
+                android:id="@+id/rate_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
@@ -49,31 +49,31 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@id/info_panel1"
+            android:id="@+id/info_panel1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@id/timestamp"
+                android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"/>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@id/info_panel2"
+            android:id="@+id/info_panel2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@id/duration_info"
+                android:id="@+id/duration_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:text="duration"/>
 
             <TextView
-                android:id="@id/extras_info"
+                android:id="@+id/extras_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -81,28 +81,28 @@
                 android:text="extras"/>
 
             <TextView
-                android:id="@id/total_info"
+                android:id="@+id/total_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/extras_info"
+                android:layout_below="@+id/extras_info"
                 android:gravity="right"
                 android:text="total"/>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@id/info_panel3"
+            android:id="@+id/info_panel3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@id/break_info"
+                android:id="@+id/break_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"/>
 
             <TextView
-                android:id="@id/hourly_rate_info"
+                android:id="@+id/hourly_rate_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -110,14 +110,14 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@id/edit_panel1"
+            android:id="@+id/edit_panel1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible"/>
 
         <LinearLayout
-            android:id="@id/edit_hourlyrate"
+            android:id="@+id/edit_hourlyrate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -128,7 +128,7 @@
                 android:text="@string/hourly_rate"/>
 
             <EditText
-                android:id="@id/set_hourly_rate"
+                android:id="@+id/set_hourly_rate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2.0"
@@ -136,7 +136,7 @@
                 android:text=""/>
 
             <ImageButton
-                android:id="@id/rate_edit_button"
+                android:id="@+id/rate_edit_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
@@ -145,7 +145,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@id/edit_panel2"
+            android:id="@+id/edit_panel2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -162,14 +162,14 @@
                     android:text="@string/start_time"/>
 
                 <Button
-                    android:id="@id/set_start_date"
+                    android:id="@+id/set_start_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:text=""/>
 
                 <Button
-                    android:id="@id/set_start_time"
+                    android:id="@+id/set_start_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
@@ -187,14 +187,14 @@
                     android:text="@string/end_time"/>
 
                 <Button
-                    android:id="@id/set_end_date"
+                    android:id="@+id/set_end_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:text=""/>
 
                 <Button
-                    android:id="@id/set_end_time"
+                    android:id="@+id/set_end_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
@@ -212,7 +212,7 @@
                     android:text="@string/break_duration"/>
 
                 <Button
-                    android:id="@id/set_break_minutes"
+                    android:id="@+id/set_break_minutes"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2.0"
@@ -221,7 +221,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@id/edit_panel3"
+            android:id="@+id/edit_panel3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -240,14 +240,14 @@
                     android:text="@string/planned_time"/>
 
                 <Button
-                    android:id="@id/set_planned_date"
+                    android:id="@+id/set_planned_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:text=""/>
 
                 <Button
-                    android:id="@id/set_planned_time"
+                    android:id="@+id/set_planned_time"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
@@ -266,7 +266,7 @@
                     android:text="@string/planned_duration"/>
 
                 <Button
-                    android:id="@id/set_planned_minutes"
+                    android:id="@+id/set_planned_minutes"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2.0"
@@ -275,7 +275,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@id/quick_panel"
+            android:id="@+id/quick_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -287,7 +287,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@id/break_start_end"
+                    android:id="@+id/break_start_end"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -295,7 +295,7 @@
                     android:text="break"/>
 
                 <Button
-                    android:id="@id/start_end"
+                    android:id="@+id/start_end"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -303,7 +303,7 @@
                     android:text="start/end"/>
 
                 <Button
-                    android:id="@id/break2_start_end"
+                    android:id="@+id/break2_start_end"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -318,7 +318,7 @@
             android:text="@string/note"/>
 
         <view
-            android:id="@id/note"
+            android:id="@+id/note"
             class="org.openintents.timesheet.LinedEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -329,7 +329,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@id/recent_notes"
+                android:id="@+id/recent_notes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"

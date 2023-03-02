@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 29
     defaultConfig {
         resConfigs "en"
         applicationId "org.openintents.timesheet"
-        minSdkVersion 9
-        targetSdkVersion 19
+        minSdkVersion 14
+        targetSdkVersion 29
         versionCode 24
         versionName "1.1.9"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -21,12 +20,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    //compile 'com.github.openintents:distribution:1.2'
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:25.3.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.google.android.material:material:1.0.0'
 }

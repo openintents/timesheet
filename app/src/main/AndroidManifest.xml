@@ -5,8 +5,6 @@
           android:versionCode="20"
           android:versionName="1.1.6">
 
-    <uses-sdk android:minSdkVersion="3"/>
-
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
     <uses-permission android:name="android.permission.READ_CALENDAR"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>

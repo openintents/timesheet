@@ -1,13 +1,14 @@
 package org.openintents.timesheet.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet.Job;
@@ -32,7 +33,7 @@ public class InsertJobActivity extends AppCompatActivity {
         this.mHourlyRate = getIntent().getIntExtra(TimesheetIntent.EXTRA_HOURLY_RATE, -1);
         this.mNote = getIntent().getStringExtra(TimesheetIntent.EXTRA_NOTE);
         if (TextUtils.isEmpty(this.mCustomer)) {
-            Toast.makeText(this, R.string.job_denied, 0).show();
+            Toast.makeText(this, R.string.job_denied, Toast.LENGTH_SHORT).show();
             finish();
         }
         TextView text = (TextView) findViewById(R.id.text);

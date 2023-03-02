@@ -40,7 +40,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -54,6 +53,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.openintents.distribution.AboutActivity;
 import org.openintents.distribution.EulaActivity;

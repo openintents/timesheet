@@ -1,10 +1,11 @@
 package org.openintents.timesheet.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 class AppCompatListActivity extends AppCompatActivity {
     private ListView mListView;

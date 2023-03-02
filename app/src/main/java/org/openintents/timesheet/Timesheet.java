@@ -15,9 +15,10 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.CalendarContract;
-import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
 
 import org.openintents.timesheet.activity.JobListActivity;
 
@@ -33,6 +34,7 @@ public class Timesheet {
     public static final double HOUR_FACTOR = 2.7777777777E-7d;
     public static final double RATE_FACTOR = 0.01d;
     public static final String _TAG = "Timesheet";
+    private static final String CHANNEL_ID = "timesheet_channel";
 
     public static void updateNotification(Context context, boolean force) {
         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PreferenceActivity.PREFS_SHOW_NOTIFICATION, false)) {
@@ -55,7 +57,7 @@ public class Timesheet {
                 PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                        context);
+                        context, CHANNEL_ID);
                 Notification notification = builder.setContentIntent(pi)
                         .setSmallIcon(R.drawable.icon_timesheet)
                         .setTicker(null)

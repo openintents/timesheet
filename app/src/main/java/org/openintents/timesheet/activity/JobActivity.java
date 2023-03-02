@@ -19,9 +19,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.provider.Contacts.People;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -45,6 +42,10 @@ import android.widget.ListAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
 
 import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
@@ -1110,6 +1111,7 @@ public class JobActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         // Save away the original text, so we still have it if the activity
         // needs to be killed while paused.
+        super.onSaveInstanceState(outState);
         outState.putString(ORIGINAL_CONTENT, mOriginalContent);
         outState.putInt(ORIGINAL_STATE, mState);
         outState.putString(ORIGINAL_URI, mUri.toString());
@@ -1315,6 +1317,7 @@ public class JobActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_CONTACT && resultCode == RESULT_OK) {
             ContentValues values = new ContentValues(1);
             Cursor c = managedQuery(data.getData(), null, null, null, null);
