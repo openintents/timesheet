@@ -340,6 +340,7 @@ public class JobActivityMileage extends AppCompatActivity {
     }
 
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putString(ORIGINAL_CONTENT, this.mOriginalContent);
         outState.putInt(ORIGINAL_STATE, this.mState);
         outState.putBoolean(SHOW_RECENT_NOTES_BUTTON, this.mShowRecentNotesButton);

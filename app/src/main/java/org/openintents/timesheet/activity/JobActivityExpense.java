@@ -308,6 +308,7 @@ public class JobActivityExpense extends AppCompatActivity {
     }
 
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putString(ORIGINAL_CONTENT, mOriginalContent);
         outState.putInt(ORIGINAL_STATE, mState);
         outState.putBoolean(SHOW_RECENT_NOTES_BUTTON, mShowRecentNotesButton);

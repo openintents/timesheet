@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="org.openintents.timesheet"
-          android:versionCode="20"
+    android:versionCode="20"
           android:versionName="1.1.6">
 
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
@@ -26,7 +25,7 @@
         android:protectionLevel="dangerous"/>
 
     <application
-        android:name=".Application"
+        android:name="android.app.Application"
         android:description="@string/app_descr"
         android:icon="@drawable/icon_timesheet"
         android:label="@string/app_name"
@@ -73,6 +72,7 @@
             android:icon="@drawable/ic_menu_edit"
             android:label="@string/app_name"
             android:parentActivityName=".activity.JobListActivity"
+            android:exported="true"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -103,7 +103,8 @@
             android:label="@string/app_name"/>
         <activity
             android:name=".activity.JobListActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -118,7 +119,8 @@
         </activity>
         <activity
             android:name=".convert.ConvertCsvActivity"
-            android:label="@string/convert_csv">
+            android:label="@string/convert_csv"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
@@ -127,8 +129,6 @@
             android:name="org.openintents.distribution.EulaActivity"/>
         <activity
             android:name="org.openintents.distribution.AboutActivity"/>
-        <activity
-            android:name="org.openintents.distribution.LicenseActivity"/>
         <activity
             android:name=".PreferenceActivity"
             android:label="@string/menu_preferences"/>

@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
-import org.openintents.timesheet.Application;
 import org.openintents.timesheet.R;
 
 /**
@@ -38,9 +37,8 @@ public class AboutActivity extends Activity {
 
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setTheme(android.R.style.Theme_Dialog);
         setContentView(R.layout.about);
-        String version = getVersionNumber() + Application.getVersionSuffix();
+        String version = getVersionNumber();
         setTitle(getString(R.string.about_title, new Object[]{getApplicationName()}));
         ((TextView) findViewById(R.id.text)).setText(getString(R.string.about_text, new Object[]{version}));
     }

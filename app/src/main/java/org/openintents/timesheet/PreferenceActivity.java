@@ -1,14 +1,8 @@
 package org.openintents.timesheet;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceScreen;
-
-import org.openintents.distribution.LicensedApplication;
-import org.openintents.util.IntentUtils;
 
 public class PreferenceActivity extends android.preference.PreferenceActivity implements OnSharedPreferenceChangeListener {
     public static final String PREFS_ASK_IF_FILE_EXISTS = "ask_if_file_exists";

@@ -58,7 +58,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.openintents.distribution.AboutActivity;
 import org.openintents.distribution.EulaActivity;
-import org.openintents.distribution.LicenseActivity;
 import org.openintents.timesheet.PreferenceActivity;
 import org.openintents.timesheet.R;
 import org.openintents.timesheet.Timesheet;
@@ -510,8 +509,6 @@ public class JobListActivity extends AppCompatListActivity {
                 objArr = new Object[RESULT_CODE_NEW_JOB];
                 objArr[0] = this.mSelectedCustomer;
                 return icon.setMessage(getString(R.string.dialog_delete_all, objArr)).setPositiveButton(R.string.delete_all, new C00332()).setNeutralButton(R.string.leave_template, new C00343()).setNegativeButton(android.R.string.cancel, new C00354()).create();
-            case RESULT_CODE_SETTINGS /*2*/:
-                return new Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle(R.string.trial_version_description).setPositiveButton(R.string.enter_license_code, new C00365()).create();
             case DIALOG_ID_DELETE_LAST /*3*/:
                 icon = new Builder(this).setIcon(android.R.drawable.ic_dialog_alert);
                 objArr = new Object[RESULT_CODE_NEW_JOB];
@@ -629,16 +626,6 @@ public class JobListActivity extends AppCompatListActivity {
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-        }
-    }
-
-    /* renamed from: org.openintents.timesheet.activity.JobListActivity.5 */
-    class C00365 implements OnClickListener {
-        C00365() {
-        }
-
-        public void onClick(DialogInterface dialog, int whichButton) {
-            JobListActivity.this.startActivity(new Intent(JobListActivity.this, LicenseActivity.class));
         }
     }
 
